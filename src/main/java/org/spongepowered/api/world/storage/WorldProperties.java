@@ -49,6 +49,11 @@ import java.util.UUID;
 public interface WorldProperties extends DataSerializable {
 
     /**
+     * Pass this value to {@link #setSpawnProtectionRadius(int)} to disable spawn protection for this world
+     */
+    int SPAWN_PROTECTION_DISABLED = 0;
+
+    /**
      * Gets whether this world is enabled. A world which is enabled but unloaded
      * may be loaded automatically if an attempt is made to transfer an entity
      * to the world using {@link Entity#transferToWorld} .
@@ -587,5 +592,21 @@ public interface WorldProperties extends DataSerializable {
      * @return The generator settings.
      */
     DataContainer getGeneratorSettings();
+
+    /**
+     * Get the world's current spawn protection radius.
+     *
+     * @see #setSpawnProtectionRadius(int) for information on the actual protected area.
+     * @return This world's spawn protection radius
+     */
+    int getSpawnProtectionRadius();
+
+    /**
+     * Set the size of the area around this world's spawn location that will be protected from being built in.
+     * The protected area will be within a (2*radius) by (2*radius) square centered around the spawn location, inclusive.
+     *
+     * @param radius The radius
+     */
+    void setSpawnProtectionRadius(int radius);
 
 }
