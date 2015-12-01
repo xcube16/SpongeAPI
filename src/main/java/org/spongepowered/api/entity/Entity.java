@@ -28,13 +28,19 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.flowpowered.math.vector.Vector3d;
+import com.flowpowered.math.vector.Vector3i;
+import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.context.ContextViewer;
+import org.spongepowered.api.context.DisplayNamed;
 import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.DataTransactionResult;
+import org.spongepowered.api.data.context.DataContextual;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.TargetedLocationData;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.entity.damage.source.DamageSource;
+import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.translation.Translatable;
 import org.spongepowered.api.util.Identifiable;
 import org.spongepowered.api.util.RelativePositions;
@@ -70,7 +76,7 @@ import javax.annotation.Nullable;
  *
  * <p>Blocks and items (when they are in inventories) are not entities.</p>
  */
-public interface Entity extends Identifiable, Locatable, DataHolder, DataSerializable, Translatable {
+public interface Entity extends DataContextual, Identifiable, Locatable, DataHolder, DataSerializable, Translatable, DisplayNamed {
 
     /**
      * Get the type of entity.
@@ -457,4 +463,35 @@ public interface Entity extends Identifiable, Locatable, DataHolder, DataSeriali
         Optional<Boolean> optional = entity.get(Keys.INVISIBLE);
         return !optional.isPresent() || !optional.get();
     }
+
+    /**
+     * Gets the current display name for this {@link Entity}.
+     *
+     * <p>The display name is determined by the following order:
+     * <ul>
+     *     <li>The display name set through data</li>
+     *     <li>The entity's vanilla display name</li>
+     * </ul></p>
+     *
+     * @return The display name
+     */
+    @Override
+    Text getDisplayName();
+
+    /**
+     * Gets the current display name for this {@link Entity}.
+     *
+     * <p>The display name is determined by the following order:
+     * <ul>
+     *     <li>The context display name, if available</li>
+     *     <li>The display name</li>
+     *     <li>The entity's vanilla display name</li>
+     * </ul></p>
+     *
+     * @param viewer The viewer to consider when fetching the name
+     * @return The display name
+     */
+    @Override
+    Text getDisplayName(@Nullable ContextViewer viewer);
+
 }

@@ -42,6 +42,7 @@ import org.spongepowered.api.effect.potion.PotionEffectType;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntitySnapshot;
 import org.spongepowered.api.entity.EntityType;
+import org.spongepowered.api.entity.living.Humanoid;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.util.RespawnLocation;
@@ -55,6 +56,7 @@ import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.item.merchant.TradeOffer;
 import org.spongepowered.api.profile.GameProfile;
+import org.spongepowered.api.profile.property.ProfileProperty;
 import org.spongepowered.api.statistic.Statistic;
 import org.spongepowered.api.statistic.achievement.Achievement;
 import org.spongepowered.api.text.Text;
@@ -319,6 +321,12 @@ public final class Keys {
     public static final Key<Value<Boolean>> EXTENDED = KeyFactory.fake("EXTENDED");
 
     public static final Key<Value<Boolean>> FALLING_BLOCK_CAN_HURT_ENTITIES = KeyFactory.fake("FALLING_BLOCK_CAN_HURT_ENTITIES");
+    /**
+     * Represents the {@link Key} for the "fake name" of a {@link Humanoid}.
+     *
+     * @see FakeNameData#fakeName()
+     */
+    public static final Key<OptionalValue<String>> FAKE_NAME = null;
 
     public static final Key<Value<BlockState>> FALLING_BLOCK_STATE = KeyFactory.fake("FALLING_BLOCK_STATE");
 
@@ -467,6 +475,22 @@ public final class Keys {
     public static final Key<Value<HorseStyle>> HORSE_STYLE = KeyFactory.fake("HORSE_STYLE");
 
     public static final Key<Value<HorseVariant>> HORSE_VARIANT = KeyFactory.fake("HORSE_VARIANT");
+
+    /**
+     * Represents the {@link Key} for the textures {@link ProfileProperty property}
+     * of a {@link Humanoid}.
+     *
+     * @see HumanoidTextureData#property()
+     */
+    public static final Key<OptionalValue<ProfileProperty>> HUMANOID_TEXTURES_PROPERTY = KeyFactory.fake("HUMANOID_TEXTURES_PROPERTY");
+
+    /**
+     * Represents the {@link Key} for the textures {@link UUID unique id}
+     * of a {@link Humanoid}.
+     *
+     * @see HumanoidTextureData#uniqueId() ()
+     */
+    public static final Key<OptionalValue<UUID>> HUMANOID_TEXTURES_UNIQUE_ID = KeyFactory.fake("HUMANOID_TEXTURES_UNIQUE_ID");
 
     public static final Key<Value<Boolean>> INVISIBILITY_IGNORES_COLLISION = KeyFactory.fake("INVISIBILITY_IGNORES_COLLISION");
 
@@ -750,8 +774,6 @@ public final class Keys {
     public static final Key<ListValue<Text>> SIGN_LINES = KeyFactory.fake("SIGN_LINES");
 
     public static final Key<Value<SkeletonType>> SKELETON_TYPE = KeyFactory.fake("SKELETON_TYPE");
-
-    public static final Key<Value<UUID>> SKIN_UNIQUE_ID = KeyFactory.fake("SKIN_UNIQUE_ID");
 
     public static final Key<Value<SkullType>> SKULL_TYPE = KeyFactory.fake("SKULL_TYPE");
 

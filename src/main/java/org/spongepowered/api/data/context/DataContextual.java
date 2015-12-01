@@ -22,30 +22,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.api.data.manipulator.immutable.entity;
+package org.spongepowered.api.data.context;
 
-import org.spongepowered.api.data.manipulator.ImmutableDataManipulator;
-import org.spongepowered.api.data.manipulator.mutable.entity.SkinData;
-import org.spongepowered.api.data.value.immutable.ImmutableValue;
-import org.spongepowered.api.entity.living.Humanoid;
-import org.spongepowered.api.entity.living.player.Player;
-
-import java.util.UUID;
+import org.spongepowered.api.context.ContextViewer;
+import org.spongepowered.api.context.NamedContextual;
 
 /**
- * An {@link ImmutableDataManipulator} handling the {@link UUID} for  the
- * {@link Humanoid} skin used. Usually this is meant where the {@link UUID}
- * belongs to a {@link Player} but without relying on a {@link Player},
- * the {@link Humanoid} will use the same skin url on the server.
+ * An object that has per-{@link ContextViewer} views of data.
  */
-public interface ImmutableSkinData extends ImmutableDataManipulator<ImmutableSkinData, SkinData> {
+public interface DataContextual extends NamedContextual {
 
     /**
-     * Gets the {@link ImmutableValue} for the {@link UUID} of the skin to
-     * display on a {@link Humanoid} entity for customization.
+     * Tests if the provided viewer has an active context.
      *
-     * @return The immutable value for the skin uuid
+     * @param viewer The viewer
+     * @return {@code true} if the viewer has a context
      */
-    ImmutableValue<UUID> skinUniqueId();
+    boolean hasContext(ContextViewer viewer);
+
+    /**
+     * Gets the context as seen by the viewer.
+     *
+     * @param viewer The viewer of the context
+     * @return The context
+     */
+    DataContext getContext(ContextViewer viewer);
 
 }
