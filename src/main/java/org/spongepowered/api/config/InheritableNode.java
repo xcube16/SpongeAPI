@@ -29,6 +29,7 @@ import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
 
 import java.util.List;
 import java.util.Map;
@@ -203,12 +204,18 @@ public class InheritableNode implements CommentedConfigurationNode {
 
     @Override
     public CommentedConfigurationNode setValue(Object val) {
-        if (!this.world.isVirtual()) {
-            this.world.setValue(val);
-        } else  if (!this.dimension.isVirtual()) {
-            this.dimension.setValue(val);
+        if (val == null) {
+            this.world.setValue(null);
+            this.dimension.setValue(null);
+            this.global.setValue(null);
         } else {
-            this.global.setValue(val);
+            if (!this.world.isVirtual()) {
+                this.world.setValue(val);
+            } else if (!this.dimension.isVirtual()) {
+                this.dimension.setValue(val);
+            } else {
+                this.global.setValue(val);
+            }
         }
         return this;
     }
@@ -237,14 +244,35 @@ public class InheritableNode implements CommentedConfigurationNode {
         return value;
     }
 
+    // Mirrored from Configurate (remove once default version is released)
     @Override
+    @SuppressWarnings("rawtypes")
     public <T> ConfigurationNode setValue(TypeToken<T> type, T value) throws ObjectMappingException {
-        return null;
+        if (value == null) {
+            setValue(null);
+            return this;
+        }
+        TypeSerializer serial = getOptions().getSerializers().get(type);
+        if (serial != null) {
+            serial.serialize(type, value, this);
+        } else if (getOptions().acceptsType(value.getClass())) {
+            setValue(value); // Just write if no applicable serializer exists?
+        } else {
+            throw new ObjectMappingException("No serializer available for type " + type);
+        }
+        return this;
     }
 
     @Override
     public CommentedConfigurationNode mergeValuesFrom(ConfigurationNode other) {
-        return null;
+        if (!this.world.isVirtual()) {
+            this.world.mergeValuesFrom(other);
+        } else if (!this.dimension.isVirtual()) {
+            this.dimension.mergeValuesFrom(other);
+        } else {
+            this.global.mergeValuesFrom(other);
+        }
+        return this;
     }
 
     @Override
@@ -259,7 +287,13 @@ public class InheritableNode implements CommentedConfigurationNode {
 
     @Override
     public CommentedConfigurationNode getAppendedNode() {
-        return null;
+        if (!this.world.isVirtual()) {
+            return getNode(this.world.getAppendedNode().getKey());
+        } else if (!this.dimension.isVirtual()) {
+            return getNode(this.dimension.getAppendedNode().getKey());
+        } else {
+            return getNode(this.global.getAppendedNode().getKey());
+        }
     }
 
     public CommentedConfigurationNode world() {
