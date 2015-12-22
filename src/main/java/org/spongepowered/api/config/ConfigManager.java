@@ -75,4 +75,13 @@ public interface ConfigManager {
      */
     ConfigRoot getPluginConfig(Object instance);
 
+    /**
+     * Gets the {@link InheritableRoot} for a plugin's configurations
+     * exposed for a specific world/dimension/global configuration.
+     *
+     * @param pluginContainer The plugin instance
+     * @return The inheritable root for the given plugin instance
+     */
+    InheritableRoot getRoot(Object pluginContainer);
+
 }
