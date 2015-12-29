@@ -27,6 +27,7 @@ package org.spongepowered.api.service.permission.option;
 import org.spongepowered.api.service.context.Context;
 import org.spongepowered.api.service.permission.Subject;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -44,7 +45,7 @@ public interface OptionSubject extends Subject {
      * @param key The key to get an option by. Case-insensitive.
      * @return The value of the option, if any is present
      */
-    Optional<String> getOption(Set<Context> contexts, String key);
+    Optional<String> getOption(List<Context> contexts, String key);
 
     /**
      * Get the value of a given option in the subject's current context
@@ -52,5 +53,7 @@ public interface OptionSubject extends Subject {
      * @param key The key to get an option by. Case-insensitive.
      * @return The value of the option, if any is present
      */
-    Optional<String> getOption(String key);
+    default Optional<String> getOption(String key) {
+        return getOption(getActiveContexts(), key);
+    }
 }

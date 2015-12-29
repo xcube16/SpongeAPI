@@ -25,8 +25,8 @@
 package org.spongepowered.api.service.economy.account;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import org.spongepowered.api.entity.Entity;
@@ -95,7 +95,7 @@ public interface Account extends Contextual {
      * @param contexts The {@link Context}s to use with the {@link Currency}.
      * @return Whether this account has a set balance for the speicified {@link Currency} and {@link Context}s
      */
-    boolean hasBalance(Currency currency, Set<Context> contexts);
+    boolean hasBalance(Currency currency, List<Context> contexts);
 
     /**
      * Returns whether this account has a set balance for the specified
@@ -126,7 +126,7 @@ public interface Account extends Contextual {
      *
      * @return he value for the specified {@link Currency} with the specified {@link Context}s.
      */
-    BigDecimal getBalance(Currency currency, Set<Context> contexts);
+    BigDecimal getBalance(Currency currency, List<Context> contexts);
 
     /**
      * Returns a {@link BigDecimal} representative of the balance stored within this
@@ -155,14 +155,14 @@ public interface Account extends Contextual {
      *
      * <p>Changes to the returned {@link Map} will not be reflected in the underlying
      * {@link Account}.
-     * See {@link #setBalance(Currency, BigDecimal, Cause, Set)}  to set values.</p>
+     * See {@link #setBalance(Currency, BigDecimal, Cause, List)}  to set values.</p>
      *
      * @param contexts the set of {@link Context}s to use with the speciied amounts.
      *
      * @return {@link Map} of {@link Currency} to {@link BigDecimal} amounts that this
      *         account holds.
      */
-    Map<Currency, BigDecimal> getBalances(Set<Context> contexts);
+    Map<Currency, BigDecimal> getBalances(List<Context> contexts);
 
     /**
      * Returns a {@link Map} of all currently set balances the account holds within
@@ -176,7 +176,7 @@ public interface Account extends Contextual {
      *
      * <p>Changes to the returned {@link Map} will not be reflected in the underlying
      * {@link Account} and may result in runtime exceptions depending on implementation.
-     * See {@link #setBalance(Currency, BigDecimal, Cause, Set)}  to set values.</p>
+     * See {@link #setBalance(Currency, BigDecimal, Cause, List)}  to set values.</p>
      *
      * @return {@link Map} of {@link Currency} to {@link BigDecimal} amounts that this
      *         account holds.
@@ -199,7 +199,7 @@ public interface Account extends Contextual {
      *
      * @return The result of the transaction
      */
-    TransactionResult setBalance(Currency currency, BigDecimal amount, Cause cause, Set<Context> contexts);
+    TransactionResult setBalance(Currency currency, BigDecimal amount, Cause cause, List<Context> contexts);
 
     /**
      * Sets the balance for this account to the specified amount for the specified
@@ -226,7 +226,7 @@ public interface Account extends Contextual {
      *
      * @return The result of the transaction
      */
-    TransactionResult resetBalances(Cause cause, Set<Context> contexts);
+    TransactionResult resetBalances(Cause cause, List<Context> contexts);
 
     /**
      * Resets the balances for all {@link Currency}s used on this account to their
@@ -250,7 +250,7 @@ public interface Account extends Contextual {
      *
      * @return The result of the transaction
      */
-    TransactionResult resetBalance(Currency currency, Cause cause, Set<Context> contexts);
+    TransactionResult resetBalance(Currency currency, Cause cause, List<Context> contexts);
 
     /**
      * Resets the balance for the specified {@link Currency} to its default value
@@ -276,7 +276,7 @@ public interface Account extends Contextual {
      *
      * @return The result of the transaction
      */
-    TransactionResult deposit(Currency currency, BigDecimal amount, Cause cause, Set<Context> contexts);
+    TransactionResult deposit(Currency currency, BigDecimal amount, Cause cause, List<Context> contexts);
 
     /**
      * Deposits the given amount of the specified {@link Currency} to this account,
@@ -303,7 +303,7 @@ public interface Account extends Contextual {
      *
      * @return The result of the transaction
      */
-    TransactionResult withdraw(Currency currency, BigDecimal amount, Cause cause, Set<Context> contexts);
+    TransactionResult withdraw(Currency currency, BigDecimal amount, Cause cause, List<Context> contexts);
 
     /**
      * Withdraws the specified amount of the specified {@link Currency} from this account,
@@ -323,8 +323,8 @@ public interface Account extends Contextual {
      * Transfers the specified amount of the specified {@link Currency} from this account
      * the destination account, using the specified {@link Context}s.
      *
-     * <p>This operation is a merged {@link #withdraw(Currency, BigDecimal, Cause, Set)}  from this account
-     * with a {@link #deposit(Currency, BigDecimal, Cause, Set)}  into the specified account.</p>
+     * <p>This operation is a merged {@link #withdraw(Currency, BigDecimal, Cause, List)}  from this account
+     * with a {@link #deposit(Currency, BigDecimal, Cause, List)}  into the specified account.</p>
      *
      * @param to the Account to transfer the amounts to.
      * @param currency The {@link Currency} to transfer the specified amount for
@@ -335,14 +335,14 @@ public interface Account extends Contextual {
      * @return a {@link TransferResult} representative of the effects of the
      *         operation
      */
-    TransferResult transfer(Account to, Currency currency, BigDecimal amount, Cause cause, Set<Context> contexts);
+    TransferResult transfer(Account to, Currency currency, BigDecimal amount, Cause cause, List<Context> contexts);
 
     /**
      * Transfers the specified amount of the specified {@link Currency} from this account
      * the destination account, using the current active {@link Context}s.
      *
-     * <p>This operation is a merged {@link #withdraw(Currency, BigDecimal, Cause, Set)} from this account
-     * with a {@link #deposit(Currency, BigDecimal, Cause, Set)} into the specified account.</p>
+     * <p>This operation is a merged {@link #withdraw(Currency, BigDecimal, Cause, List)} from this account
+     * with a {@link #deposit(Currency, BigDecimal, Cause, List)} into the specified account.</p>
      *
      * @param to the Account to transfer the amounts to.
      * @param currency The {@link Currency} to transfer the specified amount for

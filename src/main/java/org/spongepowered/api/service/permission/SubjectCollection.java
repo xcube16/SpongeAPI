@@ -26,6 +26,7 @@ package org.spongepowered.api.service.permission;
 
 import org.spongepowered.api.service.context.Context;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -89,5 +90,5 @@ public interface SubjectCollection {
      * @return Any subject known to have this permission set, and the value this
      *         permission is set to
      */
-    Map<Subject, Boolean> getAllWithPermission(Set<Context> contexts, String permission);
+    Map<Subject, Boolean> getAllWithPermission(List<Context> contexts, String permission);
 }

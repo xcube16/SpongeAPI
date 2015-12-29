@@ -24,7 +24,7 @@
  */
 package org.spongepowered.api.service.context;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * A common interface for objects that have an identifier and are bound by
@@ -47,7 +47,7 @@ public interface Contextual {
      *
      * <p>The result of these calculations may be cached.</p>
      *
-     * @return An immutable set of active contexts
+     * @return An immutable list of active contexts
      */
-    Set<Context> getActiveContexts();
+    List<Context> getActiveContexts();
 }

@@ -109,7 +109,7 @@ public interface Subject extends Contextual {
      * @param permission The permission string
      * @return True if permission is granted
      */
-    boolean hasPermission(Set<Context> contexts, String permission);
+    boolean hasPermission(List<Context> contexts, String permission);
 
     /**
      * Test whether the subject is permitted to perform an action given as the
@@ -118,7 +118,9 @@ public interface Subject extends Contextual {
      * @param permission The permission string
      * @return True if permission is granted
      */
-    boolean hasPermission(String permission);
+    default boolean hasPermission(String permission) {
+        return hasPermission(getActiveContexts(), permission);
+    }
 
     /**
      * Returns the calculated value set for a given permission.
@@ -127,7 +129,7 @@ public interface Subject extends Contextual {
      * @param permission The permission to check
      * @return The tristate true/false/unset value for permissions
      */
-    Tristate getPermissionValue(Set<Context> contexts, String permission);
+    Tristate getPermissionValue(List<Context> contexts, String permission);
 
     /**
      * Check if this subject is a child of the given parent in the subject's
@@ -136,7 +138,9 @@ public interface Subject extends Contextual {
      * @param parent The parent to check for inheritance
      * @return Whether this is a child of the given parent
      */
-    boolean isChildOf(Subject parent);
+    default boolean isChildOf(Subject parent) {
+        return isChildOf(getActiveContexts(), parent);
+    }
 
     /**
      * Check if this subject is a child of the given parent in the given context
@@ -146,7 +150,7 @@ public interface Subject extends Contextual {
      * @param parent The parent to check for inheritance
      * @return Whether this is a child of the given parent
      */
-    boolean isChildOf(Set<Context> contexts, Subject parent);
+    boolean isChildOf(List<Context> contexts, Subject parent);
 
     /**
      * Return all parents that this group has in its current context
@@ -155,7 +159,9 @@ public interface Subject extends Contextual {
      *
      * @return An immutable list of parents
      */
-    List<Subject> getParents();
+    default List<Subject> getParents() {
+        return getParents(getActiveContexts());
+    }
 
     /**
      * Return all parents that this group has. This must include inherited
@@ -164,5 +170,5 @@ public interface Subject extends Contextual {
      * @param contexts The set of contexts that represents the subject's current environment
      * @return An immutable list of parents
      */
-    List<Subject> getParents(Set<Context> contexts);
+    List<Subject> getParents(List<Context> contexts);
 }
