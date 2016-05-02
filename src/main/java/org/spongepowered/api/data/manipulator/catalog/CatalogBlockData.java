@@ -58,7 +58,7 @@ import org.spongepowered.api.data.manipulator.mutable.block.PoweredData;
 import org.spongepowered.api.data.manipulator.mutable.block.PrismarineData;
 import org.spongepowered.api.data.manipulator.mutable.block.QuartzData;
 import org.spongepowered.api.data.manipulator.mutable.block.RailDirectionData;
-import org.spongepowered.api.data.manipulator.mutable.block.RedstonePoweredData;
+import org.spongepowered.api.data.manipulator.mutable.block.RedstoneOutputData;
 import org.spongepowered.api.data.manipulator.mutable.block.SandData;
 import org.spongepowered.api.data.manipulator.mutable.block.SandstoneData;
 import org.spongepowered.api.data.manipulator.mutable.block.SeamlessData;
@@ -248,7 +248,7 @@ public final class CatalogBlockData {
      * Signifies that a block has some value of redstone power applied to it.
      * Usually applicable for all blocks.
      */
-    public static final Class<RedstonePoweredData> REDSTONE_POWERED_DATA = RedstonePoweredData.class;
+    public static final Class<RedstoneOutputData> REDSTONE_POWERED_DATA = RedstoneOutputData.class;
     /**
      * Signifies that a block is rotated with a {@link Rotation}.
      */

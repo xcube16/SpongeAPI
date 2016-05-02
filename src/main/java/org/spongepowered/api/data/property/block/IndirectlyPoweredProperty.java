@@ -24,26 +24,33 @@
  */
 package org.spongepowered.api.data.property.block;
 
-import org.spongepowered.api.data.property.BooleanProperty;
+import org.spongepowered.api.data.Property;
+import org.spongepowered.api.data.property.IntProperty;
 
-public class IndirectlyPoweredProperty extends BooleanProperty {
+/**
+ * A {@link Property} that refers to the power level the block is receiving indirectly.
+ * <p>
+ *     Note: Not all blocks support this property.
+ * </p>
+ */
+public class IndirectlyPoweredProperty extends IntProperty {
 
     /**
      * Creates a new {@link IndirectlyPoweredProperty}.
      *
-     * @param value The value of whether the property is indirectly powered or not
+     * @param value The power value this block is receiving indirectly
      */
-    public IndirectlyPoweredProperty(boolean value) {
+    public IndirectlyPoweredProperty(int value) {
         super(value);
     }
 
     /**
      * Creates a new {@link IndirectlyPoweredProperty}.
      *
-     * @param value The value of whether the property is indirectly powered or not
+     * @param value The power value this block is receiving indirectly
      * @param operator The operator for comparisons
      */
-    public IndirectlyPoweredProperty(boolean value, Operator operator) {
+    public IndirectlyPoweredProperty(int value, Operator operator) {
         super(value, operator);
     }
 

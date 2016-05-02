@@ -24,26 +24,33 @@
  */
 package org.spongepowered.api.data.property.block;
 
-import org.spongepowered.api.data.property.BooleanProperty;
+import org.spongepowered.api.data.Property;
+import org.spongepowered.api.data.property.IntProperty;
 
-public class PoweredProperty extends BooleanProperty {
+/**
+ * A {@link Property} that refers to the power level the block is receiving directly.
+ * <p>
+ *     Note: Not all blocks support this property.
+ * </p>
+ */
+public class PoweredProperty extends IntProperty {
 
     /**
      * Creates a new {@link PoweredProperty}.
      *
-     * @param value The value of whether the block is powered
+     * @param value The power value this block is receiving
      */
-    public PoweredProperty(boolean value) {
+    public PoweredProperty(int value) {
         super(value);
     }
 
     /**
      * Creates a new {@link PoweredProperty}.
      *
-     * @param value The value of whether the block is powered
+     * @param value The power value this block is receiving
      * @param operator The operator for comparisons
      */
-    public PoweredProperty(boolean value, Operator operator) {
+    public PoweredProperty(int value, Operator operator) {
         super(value, operator);
     }
 

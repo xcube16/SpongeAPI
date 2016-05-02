@@ -27,7 +27,7 @@ package org.spongepowered.api.data.manipulator.immutable.block;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.manipulator.ImmutableDataManipulator;
-import org.spongepowered.api.data.manipulator.mutable.block.RedstonePoweredData;
+import org.spongepowered.api.data.manipulator.mutable.block.RedstoneOutputData;
 import org.spongepowered.api.data.value.immutable.ImmutableBoundedValue;
 
 /**
@@ -40,7 +40,7 @@ import org.spongepowered.api.data.value.immutable.ImmutableBoundedValue;
  * {@link BlockTypes#HEAVY_WEIGHTED_PRESSURE_PLATE}, and
  * {@link BlockTypes#DAYLIGHT_DETECTOR}, etc.
  */
-public interface ImmutableRedstonePoweredData extends ImmutableDataManipulator<ImmutableRedstonePoweredData, RedstonePoweredData> {
+public interface ImmutableRedstoneOutputData extends ImmutableDataManipulator<ImmutableRedstoneOutputData, RedstoneOutputData> {
 
     /**
      * Gets the {@link ImmutableBoundedValue} for the output of "redstone

@@ -657,7 +657,7 @@ public final class Keys {
      * Represents the {@link Key} for representing the "power" state
      * of a {@link BlockState}.
      *
-     * @see RedstonePoweredData#power()
+     * @see RedstoneOutputData#power()
      */
     public static final Key<MutableBoundedValue<Integer>> POWER = KeyFactory.fake("POWER");
 
