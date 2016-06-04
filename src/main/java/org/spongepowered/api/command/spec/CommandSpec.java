@@ -34,7 +34,6 @@ import com.google.common.collect.ImmutableList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
-import org.spongepowered.api.command.CommandMessageFormatting;
 import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -45,6 +44,8 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.args.parsing.InputTokenizer;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 import java.util.HashMap;
 import java.util.List;
@@ -332,8 +333,10 @@ public final class CommandSpec implements CommandCallable {
     }
 
     @Override
-    public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
+    public List<String> getSuggestions(CommandSource source, String arguments, Optional<Location<World>> targetPos) throws CommandException {
         CommandArgs args = new CommandArgs(arguments, getInputTokenizer().tokenize(arguments, true));
+        CommandContext ctx = new CommandContext();
+        targetPos.ifPresent(pos -> ctx.putArg(CommandContext.TARGET_BLOCK_ARG, pos));
         return complete(source, args, new CommandContext());
     }
 
@@ -370,7 +373,7 @@ public final class CommandSpec implements CommandCallable {
      * Return a longer description for this command. This description is
      * composed of at least all present of the short description, the usage
      * statement, and the extended description
-     * 
+     *
      * @param source The source to get the extended description for
      * @return the extended description
      */

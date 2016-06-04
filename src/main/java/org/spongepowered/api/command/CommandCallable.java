@@ -24,8 +24,11 @@
  */
 package org.spongepowered.api.command;
 
+import com.google.common.collect.ImmutableList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 import java.util.List;
 import java.util.Optional;
@@ -63,7 +66,25 @@ public interface CommandCallable {
      * @return A list of suggestions
      * @throws CommandException Thrown if there was a parsing error
      */
-    List<String> getSuggestions(CommandSource source, String arguments) throws CommandException;
+    default List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
+        return getSuggestions(source, arguments, Optional.empty());
+    }
+
+    /**
+     * Get a list of suggestions based on input.
+     *
+     * <p>If a suggestion is chosen by the user, it will replace the last
+     * word.</p>
+     *
+     * @param source The command source
+     * @param arguments The arguments entered up to this point
+     * @param targetPosition The position the source is looking at when performing tab completion
+     * @return A list of suggestions
+     * @throws CommandException Thrown if there was a parsing error
+     */
+    default List<String> getSuggestions(CommandSource source, String arguments, Optional<Location<World>> targetPosition) throws CommandException {
+        return getSuggestions(source, arguments);
+    }
 
     /**
      * Test whether this command can probably be executed by the given source.
