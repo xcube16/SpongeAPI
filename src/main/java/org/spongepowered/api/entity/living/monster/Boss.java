@@ -24,12 +24,12 @@
  */
 package org.spongepowered.api.entity.living.monster;
 
-import org.spongepowered.api.entity.living.Hostile;
+import org.spongepowered.api.entity.living.Living;
 
 /**
  * Represents a boss monster that may cause a boss healthbar to show
  * on client interfaces.
  */
-public interface Boss extends Hostile {
+public interface Boss extends Living {
 
 }

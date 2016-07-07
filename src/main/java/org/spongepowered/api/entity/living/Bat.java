@@ -27,6 +27,6 @@ package org.spongepowered.api.entity.living;
 /**
  * Represents a Bat.
  */
-public interface Bat extends Ambient, Aerial {
+public interface Bat extends Ambient, Aerial, Agent {
 
 }

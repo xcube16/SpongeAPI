@@ -28,6 +28,6 @@ package org.spongepowered.api.entity.living;
  * Represents an entity that can not be interacted with and only adds to
  * the ambiance of the environment.
  */
-public interface Ambient extends Agent {
+public interface Ambient extends Living {
 
 }
