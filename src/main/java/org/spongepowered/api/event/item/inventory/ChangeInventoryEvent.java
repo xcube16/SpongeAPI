@@ -24,24 +24,41 @@
  */
 package org.spongepowered.api.event.item.inventory;
 
+import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.entity.item.TargetItemEvent;
+import org.spongepowered.api.item.inventory.Container;
+import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.Slot;
 
-public interface ChangeInventoryEvent extends TargetInventoryEvent, AffectSlotEvent, Cancellable {
+/**
+ * Base event for all changes that affect {@link Inventory}s.
+ */
+public interface ChangeInventoryEvent extends TargetInventoryEvent, Cancellable {
 
     /**
      * Fired when a {@link Living} changes it's equipment.
      */
-    interface Equipment extends ChangeInventoryEvent {}
+    interface Equipment extends ChangeInventoryEvent, TargetSlotEvent {
+    }
 
     /**
      * Fired when a {@link Living} changes it's held {@link ItemStack}.
      */
-    interface Held extends ChangeInventoryEvent {}
+    interface Held extends ChangeInventoryEvent, TargetSlotEvent {
+    }
 
-    interface Transfer extends ChangeInventoryEvent {}
+    /**
+     * Fired when an {@link ItemStack} is transferred from one {@link Slot} to another in a {@link Container}.
+     */
+    interface Transfer extends ChangeInventoryEvent, TargetContainerEvent, AffectSlotEvent {
+    }
 
-    interface Pickup extends ChangeInventoryEvent, TargetItemEvent {}
+    /**
+     * Fired when an {@link Item} is to be "pickup'd" into a {@link Slot} as an {@link ItemStack}.
+     */
+    interface Pickup extends ChangeInventoryEvent, TargetItemEvent, TargetSlotEvent {
+    }
 }

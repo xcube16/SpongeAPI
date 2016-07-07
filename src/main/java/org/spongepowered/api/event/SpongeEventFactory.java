@@ -154,7 +154,7 @@ import org.spongepowered.api.event.item.inventory.AffectSlotEvent;
 import org.spongepowered.api.event.item.inventory.ChangeInventoryEvent;
 import org.spongepowered.api.event.item.inventory.ClickInventoryEvent;
 import org.spongepowered.api.event.item.inventory.DropItemEvent;
-import org.spongepowered.api.event.item.inventory.InteractInventoryEvent;
+import org.spongepowered.api.event.item.inventory.InteractContainerEvent;
 import org.spongepowered.api.event.item.inventory.TargetContainerEvent;
 import org.spongepowered.api.event.item.inventory.TargetInventoryEvent;
 import org.spongepowered.api.event.item.inventory.UseItemStackEvent;
@@ -3099,37 +3099,37 @@ public class SpongeEventFactory {
     /**
      * AUTOMATICALLY GENERATED, DO NOT EDIT.
      * Creates a new instance of
-     * {@link org.spongepowered.api.event.item.inventory.InteractInventoryEvent.Close}.
+     * {@link InteractContainerEvent.Close}.
      * 
      * @param cause The cause
      * @param cursorTransaction The cursor transaction
      * @param targetInventory The target inventory
      * @return A new close interact inventory event
      */
-    public static InteractInventoryEvent.Close createInteractInventoryEventClose(Cause cause, Transaction<ItemStackSnapshot> cursorTransaction, Container targetInventory) {
+    public static InteractContainerEvent.Close createInteractInventoryEventClose(Cause cause, Transaction<ItemStackSnapshot> cursorTransaction, Container targetInventory) {
         HashMap<String, Object> values = new HashMap<>();
         values.put("cause", cause);
         values.put("cursorTransaction", cursorTransaction);
         values.put("targetInventory", targetInventory);
-        return SpongeEventFactoryUtils.createEventImpl(InteractInventoryEvent.Close.class, values);
+        return SpongeEventFactoryUtils.createEventImpl(InteractContainerEvent.Close.class, values);
     }
 
     /**
      * AUTOMATICALLY GENERATED, DO NOT EDIT.
      * Creates a new instance of
-     * {@link org.spongepowered.api.event.item.inventory.InteractInventoryEvent.Open}.
+     * {@link InteractContainerEvent.Open}.
      * 
      * @param cause The cause
      * @param cursorTransaction The cursor transaction
      * @param targetInventory The target inventory
      * @return A new open interact inventory event
      */
-    public static InteractInventoryEvent.Open createInteractInventoryEventOpen(Cause cause, Transaction<ItemStackSnapshot> cursorTransaction, Container targetInventory) {
+    public static InteractContainerEvent.Open createInteractInventoryEventOpen(Cause cause, Transaction<ItemStackSnapshot> cursorTransaction, Container targetInventory) {
         HashMap<String, Object> values = new HashMap<>();
         values.put("cause", cause);
         values.put("cursorTransaction", cursorTransaction);
         values.put("targetInventory", targetInventory);
-        return SpongeEventFactoryUtils.createEventImpl(InteractInventoryEvent.Open.class, values);
+        return SpongeEventFactoryUtils.createEventImpl(InteractContainerEvent.Open.class, values);
     }
 
     /**

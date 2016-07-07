@@ -28,11 +28,11 @@ import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
-public interface InteractInventoryEvent extends TargetContainerEvent, Cancellable {
+public interface InteractContainerEvent extends TargetContainerEvent, Cancellable {
 
     Transaction<ItemStackSnapshot> getCursorTransaction();
 
-    interface Open extends InteractInventoryEvent {}
+    interface Open extends InteractContainerEvent {}
 
-    interface Close extends InteractInventoryEvent {}
+    interface Close extends InteractContainerEvent {}
 }
