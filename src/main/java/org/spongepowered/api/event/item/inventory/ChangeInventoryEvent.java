@@ -53,7 +53,13 @@ public interface ChangeInventoryEvent extends TargetInventoryEvent, Cancellable 
     /**
      * Fired when an {@link ItemStack} is transferred from one {@link Slot} to another in a {@link Container}.
      */
-    interface Transfer extends ChangeInventoryEvent, TargetContainerEvent, AffectSlotEvent {
+    interface Transfer extends ChangeInventoryEvent, TargetSlotEvent {
+
+        /**
+         * Gets the {@link Slot} which transferred it's stack into {@link TargetSlotEvent#getTargetInventory()}.
+         * @return The slot receiving the stack
+         */
+        Slot getFromSlot();
     }
 
     /**

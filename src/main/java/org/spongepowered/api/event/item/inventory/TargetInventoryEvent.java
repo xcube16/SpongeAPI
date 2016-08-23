@@ -36,5 +36,4 @@ public interface TargetInventoryEvent extends Event {
      * @return The target {@link Inventory}
      */
     Inventory getTargetInventory();
-
 }

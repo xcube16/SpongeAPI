@@ -28,7 +28,6 @@ import com.google.common.collect.Lists;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.Event;
-import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
@@ -36,7 +35,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 /**
- * Fired when {@link ItemStack}s are generated into a {@link Inventory}
+ * Fired when {@link ItemStack}s are being affected.
  */
 public interface AffectItemStackEvent extends Event, Cancellable {
 
@@ -47,7 +46,7 @@ public interface AffectItemStackEvent extends Event, Cancellable {
      *
      * @return The unmodifiable list of transactions
      */
-    List<? extends Transaction<ItemStackSnapshot>> getTransactions();
+    List<Transaction<ItemStackSnapshot>> getTransactions();
 
     /**
      * Applies the provided {@link Predicate} to the {@link List} of

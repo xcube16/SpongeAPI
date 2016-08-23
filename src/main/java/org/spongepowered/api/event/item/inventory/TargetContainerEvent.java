@@ -30,6 +30,7 @@ import org.spongepowered.api.item.inventory.Container;
  * Base event for all events with an {@link Container} as the target.
  */
 public interface TargetContainerEvent extends TargetInventoryEvent {
+
     @Override
     Container getTargetInventory();
 }

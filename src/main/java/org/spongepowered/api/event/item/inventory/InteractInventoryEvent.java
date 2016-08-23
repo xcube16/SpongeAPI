@@ -26,41 +26,41 @@ package org.spongepowered.api.event.item.inventory;
 
 import org.spongepowered.api.item.inventory.Slot;
 
-public interface ClickInventoryEvent extends ChangeInventoryEvent {
+public interface InteractInventoryEvent extends ChangeInventoryEvent {
 
     /**
      * Fired when performing a click on a {@link Slot} with the primary click mouse button.
      */
-    interface Primary extends ClickInventoryEvent, TargetSlotEvent {}
+    interface Primary extends InteractInventoryEvent, TargetSlotEvent {}
 
     /**
      * Fired when performing a click on a {@link Slot}  with the middle click mouse button.
      */
-    interface Middle extends ClickInventoryEvent, TargetSlotEvent {}
+    interface Middle extends InteractInventoryEvent, TargetSlotEvent {}
 
     /**
      * Fired when performing a click on a {@link Slot}  with the secondary mouse button.
      */
-    interface Secondary extends ClickInventoryEvent, TargetSlotEvent {}
+    interface Secondary extends InteractInventoryEvent, TargetSlotEvent {}
 
     /**
      * Fired when performing any type of click in creative mode.
      */
-    interface Creative extends ClickInventoryEvent {}
+    interface Creative extends InteractInventoryEvent, TargetSlotEvent {}
 
-    interface Shift extends ClickInventoryEvent, AffectSlotEvent {
+    interface Shift extends InteractInventoryEvent, TargetSlotEvent {
 
-        interface Primary extends Shift, ClickInventoryEvent.Primary {}
+        interface Primary extends Shift, InteractInventoryEvent.Primary {}
 
-        interface Secondary extends Shift, ClickInventoryEvent.Secondary {}
+        interface Secondary extends Shift, InteractInventoryEvent.Secondary {}
     }
 
     /**
      * Fired when performing a double click on a {@link Slot}.
      */
-    interface Double extends ClickInventoryEvent.Primary {}
+    interface Double extends InteractInventoryEvent.Primary {}
 
-    interface Drop extends ClickInventoryEvent, DropItemEvent.Dispense {
+    interface Drop extends InteractInventoryEvent, DropItemEvent.Dispense {
 
         interface Single extends Drop {}
 
@@ -68,21 +68,21 @@ public interface ClickInventoryEvent extends ChangeInventoryEvent {
 
         interface Outside extends Drop {
 
-            interface Primary extends Outside, ClickInventoryEvent.Primary {}
+            interface Primary extends Outside, InteractInventoryEvent.Primary {}
 
-            interface Secondary extends Outside, ClickInventoryEvent.Secondary {}
+            interface Secondary extends Outside, InteractInventoryEvent.Secondary {}
         }
     }
 
-    interface Drag extends ClickInventoryEvent, AffectSlotEvent {
+    interface Drag extends InteractInventoryEvent, TargetSlotEvent {
 
-        interface Primary extends Drag, ClickInventoryEvent.Primary {}
+        interface Primary extends Drag, InteractInventoryEvent.Primary {}
 
-        interface Secondary extends Drag, ClickInventoryEvent.Secondary {}
+        interface Secondary extends Drag, InteractInventoryEvent.Secondary {}
     }
 
-    interface NumberPress extends ClickInventoryEvent {
-        
+    interface NumberPress extends InteractInventoryEvent {
+
         int getNumber();
     }
 }
