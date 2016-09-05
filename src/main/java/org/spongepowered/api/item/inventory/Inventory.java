@@ -39,11 +39,17 @@ import java.util.function.Consumer;
 
 /**
  * Base interface for queryable inventories.
- *
- * <p>TODO Flesh out javadoc from proposal document. For now, see proposal doc
- * here: https://github.com/SpongePowered/SpongeAPI/pull/443</p>
  */
 public interface Inventory extends Iterable<Inventory>, Nameable {
+
+    /**
+     * Creates a new {@link Inventory.Builder} to build an {@link Inventory}.
+     *
+     * @return The builder
+     */
+    static Inventory.Builder builder() {
+        return Sponge.getRegistry().createBuilder(Inventory.Builder.class);
+    }
 
     /**
      * Get the parent {@link Inventory} of this {@link Inventory}.
@@ -455,15 +461,6 @@ public interface Inventory extends Iterable<Inventory>, Nameable {
     <T extends Inventory> T query(Object... args);
 
     /**
-     * Creates a new {@link Inventory.Builder} to build an {@link Inventory}.
-     *
-     * @return The builder
-     */
-    static Inventory.Builder builder() {
-        return Sponge.getRegistry().createBuilder(Inventory.Builder.class);
-    }
-
-    /**
      * A Builder for Inventories based on {@link InventoryArchetype}s
      */
     interface Builder extends ResettableBuilder<Inventory, Builder> {
@@ -478,7 +475,7 @@ public interface Inventory extends Iterable<Inventory>, Nameable {
 
         /**
          * Sets an {@link InventoryProperty}
-         * TODO only properties declared in the archetype are allowed? IllegalArguement?
+         * TODO only properties declared in the archetype are allowed? IllegalArgumentException?
          *
          * @param name The name
          * @param property The property
@@ -521,7 +518,7 @@ public interface Inventory extends Iterable<Inventory>, Nameable {
 
         /**
          * TODO maybe require plugin instance?
-         * Builds the Inventory
+         * Builds the {@link Inventory}.
          *
          * @return The new Inventory instance
          */
