@@ -22,50 +22,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.api.data.persistence;
+package org.spongepowered.api.data;
+
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 /**
- * An exception that occurs when a {@link DataFormat} is unable to translate
- * from a particular input.
+ * A {@link DataHolder} which has no attachment to any particular world allowing
+ * it to be used as a blueprint to create multiple copies of its containing
+ * data.
  */
-public class InvalidDataFormatException extends UnsupportedOperationException {
-
-    private static final long serialVersionUID = 1L;
+public interface Archetype<S extends LocatableSnapshot<S>> extends DataHolder {
 
     /**
-     * Constructs a new {@link InvalidDataFormatException}.
+     * Creates a new instance based on this archetype at the given location.
+     * 
+     * @param location The location to create the new instance at
+     * @param cause The cause of the creation
+     * @return Whether the creation was successful
      */
-    public InvalidDataFormatException() {
-        super();
-    }
+    boolean apply(Location<World> location, Cause cause);
 
     /**
-     * Constructs a new {@link InvalidDataFormatException} with a message.
-     *
-     * @param message The message to display with the exception
+     * Creates a new immutable snapshot based on this archetype.
+     * 
+     * @param location The location for the snapshot to be specified as at
+     * @return The snapshot
      */
-    public InvalidDataFormatException(String message) {
-        super(message);
-    }
+    S toSnapshot(Location<World> location);
 
-    /**
-     * Constructs a new {@link InvalidDataFormatException} with the specified
-     * message and cause.
-     *
-     * @param message The exception message
-     * @param cause The cause of this exception
-     */
-    public InvalidDataFormatException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    /**
-     * Constructs a new {@link InvalidDataFormatException} with the specified
-     * cause and a null message.
-     *
-     * @param cause The cause of this exception
-     */
-    public InvalidDataFormatException(Throwable cause) {
-        super(cause);
-    }
 }

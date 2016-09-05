@@ -22,13 +22,4 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.api.event.entity;
-
-import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.event.Cancellable;
-
-/**
- * Raised when an {@link Entity} is being mounted
- */
-public interface MountEntityEvent extends TargetEntityEvent, Cancellable {
-}
+@org.spongepowered.api.util.annotation.NonnullByDefault package org.spongepowered.api.world.schematic;

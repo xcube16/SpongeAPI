@@ -22,50 +22,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.api.data.persistence;
+package org.spongepowered.api.world.schematic;
 
-/**
- * An exception that occurs when a {@link DataFormat} is unable to translate
- * from a particular input.
- */
-public class InvalidDataFormatException extends UnsupportedOperationException {
+import org.spongepowered.api.util.generator.dummy.DummyObjectProvider;
 
-    private static final long serialVersionUID = 1L;
+public class BlockPaletteTypes {
 
     /**
-     * Constructs a new {@link InvalidDataFormatException}.
+     * The global palette containing a mapping of all blockstates to ids.
      */
-    public InvalidDataFormatException() {
-        super();
+    public static final BlockPaletteType GLOBAL = DummyObjectProvider.createFor(BlockPaletteType.class, "GLOBAL");
+    /**
+     * A local palette containing only a subset of the global palette.
+     */
+    public static final BlockPaletteType LOCAL = DummyObjectProvider.createFor(BlockPaletteType.class, "LOCAL");
+    
+    private BlockPaletteTypes() {
     }
 
-    /**
-     * Constructs a new {@link InvalidDataFormatException} with a message.
-     *
-     * @param message The message to display with the exception
-     */
-    public InvalidDataFormatException(String message) {
-        super(message);
-    }
-
-    /**
-     * Constructs a new {@link InvalidDataFormatException} with the specified
-     * message and cause.
-     *
-     * @param message The exception message
-     * @param cause The cause of this exception
-     */
-    public InvalidDataFormatException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    /**
-     * Constructs a new {@link InvalidDataFormatException} with the specified
-     * cause and a null message.
-     *
-     * @param cause The cause of this exception
-     */
-    public InvalidDataFormatException(Throwable cause) {
-        super(cause);
-    }
 }

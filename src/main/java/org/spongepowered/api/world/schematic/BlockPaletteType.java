@@ -22,18 +22,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.api.event.entity;
+package org.spongepowered.api.world.schematic;
 
-import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.living.animal.Horse;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.CatalogType;
+import org.spongepowered.api.util.annotation.CatalogedBy;
 
 /**
- * Raised when the targeted {@link Entity} is being dismounted from another
- * {@link Entity}. Traditionally, if a {@link Player} is riding a
- * {@link Horse}, and the {@link Player} "dismounts", the {@link Horse}
- * would be the {@link #getTargetEntity()} in this event.
+ * Represents a type of {@link BlockPalette}.
  */
-public interface DismountEntityEvent extends TargetEntityEvent {
+@CatalogedBy(BlockPaletteTypes.class)
+public interface BlockPaletteType extends CatalogType {
+
+    /**
+     * Gets an instance of this palette type.
+     * 
+     * <p>If this is the global type then the global palette instance will be
+     * returned, otherwise a new instance will be created.</p>
+     * 
+     * @return The palette instance
+     */
+    BlockPalette create();
 
 }

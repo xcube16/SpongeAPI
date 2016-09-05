@@ -161,13 +161,12 @@ public interface DataView {
         checkNotNull(keys, "Keys cannot be null!");
         if (keys.length == 0) {
             return contains(key.getQuery());
-        } else {
-            List<DataQuery> queries = new ArrayList<>();
-            for (Key<?> arrayKey : keys) {
-                queries.add(checkNotNull(arrayKey, "Cannot have a null key!").getQuery());
-            }
-            return contains(key.getQuery(), queries.toArray(new DataQuery[queries.size()]));
         }
+        List<DataQuery> queries = new ArrayList<>();
+        for (Key<?> arrayKey : keys) {
+            queries.add(checkNotNull(arrayKey, "Cannot have a null key!").getQuery());
+        }
+        return contains(key.getQuery(), queries.toArray(new DataQuery[queries.size()]));
     }
 
     /**
@@ -578,5 +577,51 @@ public interface DataView {
      * @return The newly constructed data view
      */
     DataContainer copy();
+
+    /**
+     * Copies this {@link DataView} and all of it's contents into a new
+     * {@link DataContainer} with the given safety mode.
+     *
+     * <p>Note that the copy will not have the same path as this
+     * {@link DataView} since it will be constructed with the top level path
+     * being itself.</p>
+     *
+     * @param safety The safety mode of the copy
+     * @return The newly constructed data view
+     */
+    DataContainer copy(SafetyMode safety);
+
+    /**
+     * Gets if this view contains no data.
+     * 
+     * @return True if no data
+     */
+    boolean isEmpty();
+
+    /**
+     * Gets the {@link SafetyMode} of this data view.
+     * 
+     * @return The safety mode
+     */
+    SafetyMode getSafetyMode();
+
+    /**
+     * The safety mode of the container.
+     */
+    public static enum SafetyMode {
+        /**
+         * All data added to the container will be cloned for safety.
+         */
+        ALL_DATA_CLONED,
+        /**
+         * All data added to the container will be cloned for safety.
+         */
+        CLONED_ON_SET,
+        /**
+         * No data added to the container will be cloned, useful for situations
+         * with a large amount of data where the cloning would be too costly.
+         */
+        NO_DATA_CLONED
+    }
 
 }
