@@ -41,6 +41,7 @@ import org.spongepowered.api.world.difficulty.Difficulty;
  * the {@link Cause} of the event. Any additional modifiers that "aid" the
  * {@link Cause} of the event will be listed subsequently.</p>
  */
+@Deprecated // TODO Temporary as a marker to myself that I'd like to remove this
 public interface DamageSource {
 
     static Builder builder() {

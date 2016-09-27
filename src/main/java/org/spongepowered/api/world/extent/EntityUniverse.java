@@ -36,14 +36,12 @@ import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntitySnapshot;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.entity.spawn.SpawnCause;
-import org.spongepowered.api.event.entity.SpawnEntityEvent;
 import org.spongepowered.api.util.AABB;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 /**
@@ -180,11 +178,6 @@ public interface EntityUniverse {
      * Spawns an {@link Entity} using the already set properties (extent,
      * position, rotation) and applicable {@link DataManipulator}s with the
      * specified {@link Cause} for spawning the entity.
-     *
-     * <p>Note that for the {@link Cause} to be useful in the expected
-     * {@link SpawnEntityEvent}, a {@link SpawnCause} should be provided in the
-     * {@link Cause} for other plugins to understand and have finer control over
-     * the event.</p>
      *
      * <p>The requirements involve that all necessary setup of states and data
      * is already preformed on the entity retrieved from the various
