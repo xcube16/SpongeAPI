@@ -64,9 +64,7 @@ import javax.annotation.Nullable;
 public final class Cause implements Iterable<Object> {
 
     /**
-     * Creates a new {@link Builder} to make a new {@link Cause}. Note that the
-     * builder requires all objects to be named appropriately and does not
-     * accept duplicate names.
+     * Creates a new {@link Builder} to make a new {@link Cause}.
      *
      * @return The new builder
      */

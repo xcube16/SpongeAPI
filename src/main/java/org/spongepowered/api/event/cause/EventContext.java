@@ -37,23 +37,21 @@ import java.util.StringJoiner;
 
 import javax.annotation.Nullable;
 
+/**
+ * Provides context for an event outside of the direct chain of causes present
+ * in the event's {@link Cause}.
+ */
 public final class EventContext {
-
-    public static final String IGNITER = "Igniter";
-    public static final String NOTIFIER = "Notifier";
-    public static final String OWNER = "Owner";
-    public static final String THROWER = "Thrower";
-    public static final String PLAYER_SIMULATED = "PlayerSimulated";
 
     private static final EventContext EMPTY_CONTEXT = new EventContext(ImmutableMap.of());
 
     public static EventContext empty() {
         return EMPTY_CONTEXT;
     }
-    
+
     public static EventContext of(Map<String, Object> entries) {
         checkNotNull(entries, "Context entries cannot be null");
-        for(Map.Entry<String, Object> entry: entries.entrySet()) {
+        for (Map.Entry<String, Object> entry : entries.entrySet()) {
             checkNotNull(entry.getValue(), "Entries cannot contain null values");
         }
         return new EventContext(entries);

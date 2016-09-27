@@ -31,6 +31,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.EventContext;
+import org.spongepowered.api.event.cause.EventContextKeys;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.plugin.PluginManager;
 
@@ -76,7 +77,7 @@ public class SimpleServiceManager implements ServiceManager {
 
         PluginContainer container = containerOptional.get();
         ProviderRegistration<?> oldProvider = this.providers.put(service, new Provider<>(container, service, provider));
-        EventContext ctx = EventContext.builder().add("ServiceManager", this).build();
+        EventContext ctx = EventContext.builder().add(EventContextKeys.SERVICE_MANAGER, this).build();
         Sponge.getEventManager().post(SpongeEventFactory.createChangeServiceProviderEvent(Cause.of(ctx, container),
                 this.providers.get(service), Optional.ofNullable(oldProvider)));
     }
