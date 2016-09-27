@@ -36,6 +36,7 @@ import com.flowpowered.noise.module.source.Perlin;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.extent.ImmutableBiomeVolume;
 import org.spongepowered.api.world.extent.MutableBlockVolume;
@@ -62,7 +63,7 @@ public class SkylandsTerrainGenerator implements GenerationPopulator {
     private final Perlin inputNoise = new Perlin();
     private final VerticalScaling outputNoise = new VerticalScaling();
     private final OreNoise[] oreNoises;
-    private final Cause generatorCause = Cause.source(this).build();
+    private final Cause generatorCause = Cause.of(EventContext.empty(), this);
 
     /**
      * Constructs a new Skylands terrain generator.

@@ -24,7 +24,7 @@
  */
 package org.spongepowered.api.service.permission;
 
-import org.spongepowered.api.service.context.Context;
+import org.spongepowered.api.service.context.ServiceContext;
 import org.spongepowered.api.util.Tristate;
 
 import java.util.Collections;
@@ -44,7 +44,7 @@ public interface SubjectData {
      * A convenience constant for the global context combination (the empty
      * set), if you want your code to look especially fancy.
      */
-    Set<Context> GLOBAL_CONTEXT = Collections.emptySet();
+    Set<ServiceContext> GLOBAL_CONTEXT = Collections.emptySet();
 
     /**
      * Return all permissions associated with this data object.
@@ -52,7 +52,7 @@ public interface SubjectData {
      * @return an immutable copy of the mappings between contexts and lists of
      *         permissions containing every permission registered
      */
-    Map<Set<Context>, Map<String, Boolean>> getAllPermissions();
+    Map<Set<ServiceContext>, Map<String, Boolean>> getAllPermissions();
 
     /**
      * Returns the list of permissions set for the given context. This list is
@@ -62,7 +62,7 @@ public interface SubjectData {
      * @param contexts The particular context combination to check
      * @return Any permissions set
      */
-    Map<String, Boolean> getPermissions(Set<Context> contexts);
+    Map<String, Boolean> getPermissions(Set<ServiceContext> contexts);
 
     /**
      * Sets a permission to a given value. Setting value as
@@ -75,7 +75,7 @@ public interface SubjectData {
      * @param value The value to set this permission to
      * @return Whether the operation was successful
      */
-    boolean setPermission(Set<Context> contexts, String permission, Tristate value);
+    boolean setPermission(Set<ServiceContext> contexts, String permission, Tristate value);
 
     /**
      * Clear all permissions set in any context.
@@ -91,7 +91,7 @@ public interface SubjectData {
      * @param contexts The context combination to clear permissions in
      * @return Whether any change occurred
      */
-    boolean clearPermissions(Set<Context> contexts);
+    boolean clearPermissions(Set<ServiceContext> contexts);
 
     /**
      * Return all registered parent subjects for all contexts. The returned map
@@ -101,7 +101,7 @@ public interface SubjectData {
      *
      * @return All registered parents and the context they are registered in
      */
-    Map<Set<Context>, List<Subject>> getAllParents();
+    Map<Set<ServiceContext>, List<Subject>> getAllParents();
 
     /**
      * Return all registered parent subjects for a given context. The returned
@@ -112,7 +112,7 @@ public interface SubjectData {
      * @param contexts The context to check
      * @return names of parents valid in the given context
      */
-    List<Subject> getParents(Set<Context> contexts);
+    List<Subject> getParents(Set<ServiceContext> contexts);
 
     /**
      * Adds a parent in a particular context combination. Passing an empty
@@ -122,7 +122,7 @@ public interface SubjectData {
      * @param parent The name of the parent to add
      * @return Whether the operation was successful
      */
-    boolean addParent(Set<Context> contexts, Subject parent);
+    boolean addParent(Set<ServiceContext> contexts, Subject parent);
 
     /**
      * Removes a parent in a particular context combination. Passing an empty
@@ -132,7 +132,7 @@ public interface SubjectData {
      * @param parent The name of the parent to remove
      * @return Whether the operation was successful
      */
-    boolean removeParent(Set<Context> contexts, Subject parent);
+    boolean removeParent(Set<ServiceContext> contexts, Subject parent);
 
     /**
      * Remove all parents in any context combination.
@@ -148,14 +148,14 @@ public interface SubjectData {
      * @param contexts The context combination to clear the parents of
      * @return Whether any change occurred
      */
-    boolean clearParents(Set<Context> contexts);
+    boolean clearParents(Set<ServiceContext> contexts);
 
     /**
      * Return all options for all context combinations currently registered.
      *
      * @return An immutable snapshot of all options data
      */
-    Map<Set<Context>, Map<String, String>> getAllOptions();
+    Map<Set<ServiceContext>, Map<String, String>> getAllOptions();
 
     /**
      * Gets options for a specific context combination.
@@ -163,7 +163,7 @@ public interface SubjectData {
      * @param contexts The context combination to get options for
      * @return All available options, returning an empty map if none are present
      */
-    Map<String, String> getOptions(Set<Context> contexts);
+    Map<String, String> getOptions(Set<ServiceContext> contexts);
 
     /**
      * Sets a specific option to a value.
@@ -173,7 +173,7 @@ public interface SubjectData {
      * @param value The value to set.
      * @return Whether the operation was successful
      */
-    boolean setOption(Set<Context> contexts, String key, String value);
+    boolean setOption(Set<ServiceContext> contexts, String key, String value);
 
     /**
      * Clear all options in the given context combination.
@@ -181,7 +181,7 @@ public interface SubjectData {
      * @param contexts The context combination
      * @return Whether the operation was successful (any options were removed)
      */
-    boolean clearOptions(Set<Context> contexts);
+    boolean clearOptions(Set<ServiceContext> contexts);
 
     /**
      * Clear all options.

@@ -35,6 +35,7 @@ import org.spongepowered.api.data.type.PlantType;
 import org.spongepowered.api.data.type.PlantTypes;
 import org.spongepowered.api.data.type.ShrubTypes;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.extent.ImmutableBiomeVolume;
 import org.spongepowered.api.world.extent.MutableBlockVolume;
@@ -68,7 +69,7 @@ public class SkylandsGrassPopulator implements GenerationPopulator {
     private final Voronoi flowerCells = new Voronoi();
     private final Voronoi flowerDensities = new Voronoi();
     private final RarityCurve flowerOdds = new RarityCurve();
-    private final Cause populatorCause = Cause.source(this).build();
+    private final Cause populatorCause = Cause.of(EventContext.empty(), this);
 
     static {
         //noinspection ConstantConditions

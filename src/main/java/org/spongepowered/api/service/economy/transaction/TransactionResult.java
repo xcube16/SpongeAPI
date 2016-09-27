@@ -24,7 +24,7 @@
  */
 package org.spongepowered.api.service.economy.transaction;
 
-import org.spongepowered.api.service.context.Context;
+import org.spongepowered.api.service.context.ServiceContext;
 import org.spongepowered.api.service.economy.Currency;
 import org.spongepowered.api.service.economy.account.Account;
 
@@ -59,12 +59,12 @@ public interface TransactionResult {
     BigDecimal getAmount();
 
     /**
-     * Returns the set of {@link Context}s used to perform the
+     * Returns the set of {@link ServiceContext}s used to perform the
      * transaction.
      *
      * @return optional set of contexts
      */
-    Set<Context> getContexts();
+    Set<ServiceContext> getContexts();
 
     /**
      * Gets the {@link ResultType} of this transaction.

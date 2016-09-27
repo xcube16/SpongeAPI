@@ -36,7 +36,8 @@ import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.TargetedLocationData;
 import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.entity.damage.source.DamageSource; 
+import org.spongepowered.api.event.cause.EventContext;
+import org.spongepowered.api.event.cause.entity.damage.source.DamageSource;
 import org.spongepowered.api.text.translation.Translatable;
 import org.spongepowered.api.util.AABB;
 import org.spongepowered.api.util.Identifiable;
@@ -458,7 +459,20 @@ public interface Entity extends Identifiable, Locatable, DataHolder, DataSeriali
      * @return True if damaging the entity was successful
      */
     default boolean damage(double damage, DamageSource damageSource) {
-        return damage(damage, damageSource, Cause.source(damageSource).build());
+        return damage(damage, damageSource, Cause.of(EventContext.empty(), damageSource));
+    }
+
+    /**
+     * Damages this {@link Entity} with the given {@link DamageSource} and
+     * {@link EventContext}.
+     *
+     * @param damage The damage to deal
+     * @param damageSource The cause of the damage
+     * @param ctx The event context
+     * @return True if damaging the entity was successful
+     */
+    default boolean damage(double damage, DamageSource damageSource, EventContext ctx) {
+        return damage(damage, damageSource, Cause.of(ctx, damageSource));
     }
 
     /**

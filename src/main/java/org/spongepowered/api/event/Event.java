@@ -25,6 +25,7 @@
 package org.spongepowered.api.event;
 
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.event.impl.AbstractEvent;
 import org.spongepowered.api.eventgencore.annotation.AbsoluteSortPosition;
 import org.spongepowered.api.eventgencore.annotation.ImplementedBy;
@@ -32,8 +33,8 @@ import org.spongepowered.api.eventgencore.annotation.ImplementedBy;
 /**
  * An event called within Sponge.
  *
- * <p>This is a marker interface, which must be implemented
- * by any event used with the Sponge event bus.</p>
+ * <p>This is a marker interface, which must be implemented by any event used
+ * with the Sponge event bus.</p>
  */
 @ImplementedBy(value = AbstractEvent.class, priority = Integer.MIN_VALUE)
 public interface Event {
@@ -45,4 +46,12 @@ public interface Event {
      */
     @AbsoluteSortPosition(0)
     Cause getCause();
+
+    default Object getSource() {
+        return getCause().root();
+    }
+
+    default EventContext getContext() {
+        return getCause().getContext();
+    }
 }

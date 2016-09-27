@@ -40,6 +40,7 @@ import org.mockito.stubbing.Answer;
 import org.spongepowered.api.data.DataTransactionResult;
 import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.event.cause.entity.spawn.SpawnCause;
 import org.spongepowered.api.event.entity.AttackEntityEvent;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
@@ -232,9 +233,9 @@ public class SpongeEventFactoryTest {
             return DataTransactionResult.successNoData();
         } else if (paramType == Cause.class) {
             if (target != null && SpawnEntityEvent.class.isAssignableFrom(target)) {
-                return Cause.source(mock(SpawnCause.class)).build();
+                return Cause.of(EventContext.empty(), mock(SpawnCause.class));
             }
-            return Cause.source("none").build();
+            return Cause.of(EventContext.empty(), "none");
         } else if (paramType == Location.class) {
             return new Location<>(mock(Extent.class), Vector3d.ZERO);
         } else if (paramType == Locale.class) {

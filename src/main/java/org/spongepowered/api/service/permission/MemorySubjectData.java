@@ -31,7 +31,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
-import org.spongepowered.api.service.context.Context;
+import org.spongepowered.api.service.context.ServiceContext;
 import org.spongepowered.api.util.Tristate;
 
 import java.util.ArrayList;
@@ -52,9 +52,9 @@ import javax.annotation.Nullable;
 public class MemorySubjectData implements SubjectData {
 
     private final PermissionService service;
-    private final ConcurrentMap<Set<Context>, Map<String, String>> options = Maps.newConcurrentMap();
-    private final ConcurrentMap<Set<Context>, NodeTree> permissions = Maps.newConcurrentMap();
-    private final ConcurrentMap<Set<Context>, List<Map.Entry<String, String>>> parents = Maps.newConcurrentMap();
+    private final ConcurrentMap<Set<ServiceContext>, Map<String, String>> options = Maps.newConcurrentMap();
+    private final ConcurrentMap<Set<ServiceContext>, NodeTree> permissions = Maps.newConcurrentMap();
+    private final ConcurrentMap<Set<ServiceContext>, List<Map.Entry<String, String>>> parents = Maps.newConcurrentMap();
 
     /**
      * Creates a new subject data instance, using the provided service to request instances of permission subjects.
@@ -67,9 +67,9 @@ public class MemorySubjectData implements SubjectData {
     }
 
     @Override
-    public Map<Set<Context>, Map<String, Boolean>> getAllPermissions() {
-        ImmutableMap.Builder<Set<Context>, Map<String, Boolean>> ret = ImmutableMap.builder();
-        for (Map.Entry<Set<Context>, NodeTree> ent : this.permissions.entrySet()) {
+    public Map<Set<ServiceContext>, Map<String, Boolean>> getAllPermissions() {
+        ImmutableMap.Builder<Set<ServiceContext>, Map<String, Boolean>> ret = ImmutableMap.builder();
+        for (Map.Entry<Set<ServiceContext>, NodeTree> ent : this.permissions.entrySet()) {
             ret.put(ent.getKey(), ent.getValue().asMap());
         }
         return ret.build();
@@ -82,19 +82,19 @@ public class MemorySubjectData implements SubjectData {
      * @param contexts The contexts to get a node tree for
      * @return The node tree
      */
-    public NodeTree getNodeTree(Set<Context> contexts) {
+    public NodeTree getNodeTree(Set<ServiceContext> contexts) {
         NodeTree perms = this.permissions.get(contexts);
         return perms == null ? NodeTree.of(Collections.emptyMap()) : perms;
     }
 
     @Override
-    public Map<String, Boolean> getPermissions(Set<Context> contexts) {
+    public Map<String, Boolean> getPermissions(Set<ServiceContext> contexts) {
         NodeTree perms = this.permissions.get(contexts);
         return perms == null ? Collections.emptyMap() : perms.asMap();
     }
 
     @Override
-    public boolean setPermission(Set<Context> contexts, String permission, Tristate value) {
+    public boolean setPermission(Set<ServiceContext> contexts, String permission, Tristate value) {
         contexts = ImmutableSet.copyOf(contexts);
         while (true) {
             NodeTree oldTree = this.permissions.get(contexts);
@@ -124,14 +124,14 @@ public class MemorySubjectData implements SubjectData {
     }
 
     @Override
-    public boolean clearPermissions(Set<Context> context) {
+    public boolean clearPermissions(Set<ServiceContext> context) {
         return this.permissions.remove(context) != null;
     }
 
     @Override
-    public Map<Set<Context>, List<Subject>> getAllParents() {
-        ImmutableMap.Builder<Set<Context>, List<Subject>> ret = ImmutableMap.builder();
-        for (Map.Entry<Set<Context>, List<Map.Entry<String, String>>> ent : this.parents.entrySet()) {
+    public Map<Set<ServiceContext>, List<Subject>> getAllParents() {
+        ImmutableMap.Builder<Set<ServiceContext>, List<Subject>> ret = ImmutableMap.builder();
+        for (Map.Entry<Set<ServiceContext>, List<Map.Entry<String, String>>> ent : this.parents.entrySet()) {
             ret.put(ent.getKey(), toSubjectList(ent.getValue()));
         }
         return ret.build();
@@ -147,13 +147,13 @@ public class MemorySubjectData implements SubjectData {
     }
 
     @Override
-    public List<Subject> getParents(Set<Context> contexts) {
+    public List<Subject> getParents(Set<ServiceContext> contexts) {
         List<Map.Entry<String, String>> ret = this.parents.get(contexts);
         return ret == null ? Collections.emptyList() : toSubjectList(ret);
     }
 
     @Override
-    public boolean addParent(Set<Context> contexts, Subject parent) {
+    public boolean addParent(Set<ServiceContext> contexts, Subject parent) {
         contexts = ImmutableSet.copyOf(contexts);
         while (true) {
             Map.Entry<String, String> newEnt = Maps.immutableEntry(parent.getContainingCollection().getIdentifier(),
@@ -187,7 +187,7 @@ public class MemorySubjectData implements SubjectData {
     }
 
     @Override
-    public boolean removeParent(Set<Context> contexts, Subject parent) {
+    public boolean removeParent(Set<ServiceContext> contexts, Subject parent) {
         contexts = ImmutableSet.copyOf(contexts);
         while (true) {
             Map.Entry<String, String> removeEnt = Maps.immutableEntry(parent.getContainingCollection().getIdentifier(),
@@ -216,23 +216,23 @@ public class MemorySubjectData implements SubjectData {
     }
 
     @Override
-    public boolean clearParents(Set<Context> contexts) {
+    public boolean clearParents(Set<ServiceContext> contexts) {
         return this.parents.remove(contexts) != null;
     }
 
     @Override
-    public Map<Set<Context>, Map<String, String>> getAllOptions() {
+    public Map<Set<ServiceContext>, Map<String, String>> getAllOptions() {
         return ImmutableMap.copyOf(this.options);
     }
 
     @Override
-    public Map<String, String> getOptions(Set<Context> contexts) {
+    public Map<String, String> getOptions(Set<ServiceContext> contexts) {
         Map<String, String> ret = this.options.get(contexts);
         return ret == null ? ImmutableMap.of() : ImmutableMap.copyOf(ret);
     }
 
     @Override
-    public boolean setOption(Set<Context> contexts, String key, @Nullable String value) {
+    public boolean setOption(Set<ServiceContext> contexts, String key, @Nullable String value) {
         Map<String, String> origMap = this.options.get(contexts);
         Map<String, String> newMap;
 
@@ -260,7 +260,7 @@ public class MemorySubjectData implements SubjectData {
     }
 
     @Override
-    public boolean clearOptions(Set<Context> contexts) {
+    public boolean clearOptions(Set<ServiceContext> contexts) {
         return this.options.remove(contexts) != null;
     }
 

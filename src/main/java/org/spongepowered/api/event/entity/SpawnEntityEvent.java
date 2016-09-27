@@ -26,6 +26,7 @@ package org.spongepowered.api.event.entity;
 
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.entity.spawn.EntitySpawnCause;
 import org.spongepowered.api.event.impl.AbstractSpawnEntityEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.eventgencore.annotation.GenerateFactoryMethod;
@@ -46,6 +47,9 @@ import org.spongepowered.api.eventgencore.annotation.ImplementedBy;
 @ImplementedBy(AbstractSpawnEntityEvent.class)
 @GenerateFactoryMethod
 public interface SpawnEntityEvent extends AffectEntityEvent {
+
+    @Override
+    EntitySpawnCause getSource();
 
     interface ChunkLoad extends SpawnEntityEvent {}
 

@@ -30,18 +30,12 @@ import com.google.common.collect.MapMaker;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
+import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.plugin.PluginManager;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -82,7 +76,8 @@ public class SimpleServiceManager implements ServiceManager {
 
         PluginContainer container = containerOptional.get();
         ProviderRegistration<?> oldProvider = this.providers.put(service, new Provider<>(container, service, provider));
-        Sponge.getEventManager().post(SpongeEventFactory.createChangeServiceProviderEvent(Cause.source(container).build(),
+        EventContext ctx = EventContext.builder().add("ServiceManager", this).build();
+        Sponge.getEventManager().post(SpongeEventFactory.createChangeServiceProviderEvent(Cause.of(ctx, container),
                 this.providers.get(service), Optional.ofNullable(oldProvider)));
     }
 
@@ -98,7 +93,7 @@ public class SimpleServiceManager implements ServiceManager {
     @SuppressWarnings("unchecked")
     @Override
     public <T> Optional<ProviderRegistration<T>> getRegistration(Class<T> service) {
-        return Optional.ofNullable((ProviderRegistration) this.providers.get(service));
+        return Optional.ofNullable((ProviderRegistration<T>) this.providers.get(service));
     }
 
     @SuppressWarnings("unchecked")
@@ -115,7 +110,6 @@ public class SimpleServiceManager implements ServiceManager {
 
     private static class Provider<T> implements ProviderRegistration<T> {
 
-        @SuppressWarnings("unused")
         private final PluginContainer container;
         private final Class<T> service;
         private final T provider;
