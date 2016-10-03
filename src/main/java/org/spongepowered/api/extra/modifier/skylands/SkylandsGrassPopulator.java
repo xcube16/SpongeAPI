@@ -69,7 +69,6 @@ public class SkylandsGrassPopulator implements GenerationPopulator {
     private final Voronoi flowerCells = new Voronoi();
     private final Voronoi flowerDensities = new Voronoi();
     private final RarityCurve flowerOdds = new RarityCurve();
-    private final Cause populatorCause = Cause.of(EventContext.empty(), this);
 
     static {
         //noinspection ConstantConditions
@@ -139,9 +138,9 @@ public class SkylandsGrassPopulator implements GenerationPopulator {
                         }
                     }
                     if (flower != null) {
-                        buffer.setBlock(xx, yy + 1, zz, flower.getBlock(), this.populatorCause);
+                        buffer.setBlock(xx, yy + 1, zz, flower.getBlock());
                         if (flower.isDoubleHeight()) {
-                            buffer.setBlock(xx, yy + 2, zz, flower.getUpperBlock(), this.populatorCause);
+                            buffer.setBlock(xx, yy + 2, zz, flower.getUpperBlock());
                         }
                     } else if (value >= GRASS_ODDS) {
                         // if no flower, check if the value is greater than the grass odds
@@ -150,9 +149,9 @@ public class SkylandsGrassPopulator implements GenerationPopulator {
                             //buffer.setBlockType(xx, yy + 1, zz, BlockTypes.MELON_BLOCK);
                             //buffer.setBlockType(xx, yy + 2, zz, BlockTypes.MELON_BLOCK);
                             // TODO: fix double plants
-                            buffer.setBlock(xx, yy + 1, zz, TALL_GRASS, this.populatorCause);
+                            buffer.setBlock(xx, yy + 1, zz, TALL_GRASS);
                         } else {
-                            buffer.setBlock(xx, yy + 1, zz, TALL_GRASS, this.populatorCause);
+                            buffer.setBlock(xx, yy + 1, zz, TALL_GRASS);
                         }
                     }
                 }

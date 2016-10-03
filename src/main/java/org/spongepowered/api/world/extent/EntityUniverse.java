@@ -176,8 +176,8 @@ public interface EntityUniverse {
 
     /**
      * Spawns an {@link Entity} using the already set properties (extent,
-     * position, rotation) and applicable {@link DataManipulator}s with the
-     * specified {@link Cause} for spawning the entity.
+     * position, rotation) and applicable {@link DataManipulator}s for spawning
+     * the entity.
      *
      * <p>The requirements involve that all necessary setup of states and data
      * is already preformed on the entity retrieved from the various
@@ -188,22 +188,18 @@ public interface EntityUniverse {
      * should be taken note that there can be many reasons for a failure.</p>
      *
      * @param entity The entity to spawn
-     * @param cause The cause for the entity spawn
      * @return True if successful, false if not
      */
-    boolean spawnEntity(Entity entity, Cause cause);
+    boolean spawnEntity(Entity entity);
 
     /**
-     * Similar to {@link #spawnEntity(Entity, Cause)} except where multiple
-     * entities can be attempted to be spawned with a customary {@link Cause}.
-     * The recommended use is to easily process the entity spawns without
-     * interference with the cause tracking system.
+     * Similar to {@link #spawnEntity(Entity)} except where multiple entities
+     * can be attempted to be spawned.
      *
      * @param entities The entities to be spawned
-     * @param cause The cause to be associated with the entities spawning
      * @return True if any of the entities were successfully spawned
      */
-    boolean spawnEntities(Iterable<? extends Entity> entities, Cause cause);
+    boolean spawnEntities(Iterable<? extends Entity> entities);
 
     /**
      * Gets all the entities that intersect the bounding box, in no particular

@@ -212,8 +212,7 @@ public interface BlockVolume {
      * Gets a new block worker for this block volume.
      *
      * @return The block worker
-     * @param cause
      */
-    BlockVolumeWorker<? extends BlockVolume> getBlockWorker(Cause cause);
+    BlockVolumeWorker<? extends BlockVolume> getBlockWorker();
 
 }

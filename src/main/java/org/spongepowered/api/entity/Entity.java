@@ -30,13 +30,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.flowpowered.math.vector.Vector3d;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataHolder;
-import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.DataTransactionResult;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.TargetedLocationData;
 import org.spongepowered.api.data.value.mutable.Value;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.event.cause.entity.damage.source.DamageSource;
 import org.spongepowered.api.text.translation.Translatable;
 import org.spongepowered.api.util.AABB;
@@ -75,7 +72,7 @@ import javax.annotation.Nullable;
  *
  * <p>Blocks and items (when they are in inventories) are not entities.</p>
  */
-public interface Entity extends Identifiable, Locatable, DataHolder, DataSerializable, Translatable {
+public interface Entity extends Identifiable, Locatable, DataHolder, Translatable {
 
     /**
      * Gets the type of entity.
@@ -458,35 +455,7 @@ public interface Entity extends Identifiable, Locatable, DataHolder, DataSeriali
      * @param damageSource The cause of the damage
      * @return True if damaging the entity was successful
      */
-    default boolean damage(double damage, DamageSource damageSource) {
-        return damage(damage, damageSource, Cause.of(EventContext.empty(), damageSource));
-    }
-
-    /**
-     * Damages this {@link Entity} with the given {@link DamageSource} and
-     * {@link EventContext}.
-     *
-     * @param damage The damage to deal
-     * @param damageSource The cause of the damage
-     * @param ctx The event context
-     * @return True if damaging the entity was successful
-     */
-    default boolean damage(double damage, DamageSource damageSource, EventContext ctx) {
-        return damage(damage, damageSource, Cause.of(ctx, damageSource));
-    }
-
-    /**
-     * Damages this {@link Entity} with the given {@link Cause}. It is
-     * imperative that a {@link DamageSource} is included
-     * with the cause for maximum compatibility with plugins and the game
-     * itself.
-     *
-     * @param damage The damage to deal
-     * @param damageSource The source of damage
-     * @param cause The cause containing auxiliary objects
-     * @return True if damaging the entity was successful
-     */
-    boolean damage(double damage, DamageSource damageSource, Cause cause);
+    boolean damage(double damage, DamageSource damageSource);
 
     /**
      * Gets the nearby entities within the desired distance.

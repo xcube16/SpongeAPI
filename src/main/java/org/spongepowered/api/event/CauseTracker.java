@@ -26,32 +26,17 @@ package org.spongepowered.api.event;
 
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.EventContext;
-import org.spongepowered.api.event.impl.AbstractEvent;
-import org.spongepowered.api.eventgencore.annotation.AbsoluteSortPosition;
-import org.spongepowered.api.eventgencore.annotation.ImplementedBy;
 
-/**
- * An event called within Sponge.
- *
- * <p>This is a marker interface, which must be implemented by any event used
- * with the Sponge event bus.</p>
- */
-@ImplementedBy(value = AbstractEvent.class, priority = Integer.MIN_VALUE)
-public interface Event {
+public interface CauseTracker {
 
-    /**
-     * Gets the cause for the event.
-     *
-     * @return The cause
-     */
-    @AbsoluteSortPosition(0)
-    Cause getCause();
+    Cause createCauseFromCurrentState();
 
-    default Object getSource() {
-        return getCause().root();
-    }
+    EventContext getCurrentContext();
 
-    default EventContext getContext() {
-        return getCause().getContext();
-    }
+    void pushCause(Object cause);
+
+    Object popTopCause();
+
+    void addContext(String key, Object value);
+
 }
