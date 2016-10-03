@@ -29,7 +29,7 @@ import static com.google.common.base.Preconditions.checkState;
 import org.spongepowered.api.asset.AssetManager;
 import org.spongepowered.api.command.CommandManager;
 import org.spongepowered.api.data.DataManager;
-import org.spongepowered.api.event.CauseTracker;
+import org.spongepowered.api.event.CauseStackManager;
 import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.network.ChannelRegistrar;
 import org.spongepowered.api.plugin.PluginManager;
@@ -97,8 +97,8 @@ public final class Sponge {
         return getGame().getChannelRegistrar();
     }
 
-    public static CauseTracker getCauseTracker() {
-        return getGame().getCauseTracker();
+    public static CauseStackManager getCauseStackManager() {
+        return getGame().getCauseStackManager();
     }
 
 }

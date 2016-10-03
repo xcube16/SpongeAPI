@@ -34,8 +34,6 @@ import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.PlantType;
 import org.spongepowered.api.data.type.PlantTypes;
 import org.spongepowered.api.data.type.ShrubTypes;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.extent.ImmutableBiomeVolume;
 import org.spongepowered.api.world.extent.MutableBlockVolume;
@@ -165,7 +163,7 @@ public class SkylandsGrassPopulator implements GenerationPopulator {
                         // generate a new random value for the layer
                         final float value = SkylandsUtil.hashToFloat(xx, layerNumber, zz, seed);
                         if (value >= COVERED_GRASS_ODDS) {
-                            buffer.setBlock(xx, yy + 1, zz, TALL_GRASS, this.populatorCause);
+                            buffer.setBlock(xx, yy + 1, zz, TALL_GRASS);
                         }
                     }
                     layerNumber++;
