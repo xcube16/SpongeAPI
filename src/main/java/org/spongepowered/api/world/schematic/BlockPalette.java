@@ -83,7 +83,10 @@ public interface BlockPalette {
      * 
      * @param state The blockstate to remove
      * @return If the blockstate existed in the mapping
+     * @deprecated Not valid for global palette, but will still be valid for LocalBlockPalettes
+     * @see LocalBlockPalette#remove
      */
+    @Deprecated
     boolean remove(BlockState state);
 
     /**
@@ -92,5 +95,7 @@ public interface BlockPalette {
      * @return All contained block states
      */
     Collection<BlockState> getEntries();
+    
+    
 
 }

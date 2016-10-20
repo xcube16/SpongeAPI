@@ -24,25 +24,35 @@
  */
 package org.spongepowered.api.world.schematic;
 
-import org.spongepowered.api.CatalogType;
-import org.spongepowered.api.util.annotation.CatalogedBy;
+import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.world.extent.BlockVolume;
 
 /**
- * Represents a type of {@link BlockPalette}.
+ * A factory for creating new block palettes.
  */
-@CatalogedBy(BlockPaletteTypes.class)
-public interface BlockPaletteType extends CatalogType {
+public interface BlockPaletteFactory {
 
     /**
-     * Gets an instance of this palette type.
+     * Creates a new {@link LocalBlockPalette} which is initially empty.
      * 
-     * <p>If this is the global type then the global palette instance will be
-     * returned, otherwise a new instance will be created.</p>
-     * 
-     * @return The palette instance
-     * @deprecated Use BlockPaletteFactory#newLocalPalette() instead.
+     * @return The new palette
      */
-	@Deprecated
-    BlockPalette create();
+    LocalBlockPalette newLocalPalette();
 
+    /**
+     * Creates a new {@link LocalBlockPalette} which is initially filled with
+     * all {@link BlockState}s present in the given {@link BlockVolume}.
+     * 
+     * @param volume The volume to populate the materials from
+     * @return The new palette
+     */
+    LocalBlockPalette newLocalPaletteFor(BlockVolume volume);
+
+    /**
+     * Gets the instance of the global {@link BlockPalette} which contains all
+     * {@link BlockState}s present in the game.
+     * 
+     * @return The global block palette
+     */
+    BlockPalette getGlobalPalette();
 }

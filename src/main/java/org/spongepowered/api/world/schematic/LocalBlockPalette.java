@@ -24,25 +24,37 @@
  */
 package org.spongepowered.api.world.schematic;
 
-import org.spongepowered.api.CatalogType;
-import org.spongepowered.api.util.annotation.CatalogedBy;
+import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.world.extent.ArchetypeVolume;
 
-/**
- * Represents a type of {@link BlockPalette}.
- */
-@CatalogedBy(BlockPaletteTypes.class)
-public interface BlockPaletteType extends CatalogType {
+public interface LocalBlockPalette extends BlockPalette {
 
     /**
-     * Gets an instance of this palette type.
+     * Removes the given blockstate from the mapping.
      * 
-     * <p>If this is the global type then the global palette instance will be
-     * returned, otherwise a new instance will be created.</p>
-     * 
-     * @return The palette instance
-     * @deprecated Use BlockPaletteFactory#newLocalPalette() instead.
+     * @param state The blockstate to remove
+     * @return If the blockstate existed in the mapping
      */
-	@Deprecated
-    BlockPalette create();
+    boolean remove(BlockState state);
+
+    /**
+     * Gets if this block palette supports transparency and has a transparent
+     * index allocated.
+     * 
+     * @return True if this block palette supports translarency
+     */
+    boolean supportsTransparency();
+
+    /**
+     * Gets the transparent index for this palette. The transparent index may be
+     * used to mark blocks which are ingored when applying an
+     * {@link ArchetypeVolume} to a world for example.
+     * 
+     * @return The transparent index
+     * @throws IllegalStateException If this palette does not support
+     *         transparency
+     * @see #supportsTransparency()
+     */
+    int getTransparentIndex();
 
 }

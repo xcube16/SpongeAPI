@@ -32,8 +32,8 @@ import org.spongepowered.api.entity.ai.task.AITaskType;
 import org.spongepowered.api.entity.ai.task.AbstractAITask;
 import org.spongepowered.api.entity.living.Agent;
 import org.spongepowered.api.item.ItemType;
-import org.spongepowered.api.item.merchant.VillagerRegistry;
 import org.spongepowered.api.item.merchant.TradeOfferGenerator;
+import org.spongepowered.api.item.merchant.VillagerRegistry;
 import org.spongepowered.api.item.recipe.RecipeRegistry;
 import org.spongepowered.api.network.status.Favicon;
 import org.spongepowered.api.plugin.PluginContainer;
@@ -58,6 +58,7 @@ import org.spongepowered.api.text.translation.Translation;
 import org.spongepowered.api.util.ResettableBuilder;
 import org.spongepowered.api.util.rotation.Rotation;
 import org.spongepowered.api.world.extent.ExtentBufferFactory;
+import org.spongepowered.api.world.schematic.BlockPaletteFactory;
 
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
@@ -405,5 +406,12 @@ public interface GameRegistry {
      * @return The {@link Translation} with the given ID or Optional.empty() if not found
      */
     Optional<Translation> getTranslationById(String id);
+
+    /**
+     * Gets the {@link BlockPaletteFactory} for creating block palettes.
+     * 
+     * @return The block palette factory.
+     */
+    BlockPaletteFactory getBlockPaletteFactory();
 
 }

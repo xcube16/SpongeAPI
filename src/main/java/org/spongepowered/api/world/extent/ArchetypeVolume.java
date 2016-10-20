@@ -41,11 +41,33 @@ import java.util.Optional;
 public interface ArchetypeVolume extends MutableBlockVolume {
 
     /**
+     * Marks the given position as ignored. When this volume is applied to a
+     * world this position will be ignored and left unchanged.
+     * 
+     * @param x The X position
+     * @param y The Y position
+     * @param z The Z position
+     */
+    void markPositionAsIgnored(int x, int y, int z);
+
+    /**
+     * Marks the given position as ignored. When this volume is applied to a
+     * world this position will be ignored and left unchanged.
+     * 
+     * @param position The position
+     */
+    default void markPositionAsIgnored(Vector3i position) {
+        markPositionAsIgnored(position.getX(), position.getY(), position.getZ());
+    }
+
+    /**
      * Applies this archetype at the given location. The archetype will be
      * mapped onto the given world such that the origin on the archetype lines
      * up with the given position.
+     * 
      * @param location The location to apply at
-     * @param changeFlag The flag to use for toggling various operations on block placement
+     * @param changeFlag The flag to use for toggling various operations on
+     *        block placement
      * @param cause The cause of the changes
      */
     void apply(Location<World> location, BlockChangeFlag changeFlag, Cause cause);
