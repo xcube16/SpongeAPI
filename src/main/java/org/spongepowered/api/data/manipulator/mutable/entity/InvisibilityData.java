@@ -30,17 +30,16 @@ import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.entity.Entity;
 
 /**
- * A {@link DataManipulator} for the "vanish" state. If the value is true,
- * the {@link Entity} is rendered "vanish".
+ * A {@link DataManipulator} for the visibility of an entity.
  */
 public interface InvisibilityData extends DataManipulator<InvisibilityData, ImmutableInvisibilityData> {
 
     /**
      * Gets the {@link Value} of the "invisible" state of an {@link Entity}.
      *
-     * <p>Note that this is different from the {@link #vanish()} state as when an
-     * {@link Entity} is "invisible", update packets are still sent to all clients
-     * and the server. Likewise, no </p>
+     * <p>Note that this is different from the {@link #vanish()} state as when
+     * an {@link Entity} is "invisible", it's only not rendered, rather than not
+     * sending updates to clients.</p>
      *
      * @return The value of the invisible state
      */

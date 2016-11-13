@@ -42,8 +42,8 @@ import org.spongepowered.api.util.AABB;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 /**
@@ -94,16 +94,17 @@ public interface EntityUniverse {
      * Create an entity instance at the given position.
      *
      * <p>Creating an entity does not spawn the entity into the world. An entity
-     * created means the entity can be spawned at the given location. If
-     * {@link Optional#empty()} was returned, the entity is not able to spawn at
-     * the given location. Furthermore, this allows for the {@link Entity} to be
-     * customized further prior to traditional "ticking" and processing by core
-     * systems.</p>
+     * created means the entity can be spawned at the given location. If the
+     * entity is not able to spawn at the given location, or if the entity type
+     * cannot be created, {@link IllegalArgumentException} is thrown.
+     * Furthermore, this allows for the {@link Entity} to be customized further
+     * prior to traditional "ticking" and processing by core systems.</p>
      *
      * @param type The type
      * @param position The position
      * @return An entity, if one was created
-     * @throws IllegalArgumentException If the position or entity type is not valid to create
+     * @throws IllegalArgumentException If the position or entity type is not
+     *         valid to create
      * @throws IllegalStateException If a constructor cannot be found
      */
     Entity createEntity(EntityType type, Vector3d position) throws IllegalArgumentException, IllegalStateException;
@@ -112,11 +113,11 @@ public interface EntityUniverse {
      * Create an entity instance at the given position.
      *
      * <p>Creating an entity does not spawn the entity into the world. An entity
-     * created means the entity can be spawned at the given location. If
-     * {@link Optional#empty()} was returned, the entity is not able to spawn at
-     * the given location. Furthermore, this allows for the {@link Entity} to be
-     * customized further prior to traditional "ticking" and processing by core
-     * systems.</p>
+     * created means the entity can be spawned at the given location. If the
+     * entity is not able to spawn at the given location, or if the entity type
+     * cannot be created, {@link IllegalArgumentException} is thrown.
+     * Furthermore, this allows for the {@link Entity} to be customized further
+     * prior to traditional "ticking" and processing by core systems.</p>
      *
      * @param type The type
      * @param position The position
@@ -132,11 +133,11 @@ public interface EntityUniverse {
      * Create an entity instance at the given position.
      *
      * <p>Creating an entity does not spawn the entity into the world. An entity
-     * created means the entity can be spawned at the given location. If
-     * {@link Optional#empty()} was returned, the entity is not able to spawn at
-     * the given location. Furthermore, this allows for the {@link Entity} to be
-     * customized further prior to traditional "ticking" and processing by core
-     * systems.</p>
+     * created means the entity can be spawned at the given location. If the
+     * entity is not able to spawn at the given location, or if the entity type
+     * cannot be created, {@link IllegalArgumentException} is thrown.
+     * Furthermore, this allows for the {@link Entity} to be customized further
+     * prior to traditional "ticking" and processing by core systems.</p>
      *
      * @param entityContainer The data container of the entity
      * @return An entity, if one was created
@@ -147,11 +148,11 @@ public interface EntityUniverse {
      * Create an entity instance at the given position.
      *
      * <p>Creating an entity does not spawn the entity into the world. An entity
-     * created means the entity can be spawned at the given location. If
-     * {@link Optional#empty()} was returned, the entity is not able to spawn at
-     * the given location. Furthermore, this allows for the {@link Entity} to be
-     * customized further prior to traditional "ticking" and processing by core
-     * systems.</p>
+     * created means the entity can be spawned at the given location. If the
+     * entity is not able to spawn at the given location, or if the entity type
+     * cannot be created, {@link IllegalArgumentException} is thrown.
+     * Furthermore, this allows for the {@link Entity} to be customized further
+     * prior to traditional "ticking" and processing by core systems.</p>
      *
      * @param entityContainer The data container of the entity
      * @param position The position of the entity to spawn at
@@ -164,11 +165,11 @@ public interface EntityUniverse {
      * {@link EntitySnapshot} at the provided {@link Vector3d} position.
      *
      * <p>Creating an entity does not spawn the entity into the world. An entity
-     * created means the entity can be spawned at the given location. If
-     * {@link Optional#empty()} was returned, the entity is not able to spawn at
-     * the given location. Furthermore, this allows for the {@link Entity} to be
-     * customized further prior to traditional "ticking" and processing by core
-     * systems.</p>
+     * created means the entity can be spawned at the given location. If the
+     * entity is not able to spawn at the given location, or if the entity type
+     * cannot be created, {@link IllegalArgumentException} is thrown.
+     * Furthermore, this allows for the {@link Entity} to be customized further
+     * prior to traditional "ticking" and processing by core systems.</p>
      *
      * @param snapshot The entity snapshot of the entity
      * @param position The position of the entity to spawn at

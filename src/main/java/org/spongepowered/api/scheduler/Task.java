@@ -151,6 +151,9 @@ public interface Task extends Identifiable {
          * subsequent runs (when the interval is not 0) will not be offset. By
          * default, the delay is 0.
          *
+         * <p>Regardless of the task's synchronicity mode, the scheduler will
+         * aim to execute the task after the delay given.</p>
+         *
          * @param delay The delay in the given {@link TimeUnit}
          * @param unit The unit the delay is in
          * @return This builder, for chaining
@@ -178,6 +181,9 @@ public interface Task extends Identifiable {
          * still alive (running). As long as a previous occurrence is running no new
          * occurrences of that specific task will start, although the scheduler will
          * never cease in trying to start it a 2nd time.</p>
+         *
+         * <p>Regardless of the task's synchronicity mode, the scheduler will
+         * aim to execute the task at the interval given.</p>
          *
          * @param interval The interval in the given {@link TimeUnit}
          * @param unit The unit the interval is in

@@ -55,11 +55,11 @@ import java.util.function.Predicate;
 public interface AffectEntityEvent extends TargetWorldEvent, Cancellable {
 
     /**
-     * Gets an {@link List} of the entity data
+     * Gets a {@link List} of the entity data
      * un-affected by event changes.
      *
      * <p>This method <b>MUST</b> be called at {@link Order#PRE} in order
-     * to be properly initialized, after whih it can be called at any time.
+     * to be properly initialized, after which it can be called at any time.
      * If it is not first called at {@link Order#PRE}, it will throw an {@link IllegalStateException}
      * when invoked.</p>
      *
@@ -69,7 +69,7 @@ public interface AffectEntityEvent extends TargetWorldEvent, Cancellable {
     List<EntitySnapshot> getEntitySnapshots() throws IllegalStateException;
 
     /**
-     * Gets the {@link List} who will be affected after event
+     * Gets the {@link List} of entities that will be affected after the event's
      * resolution.
      *
      * @return The List

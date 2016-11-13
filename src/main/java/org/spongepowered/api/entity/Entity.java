@@ -347,17 +347,17 @@ public interface Entity extends Identifiable, Locatable, DataHolder, DataSeriali
     Optional<AABB> getBoundingBox();
 
     /**
-     * Gets the entity passenger that rides this entity, if available.
+     * Gets the passengers that rides this entity.
      *
-     * @return The passenger entity, if it exists
+     * @return The passengers
      */
     List<Entity> getPassengers();
 
     /**
-     * Sets the passenger entity(the entity that rides this one).
+     * Adds the entity as a passenger(the entity that rides this one).
      *
-     * @param entity The entity passenger, or null to eject
-     * @return True if the set was successful
+     * @param entity The entity passenger
+     * @return The transaction result
      */
     DataTransactionResult addPassenger(Entity entity);
 

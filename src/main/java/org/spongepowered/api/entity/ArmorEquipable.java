@@ -123,7 +123,8 @@ public interface ArmorEquipable extends Equipable {
     void setBoots(@Nullable ItemStack boots);
 
     /**
-     * Gets the current equipped item in hand if available.
+     * Gets the current equipped item in the given {@link HandType} if
+     * available.
      *
      * <p>Having the item in hand as null will result in having nothing
      * equipped in the item in hand slot.</p>
@@ -134,7 +135,7 @@ public interface ArmorEquipable extends Equipable {
     Optional<ItemStack> getItemInHand(HandType handType);
 
     /**
-     * Sets the item in hand for this entity.
+     * Sets the item in the given {@link HandType} for this entity.
      *
      * <p>Having the item in hand as null will result in having nothing
      * equipped in the item in hand slot.</p>

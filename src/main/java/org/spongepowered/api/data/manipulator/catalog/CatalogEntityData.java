@@ -138,11 +138,11 @@ import org.spongepowered.api.entity.living.monster.Zombie;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
-import org.spongepowered.api.entity.projectile.arrow.Arrow;
 import org.spongepowered.api.entity.projectile.EyeOfEnder;
 import org.spongepowered.api.entity.projectile.Firework;
 import org.spongepowered.api.entity.projectile.Projectile;
 import org.spongepowered.api.entity.projectile.Snowball;
+import org.spongepowered.api.entity.projectile.arrow.Arrow;
 import org.spongepowered.api.entity.vehicle.minecart.Minecart;
 import org.spongepowered.api.item.FireworkEffect;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -334,7 +334,7 @@ public final class CatalogEntityData {
      */
     public static final Class<IgniteableData> IGNITEABLE_DATA = IgniteableData.class;
     /**
-     * Signifies that an entity is rendered vanish. Usually applies to all
+     * Signifies that an entity is rendered invisible. Usually applies to all
      * known types of {@link Living} entities.
      */
     public static final Class<InvisibilityData> INVISIBILITY_DATA = InvisibilityData.class;

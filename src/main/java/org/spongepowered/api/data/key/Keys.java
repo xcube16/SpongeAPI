@@ -36,8 +36,6 @@ import org.spongepowered.api.data.manipulator.mutable.*;
 import org.spongepowered.api.data.manipulator.mutable.block.*;
 import org.spongepowered.api.data.manipulator.mutable.entity.*;
 import org.spongepowered.api.data.manipulator.mutable.item.*;
-import org.spongepowered.api.data.manipulator.mutable.tileentity.EndGatewayData;
-import org.spongepowered.api.data.manipulator.mutable.tileentity.StructureData;
 import org.spongepowered.api.data.meta.ItemEnchantment;
 import org.spongepowered.api.data.type.*;
 import org.spongepowered.api.data.value.immutable.ImmutableBoundedValue;
@@ -58,10 +56,8 @@ import org.spongepowered.api.entity.living.animal.SkeletonHorse;
 import org.spongepowered.api.entity.living.animal.ZombieHorse;
 import org.spongepowered.api.entity.living.monster.Skeleton;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.entity.projectile.arrow.Arrow;
-import org.spongepowered.api.statistic.Statistic;
-import org.spongepowered.api.util.RespawnLocation;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
+import org.spongepowered.api.entity.projectile.arrow.Arrow;
 import org.spongepowered.api.entity.vehicle.minecart.CommandBlockMinecart;
 import org.spongepowered.api.entity.vehicle.minecart.Minecart;
 import org.spongepowered.api.extra.fluid.FluidStackSnapshot;
@@ -70,11 +66,13 @@ import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.item.merchant.TradeOffer;
 import org.spongepowered.api.profile.GameProfile;
+import org.spongepowered.api.statistic.Statistic;
 import org.spongepowered.api.statistic.achievement.Achievement;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.util.Axis;
 import org.spongepowered.api.util.Color;
 import org.spongepowered.api.util.Direction;
+import org.spongepowered.api.util.RespawnLocation;
 import org.spongepowered.api.util.rotation.Rotation;
 
 import java.time.Instant;
@@ -571,9 +569,9 @@ public final class Keys {
     public static final Key<Value<Boolean>> INFINITE_PICKUP_DELAY = KeyFactory.fake("INFINITE_PICKUP_DELAY");
 
     /**
-     * Represents the {@link Key} for representing the "vanish" state
+     * Represents the {@link Key} for representing the "invisibility" state
      * of an {@link Entity}. This will only simply render the entity as
-     * vanish, but not prevent any entity updates being sent to clients.
+     * invisible, but not prevent any entity updates being sent to clients.
      * To fully "vanish" an {@link Entity}, use {@link #VANISH}.
      */
     public static final Key<Value<Boolean>> INVISIBLE = KeyFactory.fake("INVISIBLE");
@@ -1065,10 +1063,10 @@ public final class Keys {
      * Represents the {@link Key} for representing the "vanish" state
      * of an {@link Entity}. If the state is {@code true}, the entity is
      * not only rendered invisible, but removed from being tracked by all
-     * clients in the vincinity of the entity. In simpler terms, the entity
+     * clients in the vicinity of the entity. In simpler terms, the entity
      * with a "vanish" state being {@code true} will not send any updates
      * to any clients. This may cause issues if the vanished entity is being
-     * ridden by
+     * ridden by another entity.
      */
     public static final Key<Value<Boolean>> VANISH = KeyFactory.fake("VANISH");
 
