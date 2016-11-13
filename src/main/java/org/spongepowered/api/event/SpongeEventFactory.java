@@ -313,18 +313,18 @@ public class SpongeEventFactory {
      * @param experience The experience
      * @param originalFishHook The original fish hook
      * @param fishHook The fish hook
-     * @param itemStackTransaction The item stack transaction
+     * @param itemStackTransactions The item stack transactions
      * @param targetEntity The target entity
      * @return A new stop fishing event
      */
-    public static FishingEvent.Stop createFishingEventStop(Cause cause, int originalExperience, int experience, EntitySnapshot originalFishHook, FishHook fishHook, List<Transaction<ItemStackSnapshot>> itemStackTransaction, Entity targetEntity) {
+    public static FishingEvent.Stop createFishingEventStop(Cause cause, int originalExperience, int experience, EntitySnapshot originalFishHook, FishHook fishHook, List<Transaction<ItemStackSnapshot>> itemStackTransactions, Entity targetEntity) {
         HashMap<String, Object> values = new HashMap<>();
         values.put("cause", cause);
         values.put("originalExperience", originalExperience);
         values.put("experience", experience);
         values.put("originalFishHook", originalFishHook);
         values.put("fishHook", fishHook);
-        values.put("itemStackTransaction", itemStackTransaction);
+        values.put("itemStackTransactions", itemStackTransactions);
         values.put("targetEntity", targetEntity);
         return SpongeEventFactoryUtils.createEventImpl(FishingEvent.Stop.class, values);
     }

@@ -35,7 +35,6 @@ import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.block.CollideBlockEvent;
 import org.spongepowered.api.event.entity.ChangeEntityExperienceEvent;
 import org.spongepowered.api.event.entity.TargetEntityEvent;
-import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
@@ -81,29 +80,28 @@ public interface FishingEvent extends Event {
      * A specific {@link FishingEvent} where the {@link FishHook} is retracted
      * or "reeled in".
      *
-     * <p>If the {@link FishHook} was cast into water, an {@link ItemStack} may
-     * be hooken when it is retracted. If the event is not cancelled, Vanilla
-     * will send the @link ItemStackby spawning an {@link Item}, and sending it
+     * <p>If the {@link FishHook} was cast into water, one or more {@link ItemStack}s may
+     * be hooked when it is retracted. If the event is not cancelled, Vanilla
+     * will send the {@link ItemStack}s by spawning an {@link Item}, and sending it
      * moving towards the player.
      *
      * If the {@link FishHook} has an entity hooked, Vanilla will pull
      * the hooked entity towards the caster, if the event is not cancelled.</p>
      *
-     * <p>In Vanilla, {@link Transaction#getOriginal() the original {@link ItemStack}}
+     * <p>In Vanilla, {@link Transaction#getOriginal() the original {@link ItemStack}
      * will usually be a {@link Fish}, or miscellaneous item.</p>
      */
     interface Stop extends FishingEvent, ChangeEntityExperienceEvent, Cancellable {
 
         /**
-         * Gets the {@link Transaction} that is the transaction
-         * involving the {@link ItemStack}, If you wish to
-         * change the itemstack result, use {@link Transaction#setCustom(DataSerializable)}
+         * Gets the {@link Transaction}s that involve the {@link ItemStack}s, if
+         * you wish to change the itemstack result, use
+         * {@link Transaction#setCustom(DataSerializable)}
          *
-         * <p>The special item type {@link ItemTypes#NONE} is used to represent
-         * no item being caught,</p>
+         * <p>An empty list means no item was caught.</p>
          *
-         * @return The itemstack transaction
+         * @return The itemstack transactions
          */
-        List<Transaction<ItemStackSnapshot>> getItemStackTransaction();
+        List<Transaction<ItemStackSnapshot>> getItemStackTransactions();
     }
 }

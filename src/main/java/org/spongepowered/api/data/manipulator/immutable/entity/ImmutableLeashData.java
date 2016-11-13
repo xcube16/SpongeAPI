@@ -28,6 +28,7 @@ import org.spongepowered.api.data.manipulator.ImmutableDataManipulator;
 import org.spongepowered.api.data.manipulator.mutable.entity.LeashData;
 import org.spongepowered.api.data.value.immutable.ImmutableValue;
 import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.EntitySnapshot;
 
 /**
  * An {@link ImmutableDataManipulator} representing that an {@link Entity} is
@@ -41,6 +42,6 @@ public interface ImmutableLeashData extends ImmutableDataManipulator<ImmutableLe
      *
      * @return The immutable value for the leash holder
      */
-    ImmutableValue<Entity> leashHolder();
+    ImmutableValue<EntitySnapshot> leashHolder();
 
 }
