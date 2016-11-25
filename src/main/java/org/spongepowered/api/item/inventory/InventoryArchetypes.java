@@ -70,56 +70,60 @@ public class InventoryArchetypes {
     public static final InventoryArchetype CRAFTING = DummyObjectProvider.createFor(InventoryArchetype.class, "CRAFTING");
 
     // Vanilla Archetypes
+    // These archetypes represent vanilla inventories. Generally these inventories can be shown to a player.
+    // Changing the size of the inventory is possible but will almost always prevent displaying it to a player.
+
     // Grid-based
     /**
-     * A Chest. By default 9x3.
+     * A Chest. Sizes from 9x1 to 9x6 are allowed. The default is 9x3.
+     * When displaying the inventory the actual arrangement of slot does not matter.
+     * This means, that when creating a 3x3 CHEST inventory it will still be displayed as 9x1 to the player.
      */
     public static final InventoryArchetype CHEST = DummyObjectProvider.createFor(InventoryArchetype.class, "CHEST");
     /**
-     * A DoubleChest. By default 9x6.
+     * A DoubleChest. Sizes 9x1 to 9x6 are allowed. The default is 9x6.
      */
     public static final InventoryArchetype DOUBLE_CHEST = DummyObjectProvider.createFor(InventoryArchetype.class, "DOUBLE_CHEST");
     /**
-     * A Hopper. 5x1
+     * A Hopper. The size is always 5x1
      */
     public static final InventoryArchetype HOPPER = DummyObjectProvider.createFor(InventoryArchetype.class, "HOPPER");
     /**
-     * A Dispenser or Dropper. 3x3
+     * A Dispenser or Dropper. The size is always 3x3
      */
     public static final InventoryArchetype DISPENSER = DummyObjectProvider.createFor(InventoryArchetype.class, "DISPENSER");
     /**
-     * A Workbench. 3x3
+     * A Workbench. The size is always 3x3 + 1 OutputSlot
      */
     public static final InventoryArchetype WORKBENCH = DummyObjectProvider.createFor(InventoryArchetype.class, "WORKBENCH");
     // Slot-based
     /**
-     * A Furnace. 3 Slots
+     * A Furnace. The size is always 3 slots
      */
     public static final InventoryArchetype FURNACE = DummyObjectProvider.createFor(InventoryArchetype.class, "FURNACE");
     /**
-     * A EnchantingTable. 2 Slots
+     * A EnchantingTable. The size is always 2 slots.
      */
     public static final InventoryArchetype ENCHANTING_TABLE = DummyObjectProvider.createFor(InventoryArchetype.class, "ENCHANTING_TABLE");
     /**
-     * A Anvil. 3 Slots
+     * A Anvil. The size is always 3 slots.
      */
     public static final InventoryArchetype ANVIL = DummyObjectProvider.createFor(InventoryArchetype.class, "ANVIL");
     /**
-     * A BrewingStand. 4 Slots
-     * 5 Slots in Minecraft 1.9
+     * A BrewingStand. The size is always 5 slots.
      */
     public static final InventoryArchetype BREWING_STAND = DummyObjectProvider.createFor(InventoryArchetype.class, "BREWING_STAND");
     /**
-     * A Beacon. 1 Slot
+     * A Beacon. The size is always one slot.
      */
     public static final InventoryArchetype BEACON = DummyObjectProvider.createFor(InventoryArchetype.class, "BEACON");
     // Entity
     /**
-     * A RideableHorse, Donkey or Mule 2 Slots
+     * A RideableHorse, Donkey or Mule usually 2 Slots
      */
     public static final InventoryArchetype HORSE = DummyObjectProvider.createFor(InventoryArchetype.class, "HORSE");
     /**
-     * A Villager. 3 Slots
+     * A Villager. The size is always 3 slots.
      */
     public static final InventoryArchetype VILLAGER = DummyObjectProvider.createFor(InventoryArchetype.class, "VILLAGER");
     /**
@@ -127,6 +131,7 @@ public class InventoryArchetypes {
      * Needs a horse as carrier to show to player in Vanilla.
      */
     public static final InventoryArchetype HORSE_WITH_CHEST = DummyObjectProvider.createFor(InventoryArchetype.class, "HORSE_WITH_CHEST");
+
     // Player
     /**
      * A Player. Includes 9x3 main inventory, 9x1 Hotbar, 4 Armorslots and 2x2 Crafting area.
