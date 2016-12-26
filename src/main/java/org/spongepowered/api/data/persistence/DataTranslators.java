@@ -56,6 +56,7 @@ public final class DataTranslators {
     // sortfields:ON
     public static final DataTranslator<Schematic> SCHEMATIC = DummyObjectProvider.createExtendedFor(DataTranslator.class, "SCHEMATIC");
     public static final DataTranslator<Schematic> LEGACY_SCHEMATIC = DummyObjectProvider.createExtendedFor(DataTranslator.class, "LEGACY_SCHEMATIC");
+    public static final DataTranslator<Schematic> STRUCTURE = DummyObjectProvider.createExtendedFor(DataTranslator.class, "STRUCTURE");
     public static final DataTranslator<ConfigurationNode> CONFIGURATION_NODE = DummyObjectProvider.createExtendedFor(DataTranslator.class, "CONFIGURATION_NODE");
 
     public static final DataTranslator<UUID> UUID = DummyObjectProvider.createExtendedFor(DataTranslator.class, "UUID");

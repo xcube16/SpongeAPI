@@ -40,6 +40,7 @@ import org.spongepowered.api.world.extent.Extent;
 import org.spongepowered.api.world.extent.worker.MutableBiomeVolumeWorker;
 import org.spongepowered.api.world.extent.worker.MutableBlockVolumeWorker;
 import org.spongepowered.api.world.gen.WorldGenerator;
+import org.spongepowered.api.world.schematic.StructureManager;
 import org.spongepowered.api.world.storage.WorldProperties;
 import org.spongepowered.api.world.storage.WorldStorage;
 import org.spongepowered.api.world.weather.WeatherUniverse;
@@ -342,4 +343,12 @@ public interface World extends Extent, WeatherUniverse, Viewer, ContextSource, M
      * @throws IOException If the save failed
      */
     boolean save() throws IOException;
+
+    /**
+     * Gets the structure manager for this world.
+     * 
+     * @return The sturcture manager
+     */
+    StructureManager getStructureManager();
+
 }
