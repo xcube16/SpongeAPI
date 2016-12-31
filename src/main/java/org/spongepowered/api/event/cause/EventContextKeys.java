@@ -35,6 +35,7 @@ public final class EventContextKeys {
     public static final String THROWER = "Thrower";
     public static final String PLAYER_SIMULATED = "PlayerSimulated";
     public static final String SERVICE_MANAGER = "ServiceManager";
+    public static final String SPAWN_TYPE = "SpawnType";
 
     private EventContextKeys() {
     }

@@ -79,14 +79,33 @@ public interface CauseStackManager {
 
     /**
      * Pushes a frame of the current cause stack and context state.
+     * 
+     * @return A handle for the frame which must be passed back to pop the frame
+     *         from the stack
      */
-    void pushCauseFrame();
+    Object pushCauseFrame();
 
     /**
      * Replaces the current cause stack and context with the cause frame at the
      * top of the frame stack.
+     * 
+     * <p>The frame handle is required to ensure that frames are popped of in
+     * order and are not left in the stack. If an attempt is made to pop a frame
+     * which is not the head of the frame stack then an error will be thrown as
+     * this indicates that a frame was not popped properly.</p>
+     * 
+     * @param handle The frame handle to pop
      */
-    void popCauseFrame();
+    void popCauseFrame(Object handle);
+
+    /**
+     * Returns an {@link AutoCloseable} frame handle which should be used in a
+     * try-with-resource block the frame will be automatically popped from the
+     * frame stack when the handle is closed.
+     * 
+     * @return The frame handle
+     */
+    AutoCloseable createCauseFrame();
 
     /**
      * Adds the given object to the current context under the given key.
