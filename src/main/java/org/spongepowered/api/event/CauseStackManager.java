@@ -47,11 +47,11 @@ import java.util.Optional;
 public interface CauseStackManager {
 
     /**
-     * Creates a new {@link Cause} object from the current cause stack.
+     * Gets the current {@link Cause} object from the current cause stack.
      * 
-     * @return A new cause of the current stack.
+     * @return A cause of the current stack.
      */
-    Cause createCauseFromCurrentState();
+    Cause getCurrentCause();
 
     /**
      * Gets an {@link EventContext} object on the current contextual
@@ -76,6 +76,17 @@ public interface CauseStackManager {
      * @return The last pushed object
      */
     Object popCause();
+
+    /**
+     * Pushes a frame of the current cause stack and context state.
+     */
+    void pushCauseFrame();
+
+    /**
+     * Replaces the current cause stack and context with the cause frame at the
+     * top of the frame stack.
+     */
+    void popCauseFrame();
 
     /**
      * Adds the given object to the current context under the given key.

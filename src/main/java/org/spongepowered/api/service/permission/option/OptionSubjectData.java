@@ -24,7 +24,7 @@
  */
 package org.spongepowered.api.service.permission.option;
 
-import org.spongepowered.api.service.context.Context;
+import org.spongepowered.api.service.context.ServiceContext;
 import org.spongepowered.api.service.permission.SubjectData;
 
 import java.util.Map;
@@ -32,12 +32,14 @@ import java.util.Set;
 
 public interface OptionSubjectData extends SubjectData {
 
+    // TODO why are these overriden?
     /**
      * Return all options for all context combinations currently registered.
      *
      * @return An immutable snapshot of all options data
      */
-    Map<Set<Context>, Map<String, String>> getAllOptions();
+    @Override
+    Map<Set<ServiceContext>, Map<String, String>> getAllOptions();
 
     /**
      * Gets options for a specific context combination.
@@ -45,7 +47,8 @@ public interface OptionSubjectData extends SubjectData {
      * @param contexts The context combination to get options for
      * @return All available options, returning an empty map if none are present
      */
-    Map<String, String> getOptions(Set<Context> contexts);
+    @Override
+    Map<String, String> getOptions(Set<ServiceContext> contexts);
 
     /**
      * Sets a specific option to a value.
@@ -55,7 +58,8 @@ public interface OptionSubjectData extends SubjectData {
      * @param value The value to set.
      * @return Whether the operation was successful
      */
-    boolean setOption(Set<Context> contexts, String key, String value);
+    @Override
+    boolean setOption(Set<ServiceContext> contexts, String key, String value);
 
     /**
      * Clear all options in the given context combination.
@@ -63,12 +67,14 @@ public interface OptionSubjectData extends SubjectData {
      * @param contexts The context combination
      * @return Whether the operation was successful (any options were removed)
      */
-    boolean clearOptions(Set<Context> contexts);
+    @Override
+    boolean clearOptions(Set<ServiceContext> contexts);
 
     /**
      * Clear all options.
      *
      * @return Whether the operation was successful
      */
+    @Override
     boolean clearOptions();
 }
