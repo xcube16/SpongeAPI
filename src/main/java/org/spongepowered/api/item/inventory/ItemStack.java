@@ -40,8 +40,8 @@ import org.spongepowered.api.data.manipulator.ImmutableDataManipulator;
 import org.spongepowered.api.data.persistence.DataBuilder;
 import org.spongepowered.api.data.value.BaseValue;
 import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.text.translation.Translatable;
-import org.spongepowered.api.util.ResettableBuilder;
 
 import java.util.Map;
 import java.util.Set;
@@ -78,6 +78,13 @@ public interface ItemStack extends DataHolder, Translatable {
     static ItemStack of(ItemType itemType, int quantity) {
         return builder().itemType(itemType).quantity(quantity).build();
     }
+
+    /**
+     * Returns an empty {@link ItemStack}
+     *
+     * @return The empty ItemStack
+     */
+    static ItemStack empty() { return builder().itemType(ItemTypes.AIR).build(); }
 
 
     /**
@@ -136,6 +143,13 @@ public interface ItemStack extends DataHolder, Translatable {
      */
     boolean equalTo(ItemStack that);
 
+    /**
+     * Returns true if this ItemStack is of Type air or has 0 or less quantity.
+     *
+     * @return True if this ItemStack is empty
+     */
+    boolean isEmpty();
+
     @Override
     ItemStack copy();
     
@@ -155,9 +169,10 @@ public interface ItemStack extends DataHolder, Translatable {
         ItemType getCurrentItem();
 
         /**
-         * Sets the quantity of the item stack.
+         * Sets the quantity of the item stack. A quantity of 0 will always yield an
+         * empty Air ItemStack
          *
-         * @param quantity The quantity of the item stack
+         * @param quantity The quantity of the item stack. Negative quantities are not allowed.
          * @return This builder, for chaining
          * @throws IllegalArgumentException If the quantity is outside the allowed bounds
          */
