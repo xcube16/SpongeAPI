@@ -68,6 +68,15 @@ public interface UserStorageService {
 
     /**
      * Gets or creates a persistent {@link User} associated with the given
+     * name.
+     *
+     * @param name The name
+     * @return The user object
+     */
+    User getOrCreate(String name);
+
+    /**
+     * Gets or creates a persistent {@link User} associated with the given
      * {@link GameProfile}.
      *
      * <p>To obtain a {@link GameProfile}, use the {@link GameProfileManager}.
