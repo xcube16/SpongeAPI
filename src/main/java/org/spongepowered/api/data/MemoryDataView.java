@@ -193,21 +193,21 @@ public class MemoryDataView implements DataView {
             if (this.safety == SafetyMode.ALL_DATA_CLONED) {
                 if (object.getClass().isArray()) {
                     if (object instanceof byte[]) {
-                        return Optional.<Object>of(ArrayUtils.clone((byte[]) object));
+                        return Optional.of(((byte[]) object).clone());
                     } else if (object instanceof short[]) {
-                        return Optional.<Object>of(ArrayUtils.clone((short[]) object));
+                        return Optional.of(((short[]) object).clone());
                     } else if (object instanceof int[]) {
-                        return Optional.<Object>of(ArrayUtils.clone((int[]) object));
+                        return Optional.of(((int[]) object).clone());
                     } else if (object instanceof long[]) {
-                        return Optional.<Object>of(ArrayUtils.clone((long[]) object));
+                        return Optional.of(((long[]) object).clone());
                     } else if (object instanceof float[]) {
-                        return Optional.<Object>of(ArrayUtils.clone((float[]) object));
+                        return Optional.of(((float[]) object).clone());
                     } else if (object instanceof double[]) {
-                        return Optional.<Object>of(ArrayUtils.clone((double[]) object));
+                        return Optional.of(((double[]) object).clone());
                     } else if (object instanceof boolean[]) {
-                        return Optional.<Object>of(ArrayUtils.clone((boolean[]) object));
+                        return Optional.of(((boolean[]) object).clone());
                     } else {
-                        return Optional.<Object>of(ArrayUtils.clone((Object[]) object));
+                        return Optional.of(((Object[]) object).clone());
                     }
                 }
             }
@@ -227,7 +227,6 @@ public class MemoryDataView implements DataView {
     public DataView set(DataQuery path, Object value) {
         checkNotNull(path, "path");
         checkNotNull(value, "value");
-        checkState(this.container != null);
 
         @Nullable DataManager manager;
 
@@ -241,22 +240,13 @@ public class MemoryDataView implements DataView {
         List<String> parts = path.getParts();
         String key = parts.get(0);
         if (parts.size() > 1) {
-            DataQuery subQuery = of(key);
-            Optional<DataView> subViewOptional = this.getUnsafeView(subQuery);
-            DataView subView;
-            if (!subViewOptional.isPresent()) {
-                this.createView(subQuery);
-                subView = (DataView) this.map.get(key);
-            } else {
-                subView = subViewOptional.get();
-            }
-            subView.set(path.popFirst(), value);
+            // Get or create a DataView at key, and recursively call set() on that DataView
+            getUnsafeView(key).orElseGet(() -> createView(of(key))).set(path.popFirst(), value);
             return this;
         }
         if (value instanceof DataView) {
             checkArgument(value != this, "Cannot set a DataView to itself.");
-            // always have to copy a data view to avoid overwriting existing
-            // views and to set the interior path correctly.
+            // always have to copy a data view to set the interior path correctly.
             copyDataView(path, (DataView) value);
         } else if (value instanceof DataSerializable) {
             DataContainer valueContainer = ((DataSerializable) value).toContainer();
@@ -400,9 +390,9 @@ public class MemoryDataView implements DataView {
     }
 
     private void copyDataView(DataQuery path, DataView value) {
-        Collection<DataQuery> valueKeys = value.getKeys(true);
-        for (DataQuery oldKey : valueKeys) {
-            set(path.then(oldKey), value.get(oldKey).get());
+        DataView subview = createView(path);
+        for (DataQuery key : value.getKeys(false)) {
+            subview.set(key, value.get(key).get());
         }
     }
 
@@ -435,20 +425,20 @@ public class MemoryDataView implements DataView {
         checkArgument(sz != 0, "The size of the query must be at least 1");
 
         String key = queryParts.get(0);
-        DataQuery keyQuery = of(key);
 
+        
         if (sz == 1) {
-            DataView result = new MemoryDataView(this, keyQuery, this.safety);
+            DataView result = new MemoryDataView(this, of(key), this.safety);
             this.map.put(key, result);
             return result;
         }
-        DataQuery subQuery = path.popFirst();
+
         DataView subView = (DataView) this.map.get(key);
         if (subView == null) {
-            subView = new MemoryDataView(this.parent, keyQuery, this.safety);
+            subView = new MemoryDataView(this, of(key), this.safety);
             this.map.put(key, subView);
         }
-        return subView.createView(subQuery);
+        return subView.createView(path.popFirst());
     }
 
     @Override
