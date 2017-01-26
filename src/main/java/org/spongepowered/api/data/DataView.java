@@ -42,6 +42,32 @@ import java.util.Set;
  * Represents an object of data represented by a map.
  * <p>DataViews always exist within a {@link DataContainer} and can be used
  * for serialization.</p>
+ *
+ * Structure Allowed Types:<br/>
+ * * {@link DataView}<br/>
+ * * {@link List}&lt;Structure Type or Optimized List Type&gt;<br/>
+ *
+ * Primitive Allowed Types:<br/>
+ * * {@link Boolean}<br/>
+ * * {@link Byte}<br/>
+ * * {@link Character}<br/>
+ * * {@link Short}<br/>
+ * * {@link Integer}<br/>
+ * * {@link Long}<br/>
+ * * {@link Float}<br/>
+ * * {@link Double}<br/>
+ * * {@link String}<br/>
+ *
+ * Optimized List Allowed Types:<br/>
+ * * boolean[]<br/>
+ * * byte[]<br/>
+ * * char[]<br/>
+ * * short[]<br/>
+ * * int[]<br/>
+ * * long[]<br/>
+ * * float[]<br/>
+ * * double[]<br/>
+ * * String[]<br/>
  */
 public interface DataView {
 
@@ -174,14 +200,19 @@ public interface DataView {
      * Gets an object from the desired path. If the path is not defined,
      * an absent Optional is returned.
      *
+     * The returned Object shall be one of the Allowed Types.
+     *
      * @param path The path to the Object
      * @return The Object, if available
      */
     Optional<Object> get(DataQuery path);
 
     /**
-     * Sets the given Object value according to the given path relative to
-     * this {@link DataView}'s path.
+     * <p>Sets the given Object value according to the given path relative to
+     * this {@link DataView}'s path.</p>
+     *
+     * <p>The value must be one of the Allowed Types, {@link DataSerializable}, {@link CatalogType},
+     * or have a {@link DataTranslator} registered in Sponge's {@link DataManager}.</p>
      *
      * @param path The path of the object to set
      * @param value The value of the data
@@ -190,8 +221,11 @@ public interface DataView {
     DataView set(DataQuery path, Object value);
 
     /**
-     * Sets the given {@link Key}ed value according to the provided
-     * {@link Key}'s {@link Key#getQuery()}.
+     * <p>Sets the given {@link Key}ed value according to the provided
+     * {@link Key}'s {@link Key#getQuery()}.</p>
+     *
+     * <p>The value must be one of the Allowed Types, {@link DataSerializable}, {@link CatalogType},
+     * or have a {@link DataTranslator} registered in Sponge's {@link DataManager}.</p>
      *
      * @param key The key of the value to set
      * @param value The value of the data
