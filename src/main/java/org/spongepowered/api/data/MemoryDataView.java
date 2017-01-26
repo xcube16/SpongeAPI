@@ -66,6 +66,7 @@ public class MemoryDataView implements DataView {
 
     protected final Map<String, Object> map = Maps.newLinkedHashMap();
     private final DataContainer container;
+    @Nullable
     private final DataView parent;
     private final DataQuery path;
     private final DataView.SafetyMode safety;
@@ -73,7 +74,7 @@ public class MemoryDataView implements DataView {
     protected MemoryDataView(DataView.SafetyMode safety) {
         checkState(this instanceof DataContainer, "Cannot construct a root MemoryDataView without a container!");
         this.path = of();
-        this.parent = this;
+        this.parent = null;
         this.container = (DataContainer) this;
         this.safety = checkNotNull(safety, "Safety mode");
     }
@@ -145,8 +146,13 @@ public class MemoryDataView implements DataView {
         checkNotNull(path, "path");
         List<String> queryParts = path.getParts();
 
+        int sz = queryParts.size();
+        if (sz == 0) {
+            return true;
+        }
+
         String key = queryParts.get(0);
-        if (queryParts.size() == 1) {
+        if (sz == 1) {
             return this.map.containsKey(key);
         }
         Optional<DataView> subViewOptional = this.getUnsafeView(key);
@@ -181,7 +187,7 @@ public class MemoryDataView implements DataView {
         int sz = queryParts.size();
 
         if (sz == 0) {
-            return Optional.<Object>of(this);
+            return Optional.of(this);
         }
 
         String key = queryParts.get(0);
@@ -426,7 +432,7 @@ public class MemoryDataView implements DataView {
 
         String key = queryParts.get(0);
 
-        
+
         if (sz == 1) {
             DataView result = new MemoryDataView(this, of(key), this.safety);
             this.map.put(key, result);
@@ -561,10 +567,10 @@ public class MemoryDataView implements DataView {
         Optional<Object> val = get(path);
         if (val.isPresent()) {
             if (val.get() instanceof List<?>) {
-                return Optional.<List<?>>of(Lists.newArrayList((List<?>) val.get()));
+                return Optional.of(Lists.newArrayList((List<?>) val.get()));
             }
             if (val.get() instanceof Object[]) {
-                return Optional.<List<?>>of(Lists.newArrayList((Object[]) val.get()));
+                return Optional.of(Lists.newArrayList((Object[]) val.get()));
             }
         }
         return Optional.empty();
@@ -683,7 +689,7 @@ public class MemoryDataView implements DataView {
 
     @Override
     public Optional<List<Map<?, ?>>> getMapList(DataQuery path) {
-        return getUnsafeList(path).<List<Map<?, ?>>>map(list ->
+        return getUnsafeList(path).map(list ->
                 list.stream()
                         .filter(obj -> obj instanceof Map<?, ?>)
                         .map(obj -> (Map<?, ?>) obj)
@@ -788,7 +794,7 @@ public class MemoryDataView implements DataView {
     @Override
     public DataContainer copy() {
         final DataContainer container = new MemoryDataContainer(this.safety);
-        getKeys(false).stream()
+        getKeys(false)
             .forEach(query ->
                 get(query).ifPresent(obj ->
                         container.set(query, obj)
@@ -800,7 +806,7 @@ public class MemoryDataView implements DataView {
     @Override
     public DataContainer copy(SafetyMode safety) {
         final DataContainer container = new MemoryDataContainer(safety);
-        getKeys(false).stream()
+        getKeys(false)
             .forEach(query ->
                 get(query).ifPresent(obj ->
                         container.set(query, obj)
