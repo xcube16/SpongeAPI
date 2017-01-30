@@ -448,65 +448,8 @@ public class MemoryDataView implements DataView {
     }
 
     @Override
-    public DataView createView(DataQuery path, Map<?, ?> map) {
-        checkNotNull(path, "path");
-        DataView section = createView(path);
-
-        for (Map.Entry<?, ?> entry : map.entrySet()) {
-            if (entry.getValue() instanceof Map) {
-                section.createView(of('.', entry.getKey().toString()), (Map<?, ?>) entry.getValue());
-            } else {
-                section.set(of('.', entry.getKey().toString()), entry.getValue());
-            }
-        }
-        return section;
-    }
-
-    @Override
     public Optional<DataView> getView(DataQuery path) {
         return get(path).filter(obj -> obj instanceof DataView).map(obj -> (DataView) obj);
-    }
-
-    @Override
-    public Optional<? extends Map<?, ?>> getMap(DataQuery path) {
-        Optional<Object> val = get(path);
-        if (val.isPresent()) {
-            if (val.get() instanceof DataView) {
-                ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
-                for (Map.Entry<DataQuery, Object> entry : ((DataView) val.get()).getValues(false).entrySet()) {
-                    builder.put(entry.getKey().asString('.'), ensureMappingOf(entry.getValue()));
-                }
-                return Optional.of(builder.build());
-            } else if (val.get() instanceof Map) {
-                return Optional.of((Map<?, ?>) ensureMappingOf(val.get()));
-            }
-        }
-        return Optional.empty();
-    }
-
-    @SuppressWarnings("rawtypes")
-    private Object ensureMappingOf(Object object) {
-        if (object instanceof DataView) {
-            final ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
-            for (Map.Entry<DataQuery, Object> entry : ((DataView) object).getValues(false).entrySet()) {
-                builder.put(entry.getKey().asString('.'), ensureMappingOf(entry.getValue()));
-            }
-            return builder.build();
-        } else if (object instanceof Map) {
-            final ImmutableMap.Builder<Object, Object> builder = ImmutableMap.builder();
-            for (Map.Entry<?, ?> entry : ((Map<?, ?>) object).entrySet()) {
-                builder.put(entry.getKey().toString(), ensureMappingOf(entry.getValue()));
-            }
-            return builder.build();
-        } else if (object instanceof Collection) {
-            final ImmutableList.Builder<Object> builder = ImmutableList.builder();
-            for (Object entry : (Collection) object) {
-                builder.add(ensureMappingOf(entry));
-            }
-            return builder.build();
-        } else {
-            return object;
-        }
     }
 
     private Optional<DataView> getUnsafeView(DataQuery path) {
@@ -683,16 +626,6 @@ public class MemoryDataView implements DataView {
                         .map(Coerce::asDouble)
                         .filter(Optional::isPresent)
                         .map(Optional::get)
-                        .collect(Collectors.toList())
-        );
-    }
-
-    @Override
-    public Optional<List<Map<?, ?>>> getMapList(DataQuery path) {
-        return getUnsafeList(path).map(list ->
-                list.stream()
-                        .filter(obj -> obj instanceof Map<?, ?>)
-                        .map(obj -> (Map<?, ?>) obj)
                         .collect(Collectors.toList())
         );
     }

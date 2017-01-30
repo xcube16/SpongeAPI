@@ -26,9 +26,13 @@ package org.spongepowered.api.data;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.persistence.DataBuilder;
+import org.spongepowered.api.data.persistence.InvalidDataException;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 class SimpleData implements DataSerializable {
 
@@ -94,4 +98,11 @@ class SimpleData implements DataSerializable {
                 && Objects.equal(this.testString, other.testString)
                 && Arrays.equals(this.testList, other.testList);
     }
+
+    public static final DataBuilder<SimpleData> builder = container -> Optional.of(new SimpleData(
+            container.getInt(DataQuery.of("myInt")).get(),
+            container.getDouble(DataQuery.of("myDouble")).get(),
+            container.getString(DataQuery.of("myString")).get(),
+            container.getStringList(DataQuery.of("myStringList")).get()
+    ));
 }

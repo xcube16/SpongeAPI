@@ -26,6 +26,7 @@ package org.spongepowered.api.data;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.common.collect.ImmutableMap;
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.persistence.DataBuilder;
@@ -211,8 +212,12 @@ public interface DataView {
      * <p>Sets the given Object value according to the given path relative to
      * this {@link DataView}'s path.</p>
      *
-     * <p>The value must be one of the Allowed Types, {@link DataSerializable}, {@link CatalogType},
-     * or have a {@link DataTranslator} registered in Sponge's {@link DataManager}.</p>
+     * <p>The value must be one of<br/>
+     * * Allowed Types<br/>
+     * * {@link DataSerializable}<br/>
+     * * {@link CatalogType}<br/>
+     * * have a {@link DataTranslator} registered in Sponge's {@link DataManager}<br/>
+     * * {@link Map} (keys will be turned into queries vea toString())</p>
      *
      * @param path The path of the object to set
      * @param value The value of the data
@@ -256,19 +261,6 @@ public interface DataView {
     DataView createView(DataQuery path);
 
     /**
-     * Creates a new {@link DataView} with the given data at the desired
-     * path.
-     *
-     * <p>If any data existed at the given path, that data will be overwritten
-     * with the newly constructed {@link DataView}.</p>
-     *
-     * @param path The path of the new view
-     * @param map The data to store in the new view
-     * @return The new view
-     */
-    DataView createView(DataQuery path, Map<?, ?> map);
-
-    /**
      * Gets the {@link DataView} by path, if available.
      *
      * <p>If a {@link DataView} does not exist, or the data residing at
@@ -279,17 +271,6 @@ public interface DataView {
      * @return The data view, if available
      */
     Optional<DataView> getView(DataQuery path);
-
-    /**
-     * Gets the underlying {@link Map} by path, if available.
-     *
-     * <p>If a {@link Map} does not exist, or data residing at the path is not
-     * an instance of a {@link Map}, an absent is returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The map, if available
-     */
-    Optional<? extends Map<?, ?>> getMap(DataQuery path);
 
     /**
      * Gets the {@link Boolean} by path, if available.
@@ -508,18 +489,6 @@ public interface DataView {
     Optional<List<Double>> getDoubleList(DataQuery path);
 
     /**
-     * Gets the {@link List} of {@link Map} by path, if available.
-     *
-     * <p>If a {@link List} of {@link Map} does not exist, or the data
-     * residing at the path is not an instance of a {@link List} of
-     * {@link Map}, an absent is returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The list of maps, if available
-     */
-    Optional<List<Map<?, ?>>> getMapList(DataQuery path);
-
-    /**
      * Gets the {@link List} of {@link DataView} by path, if available.
      *
      * <p>If a {@link List} of {@link DataView} does not exist, or the data
@@ -676,7 +645,6 @@ public interface DataView {
      * The safety mode of the container.
      */
     enum SafetyMode {
-
         /**
          * All data added to the container will be cloned for safety.
          */
