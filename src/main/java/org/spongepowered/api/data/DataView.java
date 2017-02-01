@@ -201,7 +201,12 @@ public interface DataView {
      * Gets an object from the desired path. If the path is not defined,
      * an absent Optional is returned.
      *
-     * The returned Object shall be one of the Allowed Types.
+     * <p>The returned Object shall be one of the Allowed Types.</p>
+     *
+     * <p>Warning: Inconsistency leak!
+     * Only use this method if you don't care what specific type the returned Object is.
+     * Example: If you set an Integer, get() may not return an Integer,
+     * but another Allowed Type that can losslessly be coerced into an Integer!</p>
      *
      * @param path The path to the Object
      * @return The Object, if available
@@ -229,8 +234,12 @@ public interface DataView {
      * <p>Sets the given {@link Key}ed value according to the provided
      * {@link Key}'s {@link Key#getQuery()}.</p>
      *
-     * <p>The value must be one of the Allowed Types, {@link DataSerializable}, {@link CatalogType},
-     * or have a {@link DataTranslator} registered in Sponge's {@link DataManager}.</p>
+     * <p>The value must be one of<br/>
+     * * Allowed Types<br/>
+     * * {@link DataSerializable}<br/>
+     * * {@link CatalogType}<br/>
+     * * have a {@link DataTranslator} registered in Sponge's {@link DataManager}<br/>
+     * * {@link Map} (keys will be turned into queries vea toString())</p>
      *
      * @param key The key of the value to set
      * @param value The value of the data

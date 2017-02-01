@@ -35,7 +35,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.apache.commons.lang3.ArrayUtils;
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Key;
@@ -113,15 +112,12 @@ public class MemoryDataView implements DataView {
         ImmutableSet.Builder<DataQuery> builder = ImmutableSet.builder();
 
         for (Map.Entry<String, Object> entry : this.map.entrySet()) {
-            builder.add(of(entry.getKey()));
-        }
-        if (deep) {
-            for (Map.Entry<String, Object> entry : this.map.entrySet()) {
-                if (entry.getValue() instanceof DataView) {
-                    for (DataQuery query : ((DataView) entry.getValue()).getKeys(true)) {
-                        builder.add(of(entry.getKey()).then(query));
-                    }
+            if (deep && entry.getValue() instanceof DataView) {
+                for (DataQuery query : ((DataView) entry.getValue()).getKeys(true)) {
+                    builder.add(of(entry.getKey()).then(query));
                 }
+            } else {
+                builder.add(of(entry.getKey()));
             }
         }
         return builder.build();
@@ -234,15 +230,6 @@ public class MemoryDataView implements DataView {
         checkNotNull(path, "path");
         checkNotNull(value, "value");
 
-        @Nullable DataManager manager;
-
-        // TODO: this call to getDataManager each set can be cleaned up
-        try {
-            manager = Sponge.getDataManager();
-        } catch (Exception e) {
-            manager = null;
-        }
-
         List<String> parts = path.getParts();
         String key = parts.get(0);
         if (parts.size() > 1) {
@@ -250,51 +237,52 @@ public class MemoryDataView implements DataView {
             getUnsafeView(key).orElseGet(() -> createView(of(key))).set(path.popFirst(), value);
             return this;
         }
-        if (value instanceof DataView) {
-            checkArgument(value != this, "Cannot set a DataView to itself.");
-            // always have to copy a data view to set the interior path correctly.
+
+        boolean copy = this.safety != SafetyMode.NO_DATA_CLONED;
+
+        if (isPrimitive(value)) { // Primitive Allowed Types
+            this.map.put(key, value);
+
+        } else if (value instanceof boolean[]) { // Optimized List Allowed Types
+            this.map.put(key, copy ? ((boolean[]) value).clone() : value);
+        } else if (value instanceof byte[]) {
+            this.map.put(key, copy ? ((byte[])    value).clone() : value);
+        } else if (value instanceof char[]) {
+            this.map.put(key, copy ? ((char[])    value).clone() : value);
+        } else if (value instanceof short[]) {
+            this.map.put(key, copy ? ((short[])   value).clone() : value);
+        } else if (value instanceof int[]) {
+            this.map.put(key, copy ? ((int[])     value).clone() : value);
+        } else if (value instanceof long[]) {
+            this.map.put(key, copy ? ((long[])    value).clone() : value);
+        } else if (value instanceof float[]) {
+            this.map.put(key, copy ? ((float[])   value).clone() : value);
+        } else if (value instanceof double[]) {
+            this.map.put(key, copy ? ((double[])  value).clone() : value);
+        } else if (value instanceof String[]){
+            this.map.put(key, copy ? ((String[])  value).clone() : value);
+
+        } else if (value instanceof DataView) { // Structure Allowed Types
             copyDataView(path, (DataView) value);
-        } else if (value instanceof DataSerializable) {
-            DataContainer valueContainer = ((DataSerializable) value).toContainer();
-            checkArgument(!(valueContainer).equals(this), "Cannot insert self-referencing DataSerializable");
-            // see above for why this is copied
-            copyDataView(path, valueContainer);
-        } else if (value instanceof CatalogType) {
-            return set(path, ((CatalogType) value).getId());
-        } else if (manager != null && manager.getTranslator(value.getClass()).isPresent()) {
-            DataTranslator serializer = manager.getTranslator(value.getClass()).get();
-            final DataContainer container = serializer.translate(value);
-            checkArgument(!container.equals(this), "Cannot insert self-referencing Objects!");
-            // see above for why this is copied
-            copyDataView(path, container);
         } else if (value instanceof Collection) {
             setCollection(key, (Collection) value);
+
+        } else if (value instanceof DataSerializable) {
+            copyDataView(path, ((DataSerializable) value).toContainer());
+
+        } else if (value instanceof CatalogType) {
+            this.map.put(key, ((CatalogType) value).getId());
+
         } else if (value instanceof Map) {
             setMap(key, (Map) value);
-        } else if (value.getClass().isArray()) {
-            if (this.safety == SafetyMode.ALL_DATA_CLONED || this.safety == SafetyMode.CLONED_ON_SET) {
-                if (value instanceof byte[]) {
-                    this.map.put(key, ArrayUtils.clone((byte[]) value));
-                } else if (value instanceof short[]) {
-                    this.map.put(key, ArrayUtils.clone((short[]) value));
-                } else if (value instanceof int[]) {
-                    this.map.put(key, ArrayUtils.clone((int[]) value));
-                } else if (value instanceof long[]) {
-                    this.map.put(key, ArrayUtils.clone((long[]) value));
-                } else if (value instanceof float[]) {
-                    this.map.put(key, ArrayUtils.clone((float[]) value));
-                } else if (value instanceof double[]) {
-                    this.map.put(key, ArrayUtils.clone((double[]) value));
-                } else if (value instanceof boolean[]) {
-                    this.map.put(key, ArrayUtils.clone((boolean[]) value));
-                } else {
-                    this.map.put(key, ArrayUtils.clone((Object[]) value));
-                }
-            } else {
-                this.map.put(key, value);
-            }
+
         } else {
-            this.map.put(key, value);
+            Optional<? extends DataTranslator> translator = Sponge.getDataManager().getTranslator(value.getClass());
+            if (translator.isPresent()) {
+                copyDataView(path, translator.get().translate(value));
+            } else {
+                throw new IllegalArgumentException(value.getClass() + " can not be serialized");
+            }
         }
         return this;
     }
@@ -302,6 +290,18 @@ public class MemoryDataView implements DataView {
     @Override
     public <E> DataView set(Key<? extends BaseValue<E>> key, E value) {
         return set(checkNotNull(key, "Key was null!").getQuery(), value);
+    }
+
+    private boolean isPrimitive(Object value) {
+         return value instanceof Boolean ||
+                value instanceof Byte ||
+                value instanceof Character ||
+                value instanceof Short ||
+                value instanceof Integer ||
+                value instanceof Long ||
+                value instanceof Float ||
+                value instanceof Double ||
+                value instanceof String;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -395,7 +395,12 @@ public class MemoryDataView implements DataView {
         }
     }
 
+    /**
+     * {@code path} must be 1 level
+     */
     private void copyDataView(DataQuery path, DataView value) {
+        checkArgument(!value.equals(this), "Cannot insert self-referencing Objects!");
+
         DataView subview = createView(path);
         for (DataQuery key : value.getKeys(false)) {
             subview.set(key, value.get(key).get());
