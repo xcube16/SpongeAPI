@@ -53,7 +53,25 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path relative to this data view
      * @return True if the path exists
      */
-    boolean contains(DataQuery path);
+    default boolean contains(DataQuery path) {
+        checkNotNull(path, "path");
+        List<String> queryParts = path.getParts();
+
+        int sz = queryParts.size();
+        if (sz == 0) {
+            return true;
+        }
+
+        K key = this.key(queryParts.get(0));
+        if (sz == 1) {
+            return this.contains(key);
+        }
+
+        Optional<Object> optional = this.get(key);
+        return optional.isPresent()
+                && optional.get() instanceof DataQueryable
+                && ((DataQueryable) optional.get()).contains(path.popFirst());
+    }
 
     /**
      * Returns whether this {@link DataView} contains an entry for all
@@ -63,7 +81,20 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param paths The additional paths to check
      * @return True if all paths exist
      */
-    boolean contains(DataQuery path, DataQuery... paths);
+    default boolean contains(DataQuery path, DataQuery... paths) {
+        checkNotNull(path, "DataQuery cannot be null!");
+        checkNotNull(paths, "DataQuery varargs cannot be null!");
+
+        if (!this.contains(path)) {
+            return false;
+        }
+        for (DataQuery query : paths) {
+            if (!this.contains(query)) {
+                return false;
+            }
+        }
+        return true; // we contain all paths :)
+    }
 
     /**
      * Returns whether this {@link DataView} contains the given {@link Key}'s
@@ -73,7 +104,7 @@ public interface DataQueryable<K> extends DataView<K> {
      * @return True if the path exists
      */
     default boolean contains(Key<?> key) {
-        return contains(checkNotNull(key, "Key cannot be null!").getQuery());
+        return this.contains(checkNotNull(key, "Key cannot be null!").getQuery());
     }
 
     /**
@@ -87,14 +118,16 @@ public interface DataQueryable<K> extends DataView<K> {
     default boolean contains(Key<?> key, Key<?>... keys) {
         checkNotNull(key, "Key cannot be null!");
         checkNotNull(keys, "Keys cannot be null!");
-        if (keys.length == 0) {
-            return contains(key.getQuery());
+
+        if (!this.contains(key)) {
+            return false;
         }
-        List<DataQuery> queries = new ArrayList<>();
-        for (Key<?> arrayKey : keys) {
-            queries.add(checkNotNull(arrayKey, "Cannot have a null key!").getQuery());
+        for (Key<?> akey : keys) {
+            if (!this.contains(checkNotNull(akey, "Cannot have a null key!").getQuery())) {
+                return false;
+            }
         }
-        return contains(key.getQuery(), queries.toArray(new DataQuery[queries.size()]));
+        return true; // we contain all keys :)
     }
 
     /**
