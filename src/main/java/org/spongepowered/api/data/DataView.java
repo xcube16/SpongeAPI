@@ -24,20 +24,13 @@
  */
 package org.spongepowered.api.data;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import com.google.common.collect.ImmutableMap;
 import org.spongepowered.api.CatalogType;
-import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.persistence.DataBuilder;
 import org.spongepowered.api.data.persistence.DataTranslator;
-import org.spongepowered.api.data.value.BaseValue;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * Represents an object of data represented by a map.
@@ -70,7 +63,7 @@ import java.util.Set;
  * * double[]<br/>
  * * String[]<br/>
  */
-public interface DataView {
+public interface DataView<K> {
 
     /**
      * Gets the parent container of this DataView.
@@ -118,87 +111,15 @@ public interface DataView {
     Optional<DataView> getParent();
 
     /**
-     * Gets a collection containing all keys in this {@link DataView}.
+     * Returns whether this {@link DataView} contains the given key.
      *
-     * <p>If deep is set to true, then this will contain all the keys
-     * within any child {@link DataView}s (and their children, etc).
-     * These will be in a valid path notation for you to use.</p>
-     *
-     * <p>If deep is set to false, then this will contain only the keys
-     * of any direct children, and not their own children.</p>
-     *
-     * @param deep Whether or not to get all children keys
-     * @return A set of current keys in this container
+     * @param key The key
+     * @return True if the key exists
      */
-    Set<DataQuery> getKeys(boolean deep);
+    boolean contains(K key);
 
     /**
-     * Gets a Map containing all keys and their values for this {@link DataView}.
-     *
-     * <p>If deep is set to true, then this will contain all the keys and
-     * values within any child {@link DataView}s (and their children,
-     * etc). These keys will be in a valid path notation for you to use.</p>
-     *
-     * <p>If deep is set to false, then this will contain only the keys and
-     * values of any direct children, and not their own children.</p>
-     *
-     * @param deep Whether or not to get a deep list of all children or not
-     * @return Map of keys and values of this container
-     */
-    Map<DataQuery, Object> getValues(boolean deep);
-
-    /**
-     * Returns whether this {@link DataView} contains the given path.
-     *
-     * @param path The path relative to this data view
-     * @return True if the path exists
-     */
-    boolean contains(DataQuery path);
-
-    /**
-     * Returns whether this {@link DataView} contains an entry for all
-     * provided {@link DataQuery} objects.
-     *
-     * @param path The path relative to this data view
-     * @param paths The additional paths to check
-     * @return True if all paths exist
-     */
-    boolean contains(DataQuery path, DataQuery... paths);
-
-    /**
-     * Returns whether this {@link DataView} contains the given {@link Key}'s
-     * defaulted {@link DataQuery}.
-     *
-     * @param key The key to get the data path relative to this data view
-     * @return True if the path exists
-     */
-    default boolean contains(Key<?> key) {
-        return contains(checkNotNull(key, "Key cannot be null!").getQuery());
-    }
-
-    /**
-     * Returns whether this {@link DataView} contains the given {@link Key}es
-     * defaulted {@link DataQuery}.
-     *
-     * @param key The key to get the data path relative to this data view
-     * @param keys The additional keys to check
-     * @return True if the path exists
-     */
-    default boolean contains(Key<?> key, Key<?>... keys) {
-        checkNotNull(key, "Key cannot be null!");
-        checkNotNull(keys, "Keys cannot be null!");
-        if (keys.length == 0) {
-            return contains(key.getQuery());
-        }
-        List<DataQuery> queries = new ArrayList<>();
-        for (Key<?> arrayKey : keys) {
-            queries.add(checkNotNull(arrayKey, "Cannot have a null key!").getQuery());
-        }
-        return contains(key.getQuery(), queries.toArray(new DataQuery[queries.size()]));
-    }
-
-    /**
-     * Gets an object from the desired path. If the path is not defined,
+     * Gets an object from the desired key. If the key is not defined,
      * an absent Optional is returned.
      *
      * <p>The returned Object shall be one of the Allowed Types.</p>
@@ -208,14 +129,13 @@ public interface DataView {
      * Example: If you set an Integer, get() may not return an Integer,
      * but another Allowed Type that can losslessly be coerced into an Integer!</p>
      *
-     * @param path The path to the Object
+     * @param key The key to the Object
      * @return The Object, if available
      */
-    Optional<Object> get(DataQuery path);
+    Optional<Object> get(K key);
 
     /**
-     * <p>Sets the given Object value according to the given path relative to
-     * this {@link DataView}'s path.</p>
+     * <p>Sets the value at key to the given Object</p>
      *
      * <p>The value must be one of<br/>
      * * Allowed Types<br/>
@@ -224,392 +144,273 @@ public interface DataView {
      * * have a {@link DataTranslator} registered in Sponge's {@link DataManager}<br/>
      * * {@link Map} (keys will be turned into queries vea toString())</p>
      *
-     * @param path The path of the object to set
+     * @param key The key of the object to set
      * @param value The value of the data
      * @return This view, for chaining
      */
-    DataView set(DataQuery path, Object value);
+    DataView set(K key, Object value);
 
     /**
-     * <p>Sets the given {@link Key}ed value according to the provided
-     * {@link Key}'s {@link Key#getQuery()}.</p>
+     * Removes the data associated with the given key.
      *
-     * <p>The value must be one of<br/>
-     * * Allowed Types<br/>
-     * * {@link DataSerializable}<br/>
-     * * {@link CatalogType}<br/>
-     * * have a {@link DataTranslator} registered in Sponge's {@link DataManager}<br/>
-     * * {@link Map} (keys will be turned into queries vea toString())</p>
-     *
-     * @param key The key of the value to set
-     * @param value The value of the data
-     * @param <E> The type of value
+     * @param key The key of the data to remove
      * @return This view, for chaining
      */
-    <E> DataView set(Key<? extends BaseValue<E>> key, E value);
+    DataView remove(K key);
 
     /**
-     * Removes the data associated to the given path relative to this
-     * {@link DataView}'s path.
-     * <p>Path can not be emtpy, to remove this {@link DataView}, call
-     * the associated parent to remove this views name.</p>
+     * Creates a new {@link DataMap} at the desired key.
+     * <p>If any data existed at the given key, that data will be
+     * overwritten with the newly constructed {@link DataMap}.</p>
      *
-     * @param path The path of data to remove
-     * @return This view, for chaining
+     * @param key The key of the new {@link DataMap}
+     * @return The newly created {@link DataMap}
      */
-    DataView remove(DataQuery path);
+    DataMap createMap(K key);
 
     /**
-     * Creates a new {@link DataView} at the desired path.
-     * <p>If any data existed at the given path, that data will be
-     * overwritten with the newly constructed {@link DataView}.</p>
+     * Creates a new {@link DataList} at the desired key.
+     * <p>If any data existed at the given key, that data will be
+     * overwritten with the newly constructed {@link DataList}.</p>
      *
-     * @param path The path of the new view
-     * @return The newly created view
+     * @param key The key of the new {@link DataList}
+     * @return The newly created {@link DataList}
      */
-    DataView createView(DataQuery path);
+    DataList createList(K key);
 
     /**
-     * Gets the {@link DataView} by path, if available.
+     * Gets the {@link DataMap} by path, if available.
      *
-     * <p>If a {@link DataView} does not exist, or the data residing at
-     * the path is not an instance of a {@link DataView}, an absent is
+     * <p>If a {@link DataMap} does not exist, or the data residing at
+     * the path is not an instance of a {@link DataMap}, an absent is
      * returned.</p>
      *
-     * @param path The path of the value to get
-     * @return The data view, if available
+     * @param key The key to the value to get
+     * @return The {@link DataMap}, if available
      */
-    Optional<DataView> getView(DataQuery path);
+    Optional<DataMap> getMap(K key);
 
     /**
-     * Gets the {@link Boolean} by path, if available.
+     * Gets the {@link DataList} by key, if available.
      *
-     * <p>If a {@link Boolean} does not exist, or the data residing at
-     * the path is not an instance of a {@link Boolean}, an absent is
-     * returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The boolean, if available
-     */
-    Optional<Boolean> getBoolean(DataQuery path);
-
-    /**
-     * Gets the {@link Short} by path, if available.
-     *
-     * <p>If a {@link Short} does not exist, or the data residing at
-     * the path is not an instance of a {@link Short}, an absent is
-     * returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The boolean, if available
-     */
-    Optional<Short> getShort(DataQuery path);
-
-    /**
-     * Gets the {@link Byte} by path, if available.
-     *
-     * <p>If a {@link Byte} does not exist, or the data residing at
-     * the path is not an instance of a {@link Byte}, an absent is
-     * returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The boolean, if available
-     */
-    Optional<Byte> getByte(DataQuery path);
-
-    /**
-     * Gets the {@link Integer} by path, if available.
-     *
-     * <p>If a {@link Integer} does not exist, or the data residing at
-     * the path is not an instance of a {@link Integer}, an absent is
-     * returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The integer, if available
-     */
-    Optional<Integer> getInt(DataQuery path);
-
-    /**
-     * Gets the {@link Long} by path, if available.
-     *
-     * <p>If a {@link Long} does not exist, or the data residing at
-     * the path is not an instance of a {@link Long}, an absent is
-     * returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The long, if available
-     */
-    Optional<Long> getLong(DataQuery path);
-
-    /**
-     * Gets the {@link Float} by path, if available.
-     *
-     * <p>If a {@link Float} does not exist, or the data residing at
-     * the path is not an instance of a {@link Float}, an absent is
-     * returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The boolean, if available
-     */
-    Optional<Float> getFloat(DataQuery path);
-
-    /**
-     * Gets the {@link Double} by path, if available.
-     *
-     * <p>If a {@link Double} does not exist, or the data residing at
-     * the path is not an instance of a {@link Double}, an absent is
-     * returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The double, if available
-     */
-    Optional<Double> getDouble(DataQuery path);
-
-    /**
-     * Gets the {@link String} by path, if available.
-     *
-     * <p>If a {@link String} does not exist, or the data residing at
-     * the path is not an instance of a {@link String}, an absent is
-     * returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The string, if available
-     */
-    Optional<String> getString(DataQuery path);
-
-    /**
-     * Gets the {@link List} of something by path, if available.
-     *
-     * <p>If a {@link List} of something does not exist, or the data
-     * residing at the path is not an instance of a {@link List} of something,
+     * <p>If the data residing at the key is not a
+     * {@link DataList} or Optimized List Allowed Type,
      * an absent is returned.</p>
      *
-     * @param path The path of the value to get
-     * @return The list, if available
+     * <p>Implementation note: If the underlying data is an Optimized List Allowed Type,
+     * it must also be converted into the {@link DataList} in order for mutations to work.<p/>
+     *
+     * @param key The key to the value to get
+     * @return The {@link DataList}, if available
      */
-    Optional<List<?>> getList(DataQuery path);
+    Optional<DataList> getList(K key);
 
     /**
-     * Gets the {@link List} of {@link String} by path, if available.
+     * Gets the {@link Boolean} by key, if available.
      *
-     * <p>If a {@link List} of {@link String} does not exist, or the data
-     * residing at the path is not an instance of a {@link List} of
-     * {@link String}, an absent is returned.</p>
+     * <p>If the data residing at the key is not a {@link Boolean}
+     * and can not be coerced into a {@link Boolean}, an absent is returned.</p>
      *
-     * @param path The path of the value to get
-     * @return The list of strings, if available
+     * @param key The key to the value to get
+     * @return The {@link Boolean}, if available
      */
-    Optional<List<String>> getStringList(DataQuery path);
+    Optional<Boolean> getBoolean(K key);
 
     /**
-     * Gets the {@link List} of {@link Character} by path, if available.
+     * Gets the {@link Byte} by key, if available.
      *
-     * <p>If a {@link List} of {@link Character} does not exist, or the data
-     * residing at the path is not an instance of a {@link List} of
-     * {@link Character}, an absent is returned.</p>
+     * <p>If the data residing at the key is not a {@link Byte}
+     * and can not be coerced into a {@link Byte}, an absent is returned.</p>
      *
-     * @param path The path of the value to get
-     * @return The list of characters, if available
+     * @param key The key to the value to get
+     * @return The {@link Byte}, if available
      */
-    Optional<List<Character>> getCharacterList(DataQuery path);
+    Optional<Byte> getByte(K key);
 
     /**
-     * Gets the {@link List} of {@link Boolean} by path, if available.
+     * Gets the {@link Character} by key, if available.
      *
-     * <p>If a {@link List} of {@link Boolean} does not exist, or the data
-     * residing at the path is not an instance of a {@link List} of
-     * {@link Boolean}, an absent is returned.</p>
+     * <p>If the data residing at the key is not a {@link Character}
+     * and can not be coerced into a {@link Character}, an absent is returned.</p>
      *
-     * @param path The path of the value to get
-     * @return The list of booleans, if available
+     * @param key The key to the value to get
+     * @return The {@link Character}, if available
      */
-    Optional<List<Boolean>> getBooleanList(DataQuery path);
+    Optional<Short> getCharacter(K key);
 
     /**
-     * Gets the {@link List} of {@link Byte} by path, if available.
+     * Gets the {@link Short} by key, if available.
      *
-     * <p>If a {@link List} of {@link Byte} does not exist, or the data
-     * residing at the path is not an instance of a {@link List} of
-     * {@link Byte}, an absent is returned.</p>
+     * <p>If the data residing at the key is not a {@link Short}
+     * and can not be coerced into a {@link Short}, an absent is returned.</p>
      *
-     * @param path The path of the value to get
-     * @return The list of bytes, if available
+     * @param key The key to the value to get
+     * @return The {@link Short}, if available
      */
-    Optional<List<Byte>> getByteList(DataQuery path);
+    Optional<Short> getShort(K key);
 
     /**
-     * Gets the {@link List} of {@link Short} by path, if available.
+     * Gets the {@link Integer} by key, if available.
      *
-     * <p>If a {@link List} of {@link Short} does not exist, or the data
-     * residing at the path is not an instance of a {@link List} of
-     * {@link Short}, an absent is returned.</p>
+     * <p>If the data residing at the key is not a {@link Integer}
+     * and can not be coerced into a {@link Integer}, an absent is returned.</p>
      *
-     * @param path The path of the value to get
-     * @return The list of shorts, if available
+     * @param key The key to the value to get
+     * @return The {@link Integer}, if available
      */
-    Optional<List<Short>> getShortList(DataQuery path);
+    Optional<Integer> getInt(K key);
 
     /**
-     * Gets the {@link List} of {@link Integer} by path, if available.
+     * Gets the {@link Long} by key, if available.
      *
-     * <p>If a {@link List} of {@link Integer} does not exist, or the data
-     * residing at the path is not an instance of a {@link List} of
-     * {@link Integer}, an absent is returned.</p>
+     * <p>If the data residing at the key is not a {@link Long}
+     * and can not be coerced into a {@link Long}, an absent is returned.</p>
      *
-     * @param path The path of the value to get
-     * @return The list of integers, if available
+     * @param key The key to the value to get
+     * @return The {@link Long}, if available
      */
-    Optional<List<Integer>> getIntegerList(DataQuery path);
+    Optional<Long> getLong(K key);
 
     /**
-     * Gets the {@link List} of {@link Long} by path, if available.
+     * Gets the {@link Float} by key, if available.
      *
-     * <p>If a {@link List} of {@link Long} does not exist, or the data
-     * residing at the path is not an instance of a {@link List} of
-     * {@link Long}, an absent is returned.</p>
+     * <p>If the data residing at the key is not a {@link Float}
+     * and can not be coerced into a {@link Float}, an absent is returned.</p>
      *
-     * @param path The path of the value to get
-     * @return The list of longs, if available
+     * @param key The key to the value to get
+     * @return The {@link Float}, if available
      */
-    Optional<List<Long>> getLongList(DataQuery path);
+    Optional<Float> getFloat(K key);
 
     /**
-     * Gets the {@link List} of {@link Float} by path, if available.
+     * Gets the {@link Double} by key, if available.
      *
-     * <p>If a {@link List} of {@link Float} does not exist, or the data
-     * residing at the path is not an instance of a {@link List} of
-     * {@link Float}, an absent is returned.</p>
+     * <p>If the data residing at the key is not a {@link Double}
+     * and can not be coerced into a {@link Double}, an absent is returned.</p>
      *
-     * @param path The path of the value to get
-     * @return The list of floats, if available
+     * @param key The key to the value to get
+     * @return The {@link Double}, if available
      */
-    Optional<List<Float>> getFloatList(DataQuery path);
+    Optional<Double> getDouble(K key);
 
     /**
-     * Gets the {@link List} of {@link Double} by path, if available.
+     * Gets the {@link String} by key, if available.
      *
-     * <p>If a {@link List} of {@link Double} does not exist, or the data
-     * residing at the path is not an instance of a {@link List} of
-     * {@link Double}, an absent is returned.</p>
+     * <p>If the data residing at the key is not a {@link String}
+     * and can not be coerced into a {@link String}, an absent is returned.</p>
      *
-     * @param path The path of the value to get
-     * @return The list of doubles, if available
+     * @param key The key to the value to get
+     * @return The {@link String}, if available
      */
-    Optional<List<Double>> getDoubleList(DataQuery path);
+    Optional<String> getString(K key);
 
     /**
-     * Gets the {@link List} of {@link DataView} by path, if available.
+     * Gets the boolean array at key, if available.
      *
-     * <p>If a {@link List} of {@link DataView} does not exist, or the data
-     * residing at the path is not an instance of a {@link List} of
-     * {@link DataView}, an absent is returned.</p>
+     * <p>If the boolean array does not exist, or the data
+     * residing at the key can not be coerced into a boolean array,
+     * an absent is returned.</p>
      *
-     * @param path The path of the value to get
-     * @return The list of data views, if available
+     * @param key The key of the value to get
+     * @return The boolean array, if available
      */
-    Optional<List<DataView>> getViewList(DataQuery path);
+    Optional<boolean[]> getBooleanArray(K key);
 
     /**
-     * Gets the {@link DataSerializable} object by path, if available.
+     * Gets the byte array at key, if available.
      *
-     * <p>If a {@link DataSerializable} exists, but is not the proper class
-     * type, or there is no data at the path given, an absent is returned.</p>
+     * <p>If the byte array does not exist, or the data
+     * residing at the key can not be coerced into a byte array,
+     * an absent is returned.</p>
      *
-     * <p>It is important that the {@link DataManager} provided is
-     * the same one that has registered many of the
-     * {@link DataBuilder}s to ensure the {@link DataSerializable}
-     * requested can be returned.</p>
-     *
-     * @param <T> The type of {@link DataSerializable} object
-     * @param path The path of the value to get
-     * @param clazz The class of the {@link DataSerializable}
-     * @return The deserialized object, if available
+     * @param key The key of the value to get
+     * @return The byte array, if available
      */
-    <T extends DataSerializable> Optional<T> getSerializable(DataQuery path, Class<T> clazz);
+    Optional<byte[]> getByteArray(K key);
 
     /**
-     * Gets the {@link List} of {@link DataSerializable} by path, if available.
+     * Gets the char array at key, if available.
      *
-     * <p>If a {@link List} exists, but the contents of the list are not
-     * considered {@link DataSerializable} or are not of the proper type of
-     * {@link DataSerializable}, an absent is returned.</p>
+     * <p>If the char array does not exist, or the data
+     * residing at the key can not be coerced into a char array,
+     * an absent is returned.</p>
      *
-     * <p>It is important that the {@link DataManager} provided is
-     * the same one that has registered many of the
-     * {@link DataBuilder}s to ensure the {@link DataSerializable}
-     * requested can be returned.</p>
-     *
-     * @param <T> The type of {@link DataSerializable} object
-     * @param path The path of the list value to get
-     * @param clazz The class of the {@link DataSerializable}
-     * @return The deserialized objects in a list, if available
+     * @param key The key of the value to get
+     * @return The char array, if available
      */
-    <T extends DataSerializable> Optional<List<T>> getSerializableList(DataQuery path, Class<T> clazz);
+    Optional<char[]> getCharArray(K key);
 
     /**
-     * Gets the {@link Object} object by path, if available.
+     * Gets the short array at key, if available.
      *
-     * <p>If a {@link Object} exists, but is not the proper class
-     * type, or there is no data at the path given, an absent is returned.</p>
+     * <p>If the short array does not exist, or the data
+     * residing at the key can not be coerced into a short array,
+     * an absent is returned.</p>
      *
-     * <p>It is important that the {@link DataManager} provided is
-     * the same one that has registered many of the
-     * {@link DataTranslator}s to ensure the {@link DataSerializable}
-     * requested can be returned.</p>
-     *
-     * @param <T> The type of {@link Object} object
-     * @param path The path of the value to get
-     * @param objectClass The class of the {@link Object}
-     * @return The deserialized object, if available
+     * @param key The key of the value to get
+     * @return The short array, if available
      */
-    <T> Optional<T> getObject(DataQuery path, Class<T> objectClass);
+    Optional<short[]> getShortArray(K key);
 
     /**
-     * Gets the {@link List} of {@link DataSerializable} by path, if available.
+     * Gets the int array at key, if available.
      *
-     * <p>If a {@link List} exists, but the contents of the list are not
-     * considered {@link DataTranslator}"able" or are not of the proper type of
-     * {@link DataTranslator}, an absent is returned.</p>
+     * <p>If the int array does not exist, or the data
+     * residing at the key can not be coerced into a int array,
+     * an absent is returned.</p>
      *
-     * <p>It is important that the {@link DataManager} provided is
-     * the same one that has registered many of the
-     * {@link DataTranslator}s to ensure the {@link Object}
-     * requested can be returned.</p>
-     *
-     * @param <T> The type of {@link Object} object
-     * @param path The path of the value to get
-     * @param objectClass The class of the {@link Object}
-     * @return The deserialized objects in a list, if available
+     * @param key The key of the value to get
+     * @return The int array, if available
      */
-    <T> Optional<List<T>> getObjectList(DataQuery path, Class<T> objectClass);
+    Optional<int[]> getIntegerArray(K key);
 
     /**
-     * Gets the {@link CatalogType} object by path, if available.
+     * Gets the long array at key, if available.
      *
-     * <p>If a {@link CatalogType} exists, but is not named properly, not
-     * existing in a registry, or simply an invalid value will return
-     * an empty value.</p>
+     * <p>If the long array does not exist, or the data
+     * residing at the key can not be coerced into a long array,
+     * an absent is returned.</p>
      *
-     * @param path The path of the value to get
-     * @param catalogType The class of the dummy type
-     * @param <T> The type of dummy
-     * @return The dummy type, if available
+     * @param key The key of the value to get
+     * @return The long array, if available
      */
-    <T extends CatalogType> Optional<T> getCatalogType(DataQuery path, Class<T> catalogType);
+    Optional<long[]> getLongArray(K key);
 
     /**
-     * Gets the {@link List} of {@link CatalogType}s by path, if available.
+     * Gets the float array at key, if available.
      *
-     * <p>If a {@link List} exists, but contents of the list are not
-     * considered {@link CatalogType}s or are not of the proper type
-     * of {@link CatalogType}, an absent is returned.</p>
+     * <p>If the float array does not exist, or the data
+     * residing at the key can not be coerced into a float array,
+     * an absent is returned.</p>
      *
-     * @param path The path of the list value to get
-     * @param catalogType The class of the dummy type
-     * @param <T> The type of dummy type
-     * @return The list of dummy types, if available
+     * @param key The key of the value to get
+     * @return The float array, if available
      */
-    <T extends CatalogType> Optional<List<T>> getCatalogTypeList(DataQuery path, Class<T> catalogType);
+    Optional<float[]> getFloatArray(K key);
+
+    /**
+     * Gets the double array at key, if available.
+     *
+     * <p>If the double array does not exist, or the data
+     * residing at the key can not be coerced into a double array,
+     * an absent is returned.</p>
+     *
+     * @param key The key of the value to get
+     * @return The double array, if available
+     */
+    Optional<double[]> getDoubleArray(K key);
+
+    /**
+     * Gets the {@link String} array at key, if available.
+     *
+     * <p>If the {@link String} array does not exist, or the data
+     * residing at the key can not be coerced into a {@link String} array,
+     * an absent is returned.</p>
+     *
+     * @param key The key of the value to get
+     * @return The {@link String} array, if available
+     */
+    Optional<String[]> getStringArray(K key);
 
     /**
      * Copies this {@link DataView} and all of it's contents into a new
