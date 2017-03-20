@@ -24,6 +24,7 @@
  */
 package org.spongepowered.api.data;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.spongepowered.api.data.DataQuery.of;
 
@@ -56,15 +57,14 @@ public interface DataQueryable<K> extends DataView<K> {
      */
     default boolean contains(DataQuery path) {
         checkNotNull(path, "path");
-        List<String> queryParts = path.getParts();
+        List<String> parts = path.getParts();
 
-        int sz = queryParts.size();
-        if (sz == 0) {
+        if (parts.isEmpty()) {
             return true;
         }
 
-        K key = this.key(queryParts.get(0));
-        if (sz == 1) {
+        K key = this.key(parts.get(0));
+        if (parts.size() == 1) {
             return this.contains(key);
         }
 
@@ -149,19 +149,20 @@ public interface DataQueryable<K> extends DataView<K> {
     default DataQueryable<K> set(DataQuery path, Object value) {
         checkNotNull(path, "path");
         checkNotNull(value, "value");
-
         List<String> parts = path.getParts();
+        checkArgument(parts.isEmpty(), "The query not be empty");
+
         K key = this.key(parts.get(0));
-        if (parts.size() > 1) {
+        if (parts.size() == 1) {
+            this.set(key, value);
+        } else {
             // Get or create a DataQueryable at key, and recursively call set() on that DataQueryable
             this.get(key)
                     .map((obj) -> obj instanceof DataQueryable ? (DataQueryable) obj : null)
                     .orElseGet(() -> createMap(key))
                     .set(path.popFirst(), value);
-            return this;
         }
 
-        set(key, value);
         return this;
     }
 
@@ -181,8 +182,8 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param <E> The type of value
      * @return This view, for chaining
      */
-    default <E> DataView set(Key<? extends BaseValue<E>> key, E value) {
-        return set(checkNotNull(key, "Key was null!").getQuery(), value);
+    default <E> DataQueryable<K> set(Key<? extends BaseValue<E>> key, E value) {
+        return this.set(checkNotNull(key, "Key was null!").getQuery(), value);
     }
 
     /**
@@ -194,7 +195,22 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of data to remove
      * @return This view, for chaining
      */
-    DataView remove(DataQuery path);
+    default DataQueryable<K> remove(DataQuery path) {
+        checkNotNull(path, "path");
+        List<String> parts = path.getParts();
+        checkArgument(parts.isEmpty(), "The query not be empty");
+
+        K key = this.key(parts.get(0));
+        if (parts.size() == 1) {
+            this.remove(key);
+        } else {
+            Optional<Object> optional = this.get(key);
+            if (optional.isPresent() && optional.get() instanceof DataQueryable) {
+                ((DataQueryable) optional.get()).remove(path.pop());
+            }
+        }
+        return this;
+    }
 
     /**
      * Creates a new {@link DataMap} at the desired path.
@@ -204,7 +220,21 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of the new data map
      * @return The newly created data map
      */
-    DataMap createMap(DataQuery path);
+    default DataMap createMap(DataQuery path) {
+        checkNotNull(path, "path");
+        List<String> parts = path.getParts();
+        checkArgument(parts.isEmpty(), "The query not be empty");
+
+        K key = this.key(parts.get(0));
+        if (parts.size() == 1) {
+            return this.createMap(key);
+        }
+
+        return this.get(key)
+                .map((obj) -> obj instanceof DataQueryable ? (DataQueryable) obj : null)
+                .orElseGet(() -> createMap(key))
+                .createMap(path.popFirst());
+    }
 
     /**
      * Creates a new {@link DataList} at the desired path.
@@ -214,7 +244,21 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of the new data list
      * @return The newly created data list
      */
-    DataList createList(DataQuery path);
+    default DataList createList(DataQuery path) {
+        checkNotNull(path, "path");
+        List<String> parts = path.getParts();
+        checkArgument(parts.isEmpty(), "The query not be empty");
+
+        K key = this.key(parts.get(0));
+        if (parts.size() == 1) {
+            return this.createList(key);
+        }
+
+        return this.get(key)
+                .map((obj) -> obj instanceof DataQueryable ? (DataQueryable) obj : null)
+                .orElseGet(() -> createMap(key))
+                .createList(path.popFirst());
+    }
 
     /**
      * Gets the {@link DataMap} by path, if available.
