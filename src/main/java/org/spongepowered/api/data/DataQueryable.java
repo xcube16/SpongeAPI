@@ -25,6 +25,7 @@
 package org.spongepowered.api.data;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.spongepowered.api.data.DataQuery.of;
 
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.data.key.Key;
@@ -48,7 +49,7 @@ public interface DataQueryable<K> extends DataView<K> {
     K key(String key);
 
     /**
-     * Returns whether this {@link DataView} contains the given path.
+     * Returns whether this {@link DataQueryable} contains the given path.
      *
      * @param path The path relative to this data view
      * @return True if the path exists
@@ -74,7 +75,7 @@ public interface DataQueryable<K> extends DataView<K> {
     }
 
     /**
-     * Returns whether this {@link DataView} contains an entry for all
+     * Returns whether this {@link DataQueryable} contains an entry for all
      * provided {@link DataQuery} objects.
      *
      * @param path The path relative to this data view
@@ -97,7 +98,7 @@ public interface DataQueryable<K> extends DataView<K> {
     }
 
     /**
-     * Returns whether this {@link DataView} contains the given {@link Key}'s
+     * Returns whether this {@link DataQueryable} contains the given {@link Key}'s
      * defaulted {@link DataQuery}.
      *
      * @param key The key to get the data path relative to this data view
@@ -108,7 +109,7 @@ public interface DataQueryable<K> extends DataView<K> {
     }
 
     /**
-     * Returns whether this {@link DataView} contains the given {@link Key}es
+     * Returns whether this {@link DataQueryable} contains the given {@link Key}es
      * defaulted {@link DataQuery}.
      *
      * @param key The key to get the data path relative to this data view
@@ -132,7 +133,7 @@ public interface DataQueryable<K> extends DataView<K> {
 
     /**
      * <p>Sets the given Object value according to the given path relative to
-     * this {@link DataView}'s path.</p>
+     * this {@link DataQueryable}'s path.</p>
      *
      * <p>The value must be one of<br/>
      * * Allowed Types<br/>
@@ -145,7 +146,24 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param value The value of the data
      * @return This view, for chaining
      */
-    DataView set(DataQuery path, Object value);
+    default DataQueryable<K> set(DataQuery path, Object value) {
+        checkNotNull(path, "path");
+        checkNotNull(value, "value");
+
+        List<String> parts = path.getParts();
+        K key = this.key(parts.get(0));
+        if (parts.size() > 1) {
+            // Get or create a DataQueryable at key, and recursively call set() on that DataQueryable
+            this.get(key)
+                    .map((obj) -> obj instanceof DataQueryable ? (DataQueryable) obj : null)
+                    .orElseGet(() -> createMap(key))
+                    .set(path.popFirst(), value);
+            return this;
+        }
+
+        set(key, value);
+        return this;
+    }
 
     /**
      * <p>Sets the given {@link Key}ed value according to the provided
@@ -163,7 +181,9 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param <E> The type of value
      * @return This view, for chaining
      */
-    <E> DataView set(Key<? extends BaseValue<E>> key, E value);
+    default <E> DataView set(Key<? extends BaseValue<E>> key, E value) {
+        return set(checkNotNull(key, "Key was null!").getQuery(), value);
+    }
 
     /**
      * Removes the data associated to the given path relative to this

@@ -24,6 +24,6 @@
  */
 package org.spongepowered.api.data;
 
-public interface DataList extends DataView<Integer> {
+public interface DataList extends DataQueryable<Integer> {
 
 }
