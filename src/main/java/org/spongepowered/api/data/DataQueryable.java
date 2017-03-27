@@ -28,9 +28,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.spongepowered.api.CatalogType;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Key;
-import org.spongepowered.api.data.persistence.DataBuilder;
 import org.spongepowered.api.data.persistence.DataTranslator;
 import org.spongepowered.api.data.value.BaseValue;
 import org.spongepowered.api.util.Coerce;
@@ -38,9 +36,6 @@ import org.spongepowered.api.util.Coerce;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public abstract class DataQueryable<K> implements DataView<K> {
 
@@ -56,7 +51,7 @@ public abstract class DataQueryable<K> implements DataView<K> {
         return this.get(key).filter(o -> o instanceof DataQueryable).map(o -> (DataQueryable) o);
     }
 
-    private Optional<Object> get(DataQuery path) {
+    protected Optional<Object> get(DataQuery path) {
         checkNotNull(path, "path");
         List<String> parts = path.getParts();
 
@@ -553,83 +548,5 @@ public abstract class DataQueryable<K> implements DataView<K> {
      */
     public Optional<String[]> getStringArray(DataQuery path) {
         return get(path).flatMap(Coerce::asStringArray);
-    }
-
-    /**
-     * Gets a {@link DataSerializable}, {@link CatalogType}, or {@link DataTranslator}-able
-     * object registered in Sponge by key, if available.
-     *
-     * <p>If the data at the key is a {@link DataMap}
-     * and {@code type} is a {@link DataSerializable},
-     * and the {@link DataSerializable} has a corresponding {@link DataBuilder} registered
-     * in Sponge's DataManager, present is returned.</p>
-     *
-     * <p>If the data at the key is a {@link DataMap}
-     * and a {@link DataTranslator} corresponding to {@code type} is registered
-     * in Sponge's DataManager, present is returned.</p>
-     *
-     * <p>If {@code type} is a {@link CatalogType} registered in Sponge
-     * and the data at the key can be coerced into a {@link String}
-     * representing the specific {@link CatalogType}, present is returned.</p>
-     *
-     * @param <T> The type of object
-     * @param key The key of the value to get
-     * @param type The class of the object
-     * @return The deserialized object, if available
-     */
-    public <T extends DataSerializable> Optional<T> getSpongeObject(K key, Class<T> type) {
-        checkNotNull(type, "type");
-        return this.get(key).flatMap(o -> this.coerseSpongeObject(o, type));
-    }
-
-    /**
-     * Gets a {@link DataSerializable}, {@link CatalogType}, or {@link DataTranslator}-able
-     * object registered in Sponge at path, if available.
-     *
-     * <p>If the data at the path is a {@link DataMap}
-     * and {@code type} is a {@link DataSerializable},
-     * and the {@link DataSerializable} has a corresponding {@link DataBuilder} registered
-     * in Sponge's DataManager, present is returned.</p>
-     *
-     * <p>If the data at the path is a {@link DataMap}
-     * and a {@link DataTranslator} corresponding to {@code type} is registered
-     * in Sponge's DataManager, present is returned.</p>
-     *
-     * <p>If {@code type} is a {@link CatalogType} registered in Sponge
-     * and the data at the path can be coerced into a {@link String}
-     * representing the specific {@link CatalogType}, present is returned.</p>
-     *
-     * @param <T> The type of object
-     * @param path The key of the value to get
-     * @param type The class of the object
-     * @return The deserialized object, if available
-     */
-    public <T extends DataSerializable> Optional<T> getSpongeObject(DataQuery path, Class<T> type) {
-        checkNotNull(type, "type");
-        return this.get(path).flatMap(o -> this.coerseSpongeObject(o, type));
-    }
-
-    //TODO: move to Coerce?
-    @SuppressWarnings("unchecked")
-    private <T extends DataSerializable> Optional<T> coerseSpongeObject(@Nonnull Object obj, @Nonnull Class<T> type) {
-        if (obj instanceof DataMap) {
-
-            // See if type is a DataSerializable, in which case it *might* have a builder
-            if (DataSerializable.class.isAssignableFrom(type)) {
-                Optional<DataBuilder<T>> builder = Sponge.getDataManager().getBuilder(type);
-                if (builder.isPresent()) {
-                    return builder.get().build((DataMap) obj);
-                } // else: ok, it did'nt have a builder, move on
-            }
-
-            // Try using a data translator
-            return Sponge.getDataManager().getTranslator(type)
-                    .map(translator -> translator.translate((DataMap) obj));
-        }
-        if (CatalogType.class.isAssignableFrom(type)) {
-            // The compiler does not like the `(Class) type` hack. Added @SuppressWarnings("unchecked")
-            return Coerce.asString(obj).flatMap(s -> Sponge.getRegistry().getType((Class) type, s));
-        }
-        return Optional.empty();
     }
 }

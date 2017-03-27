@@ -25,7 +25,6 @@
 package org.spongepowered.api.data;
 
 import org.spongepowered.api.CatalogType;
-import org.spongepowered.api.data.persistence.DataBuilder;
 import org.spongepowered.api.data.persistence.DataTranslator;
 import org.spongepowered.api.util.Coerce;
 
