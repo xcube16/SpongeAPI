@@ -27,7 +27,7 @@ package org.spongepowered.api.data;
 import java.util.Map;
 import java.util.Set;
 
-public interface DataMap extends DataQueryable<String> {
+public interface DataMap extends DataView<String> {
 
     /**
      * Gets a collection containing all keys in this {@link DataView}.

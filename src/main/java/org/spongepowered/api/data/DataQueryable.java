@@ -26,20 +26,23 @@ package org.spongepowered.api.data;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.spongepowered.api.data.DataQuery.of;
 
 import org.spongepowered.api.CatalogType;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.persistence.DataBuilder;
 import org.spongepowered.api.data.persistence.DataTranslator;
 import org.spongepowered.api.data.value.BaseValue;
+import org.spongepowered.api.util.Coerce;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public interface DataQueryable<K> extends DataView<K> {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+public abstract class DataQueryable<K> implements DataView<K> {
 
     /**
      * Parses a {@link String} into a key type.
@@ -47,7 +50,27 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param key A {@link String} representation of a key
      * @return A key
      */
-    K key(String key);
+    protected abstract K key(String key);
+
+    private Optional<DataQueryable> getQueryable(K key) {
+        return this.get(key).filter(o -> o instanceof DataQueryable).map(o -> (DataQueryable) o);
+    }
+
+    private Optional<Object> get(DataQuery path) {
+        checkNotNull(path, "path");
+        List<String> parts = path.getParts();
+
+        if (parts.isEmpty()) {
+            return Optional.of(this);
+        }
+
+        K key = this.key(parts.get(0));
+        if (parts.size() == 1) {
+            return this.get(key);
+        }
+
+        return this.getQueryable(key).map(q -> q.get(path.popFirst()));
+    }
 
     /**
      * Returns whether this {@link DataQueryable} contains the given path.
@@ -55,7 +78,7 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path relative to this data view
      * @return True if the path exists
      */
-    default boolean contains(DataQuery path) {
+    public boolean contains(DataQuery path) {
         checkNotNull(path, "path");
         List<String> parts = path.getParts();
 
@@ -68,10 +91,8 @@ public interface DataQueryable<K> extends DataView<K> {
             return this.contains(key);
         }
 
-        Optional<Object> optional = this.get(key);
-        return optional.isPresent()
-                && optional.get() instanceof DataQueryable
-                && ((DataQueryable) optional.get()).contains(path.popFirst());
+        Optional<DataQueryable> optional = this.getQueryable(key);
+        return optional.isPresent() && optional.get().contains(path.popFirst());
     }
 
     /**
@@ -82,7 +103,7 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param paths The additional paths to check
      * @return True if all paths exist
      */
-    default boolean contains(DataQuery path, DataQuery... paths) {
+    public boolean contains(DataQuery path, DataQuery... paths) {
         checkNotNull(path, "DataQuery cannot be null!");
         checkNotNull(paths, "DataQuery varargs cannot be null!");
 
@@ -104,7 +125,7 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param key The key to get the data path relative to this data view
      * @return True if the path exists
      */
-    default boolean contains(Key<?> key) {
+    public boolean contains(Key<?> key) {
         return this.contains(checkNotNull(key, "Key cannot be null!").getQuery());
     }
 
@@ -116,7 +137,7 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param keys The additional keys to check
      * @return True if the path exists
      */
-    default boolean contains(Key<?> key, Key<?>... keys) {
+    public boolean contains(Key<?> key, Key<?>... keys) {
         checkNotNull(key, "Key cannot be null!");
         checkNotNull(keys, "Keys cannot be null!");
 
@@ -146,7 +167,7 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param value The value of the data
      * @return This view, for chaining
      */
-    default DataQueryable<K> set(DataQuery path, Object value) {
+    public DataQueryable<K> set(DataQuery path, Object value) {
         checkNotNull(path, "path");
         checkNotNull(value, "value");
         List<String> parts = path.getParts();
@@ -157,9 +178,8 @@ public interface DataQueryable<K> extends DataView<K> {
             this.set(key, value);
         } else {
             // Get or create a DataQueryable at key, and recursively call set() on that DataQueryable
-            this.get(key)
-                    .map((obj) -> obj instanceof DataQueryable ? (DataQueryable) obj : null)
-                    .orElseGet(() -> createMap(key))
+            this.getQueryable(key)
+                    .orElseGet(() -> this.createMap(key))
                     .set(path.popFirst(), value);
         }
 
@@ -182,7 +202,7 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param <E> The type of value
      * @return This view, for chaining
      */
-    default <E> DataQueryable<K> set(Key<? extends BaseValue<E>> key, E value) {
+    public <E> DataQueryable<K> set(Key<? extends BaseValue<E>> key, E value) {
         return this.set(checkNotNull(key, "Key was null!").getQuery(), value);
     }
 
@@ -195,19 +215,16 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of data to remove
      * @return This view, for chaining
      */
-    default DataQueryable<K> remove(DataQuery path) {
+    public DataQueryable<K> remove(DataQuery path) {
         checkNotNull(path, "path");
         List<String> parts = path.getParts();
-        checkArgument(parts.isEmpty(), "The query not be empty");
+        checkArgument(parts.isEmpty(), "The query can not be empty");
 
         K key = this.key(parts.get(0));
         if (parts.size() == 1) {
             this.remove(key);
         } else {
-            Optional<Object> optional = this.get(key);
-            if (optional.isPresent() && optional.get() instanceof DataQueryable) {
-                ((DataQueryable) optional.get()).remove(path.pop());
-            }
+            this.getQueryable(key).ifPresent(dataQueryable -> dataQueryable.remove(path.pop()));
         }
         return this;
     }
@@ -220,7 +237,7 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of the new data map
      * @return The newly created data map
      */
-    default DataMap createMap(DataQuery path) {
+    public DataMap createMap(DataQuery path) {
         checkNotNull(path, "path");
         List<String> parts = path.getParts();
         checkArgument(parts.isEmpty(), "The query not be empty");
@@ -230,9 +247,8 @@ public interface DataQueryable<K> extends DataView<K> {
             return this.createMap(key);
         }
 
-        return this.get(key)
-                .map((obj) -> obj instanceof DataQueryable ? (DataQueryable) obj : null)
-                .orElseGet(() -> createMap(key))
+        return this.getQueryable(key)
+                .orElseGet(() -> this.createMap(key))
                 .createMap(path.popFirst());
     }
 
@@ -244,7 +260,7 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of the new data list
      * @return The newly created data list
      */
-    default DataList createList(DataQuery path) {
+    public DataList createList(DataQuery path) {
         checkNotNull(path, "path");
         List<String> parts = path.getParts();
         checkArgument(parts.isEmpty(), "The query not be empty");
@@ -254,9 +270,8 @@ public interface DataQueryable<K> extends DataView<K> {
             return this.createList(key);
         }
 
-        return this.get(key)
-                .map((obj) -> obj instanceof DataQueryable ? (DataQueryable) obj : null)
-                .orElseGet(() -> createMap(key))
+        return this.getQueryable(key)
+                .orElseGet(() -> this.createMap(key))
                 .createList(path.popFirst());
     }
 
@@ -270,7 +285,9 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of the value to get
      * @return The data map, if available
      */
-    Optional<DataMap> getMap(DataQuery path);
+    public Optional<DataMap> getMap(DataQuery path) {
+        return this.get(path).filter(o -> o instanceof DataMap).map(o -> (DataMap) o);
+    }
 
     /**
      * Gets the {@link DataList} by path, if available.
@@ -282,7 +299,9 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of the value to get
      * @return The data list, if available
      */
-    Optional<DataList> getList(DataQuery path);
+    public Optional<DataList> getList(DataQuery path) {
+        return this.get(path).filter(o -> o instanceof DataList).map(o -> (DataList) o);
+    }
 
     /**
      * Gets the {@link Boolean} by path, if available.
@@ -294,7 +313,9 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of the value to get
      * @return The boolean, if available
      */
-    Optional<Boolean> getBoolean(DataQuery path);
+    public Optional<Boolean> getBoolean(DataQuery path) {
+        return this.get(path).flatMap(Coerce::asBoolean);
+    }
 
     /**
      * Gets the {@link Byte} by path, if available.
@@ -306,7 +327,9 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of the value to get
      * @return The boolean, if available
      */
-    Optional<Byte> getByte(DataQuery path);
+    public Optional<Byte> getByte(DataQuery path) {
+        return this.get(path).flatMap(Coerce::asByte);
+    }
 
     /**
      * Gets the {@link Character} by path, if available.
@@ -318,7 +341,9 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of the value to get
      * @return The boolean, if available
      */
-    Optional<Short> getCharacter(DataQuery path);
+    public Optional<Character> getCharacter(DataQuery path) {
+        return this.get(path).flatMap(Coerce::asChar);
+    }
 
     /**
      * Gets the {@link Short} by path, if available.
@@ -330,7 +355,9 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of the value to get
      * @return The boolean, if available
      */
-    Optional<Short> getShort(DataQuery path);
+    public Optional<Short> getShort(DataQuery path) {
+        return get(path).flatMap(Coerce::asShort);
+    }
 
     /**
      * Gets the {@link Integer} by path, if available.
@@ -342,7 +369,9 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of the value to get
      * @return The integer, if available
      */
-    Optional<Integer> getInt(DataQuery path);
+    public Optional<Integer> getInt(DataQuery path) {
+        return get(path).flatMap(Coerce::asInteger);
+    }
 
     /**
      * Gets the {@link Long} by path, if available.
@@ -354,7 +383,9 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of the value to get
      * @return The long, if available
      */
-    Optional<Long> getLong(DataQuery path);
+    public Optional<Long> getLong(DataQuery path) {
+        return get(path).flatMap(Coerce::asLong);
+    }
 
     /**
      * Gets the {@link Float} by path, if available.
@@ -366,7 +397,9 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of the value to get
      * @return The boolean, if available
      */
-    Optional<Float> getFloat(DataQuery path);
+    public Optional<Float> getFloat(DataQuery path) {
+        return get(path).flatMap(Coerce::asFloat);
+    }
 
     /**
      * Gets the {@link Double} by path, if available.
@@ -378,7 +411,9 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of the value to get
      * @return The double, if available
      */
-    Optional<Double> getDouble(DataQuery path);
+    public Optional<Double> getDouble(DataQuery path) {
+        return get(path).flatMap(Coerce::asDouble);
+    }
 
     /**
      * Gets the {@link String} by path, if available.
@@ -390,7 +425,9 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of the value to get
      * @return The string, if available
      */
-    Optional<String> getString(DataQuery path);
+    public Optional<String> getString(DataQuery path) {
+        return get(path).flatMap(Coerce::asString);
+    }
 
     /**
      * Gets the boolean array at path, if available.
@@ -402,7 +439,9 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of the value to get
      * @return The boolean array, if available
      */
-    Optional<boolean[]> getBooleanArray(DataQuery path);
+    public Optional<boolean[]> getBooleanArray(DataQuery path) {
+        return get(path).flatMap(Coerce::asBooleanArray);
+    }
 
     /**
      * Gets the byte array at path, if available.
@@ -414,7 +453,9 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of the value to get
      * @return The byte array, if available
      */
-    Optional<byte[]> getByteArray(DataQuery path);
+    public Optional<byte[]> getByteArray(DataQuery path) {
+        return get(path).flatMap(Coerce::asByteArray);
+    }
 
     /**
      * Gets the char array at path, if available.
@@ -426,7 +467,9 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of the value to get
      * @return The char array, if available
      */
-    Optional<char[]> getCharArray(DataQuery path);
+    public Optional<char[]> getCharArray(DataQuery path) {
+        return get(path).flatMap(Coerce::asCharArray);
+    }
 
     /**
      * Gets the short array at path, if available.
@@ -438,7 +481,9 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of the value to get
      * @return The short array, if available
      */
-    Optional<short[]> getShortArray(DataQuery path);
+    public Optional<short[]> getShortArray(DataQuery path) {
+        return get(path).flatMap(Coerce::asShortArray);
+    }
 
     /**
      * Gets the int array at path, if available.
@@ -450,7 +495,9 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of the value to get
      * @return The int array, if available
      */
-    Optional<int[]> getIntegerArray(DataQuery path);
+    public Optional<int[]> getIntArray(DataQuery path) {
+        return get(path).flatMap(Coerce::asIntArray);
+    }
 
     /**
      * Gets the long array at path, if available.
@@ -462,7 +509,9 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of the value to get
      * @return The long array, if available
      */
-    Optional<long[]> getLongArray(DataQuery path);
+    public Optional<long[]> getLongArray(DataQuery path) {
+        return get(path).flatMap(Coerce::asLongArray);
+    }
 
     /**
      * Gets the float array at path, if available.
@@ -474,7 +523,9 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of the value to get
      * @return The float array, if available
      */
-    Optional<float[]> getFloatArray(DataQuery path);
+    public Optional<float[]> getFloatArray(DataQuery path) {
+        return get(path).flatMap(Coerce::asFloatArray);
+    }
 
     /**
      * Gets the double array at path, if available.
@@ -486,7 +537,9 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of the value to get
      * @return The double array, if available
      */
-    Optional<double[]> getDoubleArray(DataQuery path);
+    public Optional<double[]> getDoubleArray(DataQuery path) {
+        return get(path).flatMap(Coerce::asDoubleArray);
+    }
 
     /**
      * Gets the {@link String} array at path, if available.
@@ -498,40 +551,85 @@ public interface DataQueryable<K> extends DataView<K> {
      * @param path The path of the value to get
      * @return The {@link String} array, if available
      */
-    Optional<String[]> getStringArray(DataQuery path);
+    public Optional<String[]> getStringArray(DataQuery path) {
+        return get(path).flatMap(Coerce::asStringArray);
+    }
 
     /**
-     * Gets the {@link DataSerializable} object by path, if available.
+     * Gets a {@link DataSerializable}, {@link CatalogType}, or {@link DataTranslator}-able
+     * object registered in Sponge by key, if available.
      *
-     * <p>If a {@link DataSerializable} exists, but is not the proper class
-     * type, or there is no data at the path given, an absent is returned.</p>
+     * <p>If the data at the key is a {@link DataMap}
+     * and {@code type} is a {@link DataSerializable},
+     * and the {@link DataSerializable} has a corresponding {@link DataBuilder} registered
+     * in Sponge's DataManager, present is returned.</p>
      *
-     * <p>It is important that the {@link DataManager} provided is
-     * the same one that has registered many of the
-     * {@link DataBuilder}s to ensure the {@link DataSerializable}
-     * requested can be returned.</p>
+     * <p>If the data at the key is a {@link DataMap}
+     * and a {@link DataTranslator} corresponding to {@code type} is registered
+     * in Sponge's DataManager, present is returned.</p>
      *
-     * @param <T> The type of {@link DataSerializable} object
-     * @param path The path of the value to get
-     * @param clazz The class of the {@link DataSerializable}
+     * <p>If {@code type} is a {@link CatalogType} registered in Sponge
+     * and the data at the key can be coerced into a {@link String}
+     * representing the specific {@link CatalogType}, present is returned.</p>
+     *
+     * @param <T> The type of object
+     * @param key The key of the value to get
+     * @param type The class of the object
      * @return The deserialized object, if available
      */
-    <T extends DataSerializable> Optional<T> getSerializable(DataQuery path, Class<T> clazz);
-
-    <T> Optional<T> getObject(DataQuery path, Class<T> objectClass);
+    public <T extends DataSerializable> Optional<T> getSpongeObject(K key, Class<T> type) {
+        checkNotNull(type, "type");
+        return this.get(key).flatMap(o -> this.coerseSpongeObject(o, type));
+    }
 
     /**
-     * Gets the {@link CatalogType} object by path, if available.
+     * Gets a {@link DataSerializable}, {@link CatalogType}, or {@link DataTranslator}-able
+     * object registered in Sponge at path, if available.
      *
-     * <p>If a {@link CatalogType} exists, but is not named properly, not
-     * existing in a registry, or simply an invalid value will return
-     * an empty value.</p>
+     * <p>If the data at the path is a {@link DataMap}
+     * and {@code type} is a {@link DataSerializable},
+     * and the {@link DataSerializable} has a corresponding {@link DataBuilder} registered
+     * in Sponge's DataManager, present is returned.</p>
      *
-     * @param path The path of the value to get
-     * @param catalogType The class of the dummy type
-     * @param <T> The type of dummy
-     * @return The dummy type, if available
+     * <p>If the data at the path is a {@link DataMap}
+     * and a {@link DataTranslator} corresponding to {@code type} is registered
+     * in Sponge's DataManager, present is returned.</p>
+     *
+     * <p>If {@code type} is a {@link CatalogType} registered in Sponge
+     * and the data at the path can be coerced into a {@link String}
+     * representing the specific {@link CatalogType}, present is returned.</p>
+     *
+     * @param <T> The type of object
+     * @param path The key of the value to get
+     * @param type The class of the object
+     * @return The deserialized object, if available
      */
-    <T extends CatalogType> Optional<T> getCatalogType(DataQuery path, Class<T> catalogType);
+    public <T extends DataSerializable> Optional<T> getSpongeObject(DataQuery path, Class<T> type) {
+        checkNotNull(type, "type");
+        return this.get(path).flatMap(o -> this.coerseSpongeObject(o, type));
+    }
 
+    //TODO: move to Coerce?
+    @SuppressWarnings("unchecked")
+    private <T extends DataSerializable> Optional<T> coerseSpongeObject(@Nonnull Object obj, @Nonnull Class<T> type) {
+        if (obj instanceof DataMap) {
+
+            // See if type is a DataSerializable, in which case it *might* have a builder
+            if (DataSerializable.class.isAssignableFrom(type)) {
+                Optional<DataBuilder<T>> builder = Sponge.getDataManager().getBuilder(type);
+                if (builder.isPresent()) {
+                    return builder.get().build((DataMap) obj);
+                } // else: ok, it did'nt have a builder, move on
+            }
+
+            // Try using a data translator
+            return Sponge.getDataManager().getTranslator(type)
+                    .map(translator -> translator.translate((DataMap) obj));
+        }
+        if (CatalogType.class.isAssignableFrom(type)) {
+            // The compiler does not like the `(Class) type` hack. Added @SuppressWarnings("unchecked")
+            return Coerce.asString(obj).flatMap(s -> Sponge.getRegistry().getType((Class) type, s));
+        }
+        return Optional.empty();
+    }
 }
