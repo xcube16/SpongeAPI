@@ -27,6 +27,7 @@ package org.spongepowered.api.data;
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.data.persistence.DataBuilder;
 import org.spongepowered.api.data.persistence.DataTranslator;
+import org.spongepowered.api.util.Coerce;
 
 import java.util.List;
 import java.util.Map;
@@ -188,7 +189,9 @@ public interface DataView<K> {
      * @param key The key to the value to get
      * @return The {@link DataMap}, if available
      */
-    Optional<DataMap> getMap(K key);
+    default Optional<DataMap> getMap(K key) {
+        return this.get(key).filter(o -> o instanceof DataMap).map(o -> (DataMap) o);
+    }
 
     /**
      * Gets the {@link DataList} by key, if available.
@@ -203,7 +206,9 @@ public interface DataView<K> {
      * @param key The key to the value to get
      * @return The {@link DataList}, if available
      */
-    Optional<DataList> getList(K key);
+    default Optional<DataList> getList(K key) {
+        return this.get(key).filter(o -> o instanceof DataList).map(o -> (DataList) o);
+    }
 
     /**
      * Gets the {@link Boolean} by key, if available.
@@ -214,7 +219,9 @@ public interface DataView<K> {
      * @param key The key to the value to get
      * @return The {@link Boolean}, if available
      */
-    Optional<Boolean> getBoolean(K key);
+    default Optional<Boolean> getBoolean(K key) {
+        return this.get(key).flatMap(Coerce::asBoolean);
+    }
 
     /**
      * Gets the {@link Byte} by key, if available.
@@ -225,7 +232,9 @@ public interface DataView<K> {
      * @param key The key to the value to get
      * @return The {@link Byte}, if available
      */
-    Optional<Byte> getByte(K key);
+    default Optional<Byte> getByte(K key) {
+        return this.get(key).flatMap(Coerce::asByte);
+    }
 
     /**
      * Gets the {@link Character} by key, if available.
@@ -236,7 +245,9 @@ public interface DataView<K> {
      * @param key The key to the value to get
      * @return The {@link Character}, if available
      */
-    Optional<Short> getCharacter(K key);
+    default Optional<Character> getCharacter(K key) {
+        return this.get(key).flatMap(Coerce::asChar);
+    }
 
     /**
      * Gets the {@link Short} by key, if available.
@@ -247,7 +258,9 @@ public interface DataView<K> {
      * @param key The key to the value to get
      * @return The {@link Short}, if available
      */
-    Optional<Short> getShort(K key);
+    default Optional<Short> getShort(K key) {
+        return this.get(key).flatMap(Coerce::asShort);
+    }
 
     /**
      * Gets the {@link Integer} by key, if available.
@@ -258,7 +271,9 @@ public interface DataView<K> {
      * @param key The key to the value to get
      * @return The {@link Integer}, if available
      */
-    Optional<Integer> getInt(K key);
+    default Optional<Integer> getInt(K key) {
+        return this.get(key).flatMap(Coerce::asInteger);
+    }
 
     /**
      * Gets the {@link Long} by key, if available.
@@ -269,7 +284,9 @@ public interface DataView<K> {
      * @param key The key to the value to get
      * @return The {@link Long}, if available
      */
-    Optional<Long> getLong(K key);
+    default Optional<Long> getLong(K key) {
+        return this.get(key).flatMap(Coerce::asLong);
+    }
 
     /**
      * Gets the {@link Float} by key, if available.
@@ -280,7 +297,9 @@ public interface DataView<K> {
      * @param key The key to the value to get
      * @return The {@link Float}, if available
      */
-    Optional<Float> getFloat(K key);
+    default Optional<Float> getFloat(K key) {
+        return this.get(key).flatMap(Coerce::asFloat);
+    }
 
     /**
      * Gets the {@link Double} by key, if available.
@@ -291,7 +310,9 @@ public interface DataView<K> {
      * @param key The key to the value to get
      * @return The {@link Double}, if available
      */
-    Optional<Double> getDouble(K key);
+    default Optional<Double> getDouble(K key) {
+        return this.get(key).flatMap(Coerce::asDouble);
+    }
 
     /**
      * Gets the {@link String} by key, if available.
@@ -302,7 +323,9 @@ public interface DataView<K> {
      * @param key The key to the value to get
      * @return The {@link String}, if available
      */
-    Optional<String> getString(K key);
+    default Optional<String> getString(K key) {
+        return this.get(key).flatMap(Coerce::asString);
+    }
 
     /**
      * Gets the boolean array at key, if available.
@@ -314,7 +337,9 @@ public interface DataView<K> {
      * @param key The key of the value to get
      * @return The boolean array, if available
      */
-    Optional<boolean[]> getBooleanArray(K key);
+    defualt Optional<boolean[]> getBooleanArray(K key) {
+        return this.get(key).flatMap(Coerce::asBooleanArray);
+    }
 
     /**
      * Gets the byte array at key, if available.
@@ -326,7 +351,9 @@ public interface DataView<K> {
      * @param key The key of the value to get
      * @return The byte array, if available
      */
-    Optional<byte[]> getByteArray(K key);
+    defualt Optional<byte[]> getByteArray(K key) {
+        return this.get(key).flatMap(Coerce::asByteArray);
+    }
 
     /**
      * Gets the char array at key, if available.
@@ -338,7 +365,9 @@ public interface DataView<K> {
      * @param key The key of the value to get
      * @return The char array, if available
      */
-    Optional<char[]> getCharArray(K key);
+    defualt Optional<char[]> getCharArray(K key) {
+        return this.get(key).flatMap(Coerce::asCharArray);
+    }
 
     /**
      * Gets the short array at key, if available.
@@ -350,7 +379,9 @@ public interface DataView<K> {
      * @param key The key of the value to get
      * @return The short array, if available
      */
-    Optional<short[]> getShortArray(K key);
+    defualt Optional<short[]> getShortArray(K key) {
+        return this.get(key).flatMap(Coerce::asShortArray);
+    }
 
     /**
      * Gets the int array at key, if available.
@@ -362,7 +393,9 @@ public interface DataView<K> {
      * @param key The key of the value to get
      * @return The int array, if available
      */
-    Optional<int[]> getIntegerArray(K key);
+    defualt Optional<int[]> getIntegerArray(K key) {
+        return this.get(key).flatMap(Coerce::asIntArray);
+    }
 
     /**
      * Gets the long array at key, if available.
@@ -374,7 +407,9 @@ public interface DataView<K> {
      * @param key The key of the value to get
      * @return The long array, if available
      */
-    Optional<long[]> getLongArray(K key);
+    defualt Optional<long[]> getLongArray(K key) {
+        return this.get(key).flatMap(Coerce::asLongArray);
+    }
 
     /**
      * Gets the float array at key, if available.
@@ -386,7 +421,9 @@ public interface DataView<K> {
      * @param key The key of the value to get
      * @return The float array, if available
      */
-    Optional<float[]> getFloatArray(K key);
+    defualt Optional<float[]> getFloatArray(K key) {
+        return this.get(key).flatMap(Coerce::asFloatArray);
+    }
 
     /**
      * Gets the double array at key, if available.
@@ -398,7 +435,9 @@ public interface DataView<K> {
      * @param key The key of the value to get
      * @return The double array, if available
      */
-    Optional<double[]> getDoubleArray(K key);
+    defualt Optional<double[]> getDoubleArray(K key) {
+        return this.get(key).flatMap(Coerce::asDoubleArray);
+    }
 
     /**
      * Gets the {@link String} array at key, if available.
@@ -410,7 +449,9 @@ public interface DataView<K> {
      * @param key The key of the value to get
      * @return The {@link String} array, if available
      */
-    Optional<String[]> getStringArray(K key);
+    defualt Optional<String[]> getStringArray(K key) {
+        return this.get(key).flatMap(Coerce::asStringArray);
+    }
 
     /**
      * Copies this {@link DataView} and all of it's contents into a new
