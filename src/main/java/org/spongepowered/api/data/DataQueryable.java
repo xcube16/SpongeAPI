@@ -37,13 +37,56 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.annotation.Nullable;
+
 public abstract class DataQueryable<K> implements DataView<K> {
 
-    private Optional<DataQueryable> getQueryable(K key) {
-        return this.get(key).filter(o -> o instanceof DataQueryable).map(o -> (DataQueryable) o);
+    /**
+     * Gets the {@link DataView} that contains a query's last element if it exists
+     *
+     * @param parts The parts of the query
+     * @return The DataView, if available
+     */
+    private Optional<DataView> getHolder(List<String> parts) {
+        DataView view = this;
+        for (int i = 0; i < parts.size() - 1; i++) {
+            Optional<Object> opt = get(view, parts.get(i));
+            if (opt.isPresent() && opt.get() instanceof DataView) {
+                view = (DataView) opt.get();
+            } else {
+                return Optional.empty();
+            }
+        }
+        return Optional.of(view);
     }
 
-    protected Optional<Object> get(DataQuery path) {
+    /**
+     * Gets the {@link DataView} that contains a query's last element,
+     * creating {@link DataMap}'s for any element that does not exist along the way.
+     *
+     * @param parts The parts of the query
+     * @return The DataView
+     */
+    private DataView getOrCreateHolder(List<String> parts) {
+        DataView view = this;
+        for (int i = 0; i < parts.size() - 1; i++) {
+            Optional<Object> opt = get(view, parts.get(i));
+            if (opt.isPresent() && opt.get() instanceof DataView) {
+                view = (DataView) opt.get();
+            } else {
+                view = createMap(view, parts.get(i));
+            }
+        }
+        return view;
+    }
+
+    /**
+     * A lot like {@link DataView#get(Object)} but takes a query instead.
+     *
+     * @param path The path to the Object
+     * @return The Object, if available
+     */
+    private Optional<Object> get(DataQuery path) {
         checkNotNull(path, "path");
         List<String> parts = path.getParts();
 
@@ -51,20 +94,9 @@ public abstract class DataQueryable<K> implements DataView<K> {
             return Optional.of(this);
         }
 
-        K key = this.key(parts.get(0));
-        if (parts.size() == 1) {
-            return this.get(key);
-        }
-
-        return this.getQueryable(key).map(q -> q.get(path.popFirst()));
+        return getHolder(parts).map(v -> get(v, parts.get(parts.size() - 1)));
     }
 
-    /**
-     * Returns whether this {@link DataQueryable} contains the given path.
-     *
-     * @param path The path relative to this data view
-     * @return True if the path exists
-     */
     public boolean contains(DataQuery path) {
         checkNotNull(path, "path");
         List<String> parts = path.getParts();
@@ -73,471 +105,121 @@ public abstract class DataQueryable<K> implements DataView<K> {
             return true;
         }
 
-        K key = this.key(parts.get(0));
-        if (parts.size() == 1) {
-            return this.contains(key);
-        }
-
-        Optional<DataQueryable> optional = this.getQueryable(key);
-        return optional.isPresent() && optional.get().contains(path.popFirst());
+        Optional<DataView> opt = getHolder(parts);
+        return opt.isPresent() && contains(opt.get(), parts.get(parts.size() - 1));
     }
 
-    /**
-     * Returns whether this {@link DataQueryable} contains an entry for all
-     * provided {@link DataQuery} objects.
-     *
-     * @param path The path relative to this data view
-     * @param paths The additional paths to check
-     * @return True if all paths exist
-     */
-    public boolean contains(DataQuery path, DataQuery... paths) {
-        checkNotNull(path, "DataQuery cannot be null!");
-        checkNotNull(paths, "DataQuery varargs cannot be null!");
-
-        if (!this.contains(path)) {
-            return false;
-        }
-        for (DataQuery query : paths) {
-            if (!this.contains(query)) {
-                return false;
-            }
-        }
-        return true; // we contain all paths :)
-    }
-
-    /**
-     * Returns whether this {@link DataQueryable} contains the given {@link Key}'s
-     * defaulted {@link DataQuery}.
-     *
-     * @param key The key to get the data path relative to this data view
-     * @return True if the path exists
-     */
-    public boolean contains(Key<?> key) {
-        return this.contains(checkNotNull(key, "Key cannot be null!").getQuery());
-    }
-
-    /**
-     * Returns whether this {@link DataQueryable} contains the given {@link Key}es
-     * defaulted {@link DataQuery}.
-     *
-     * @param key The key to get the data path relative to this data view
-     * @param keys The additional keys to check
-     * @return True if the path exists
-     */
-    public boolean contains(Key<?> key, Key<?>... keys) {
-        checkNotNull(key, "Key cannot be null!");
-        checkNotNull(keys, "Keys cannot be null!");
-
-        if (!this.contains(key)) {
-            return false;
-        }
-        for (Key<?> akey : keys) {
-            if (!this.contains(checkNotNull(akey, "Cannot have a null key!").getQuery())) {
-                return false;
-            }
-        }
-        return true; // we contain all keys :)
-    }
-
-    /**
-     * <p>Sets the given Object value according to the given path relative to
-     * this {@link DataQueryable}'s path.</p>
-     *
-     * <p>The value must be one of<br/>
-     * * Allowed Types<br/>
-     * * {@link DataSerializable}<br/>
-     * * {@link CatalogType}<br/>
-     * * have a {@link DataTranslator} registered in Sponge's {@link DataManager}<br/>
-     * * {@link Map} (keys will be turned into queries vea toString())</p>
-     *
-     * @param path The path of the object to set
-     * @param value The value of the data
-     * @return This view, for chaining
-     */
     public DataQueryable<K> set(DataQuery path, Object value) {
         checkNotNull(path, "path");
         checkNotNull(value, "value");
         List<String> parts = path.getParts();
         checkArgument(parts.isEmpty(), "The query not be empty");
 
-        K key = this.key(parts.get(0));
-        if (parts.size() == 1) {
-            this.set(key, value);
-        } else {
-            // Get or create a DataQueryable at key, and recursively call set() on that DataQueryable
-            this.getQueryable(key)
-                    .orElseGet(() -> this.createMap(key))
-                    .set(path.popFirst(), value);
-        }
-
+        set(getOrCreateHolder(parts), parts.get(parts.size() - 1), value);
         return this;
     }
 
-    /**
-     * <p>Sets the given {@link Key}ed value according to the provided
-     * {@link Key}'s {@link Key#getQuery()}.</p>
-     *
-     * <p>The value must be one of<br/>
-     * * Allowed Types<br/>
-     * * {@link DataSerializable}<br/>
-     * * {@link CatalogType}<br/>
-     * * have a {@link DataTranslator} registered in Sponge's {@link DataManager}<br/>
-     * * {@link Map} (keys will be turned into queries vea toString())</p>
-     *
-     * @param key The key of the value to set
-     * @param value The value of the data
-     * @param <E> The type of value
-     * @return This view, for chaining
-     */
-    public <E> DataQueryable<K> set(Key<? extends BaseValue<E>> key, E value) {
-        return this.set(checkNotNull(key, "Key was null!").getQuery(), value);
-    }
-
-    /**
-     * Removes the data associated to the given path relative to this
-     * {@link DataView}'s path.
-     * <p>Path can not be emtpy, to remove this {@link DataView}, call
-     * the associated parent to remove this views name.</p>
-     *
-     * @param path The path of data to remove
-     * @return This view, for chaining
-     */
     public DataQueryable<K> remove(DataQuery path) {
         checkNotNull(path, "path");
         List<String> parts = path.getParts();
         checkArgument(parts.isEmpty(), "The query can not be empty");
 
-        K key = this.key(parts.get(0));
-        if (parts.size() == 1) {
-            this.remove(key);
-        } else {
-            this.getQueryable(key).ifPresent(dataQueryable -> dataQueryable.remove(path.pop()));
-        }
+        getHolder(parts).ifPresent(v -> remove(v, parts.get(parts.size() - 1)));
         return this;
     }
 
-    /**
-     * Creates a new {@link DataMap} at the desired path.
-     * <p>If any data existed at the given path, that data will be
-     * overwritten with the newly constructed {@link DataView}.</p>
-     *
-     * @param path The path of the new data map
-     * @return The newly created data map
-     */
     public DataMap createMap(DataQuery path) {
         checkNotNull(path, "path");
         List<String> parts = path.getParts();
         checkArgument(parts.isEmpty(), "The query not be empty");
 
-        K key = this.key(parts.get(0));
-        if (parts.size() == 1) {
-            return this.createMap(key);
-        }
-
-        return this.getQueryable(key)
-                .orElseGet(() -> this.createMap(key))
-                .createMap(path.popFirst());
+        return createMap(getOrCreateHolder(parts), parts.get(parts.size() - 1));
     }
 
-    /**
-     * Creates a new {@link DataList} at the desired path.
-     * <p>If any data existed at the given path, that data will be
-     * overwritten with the newly constructed {@link DataList}.</p>
-     *
-     * @param path The path of the new data list
-     * @return The newly created data list
-     */
     public DataList createList(DataQuery path) {
         checkNotNull(path, "path");
         List<String> parts = path.getParts();
         checkArgument(parts.isEmpty(), "The query not be empty");
 
-        K key = this.key(parts.get(0));
-        if (parts.size() == 1) {
-            return this.createList(key);
-        }
-
-        return this.getQueryable(key)
-                .orElseGet(() -> this.createMap(key))
-                .createList(path.popFirst());
+        return createList(getOrCreateHolder(parts), parts.get(parts.size() - 1));
     }
 
-    /**
-     * Gets the {@link DataMap} by path, if available.
-     *
-     * <p>If a {@link DataMap} does not exist, or the data residing at
-     * the path is not an instance of a {@link DataMap}, an absent is
-     * returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The data map, if available
-     */
     public Optional<DataMap> getMap(DataQuery path) {
         return this.get(path).filter(o -> o instanceof DataMap).map(o -> (DataMap) o);
     }
 
-    /**
-     * Gets the {@link DataList} by path, if available.
-     *
-     * <p>If a {@link DataList} does not exist, or the data residing at
-     * the path is not an instance of a {@link DataList}, an absent is
-     * returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The data list, if available
-     */
     public Optional<DataList> getList(DataQuery path) {
         return this.get(path).filter(o -> o instanceof DataList).map(o -> (DataList) o);
     }
 
-    /**
-     * Gets the {@link Boolean} by path, if available.
-     *
-     * <p>If a {@link Boolean} does not exist, or the data residing at
-     * the path is not an instance of a {@link Boolean}, an absent is
-     * returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The boolean, if available
-     */
     public Optional<Boolean> getBoolean(DataQuery path) {
         return this.get(path).flatMap(Coerce::asBoolean);
     }
 
-    /**
-     * Gets the {@link Byte} by path, if available.
-     *
-     * <p>If a {@link Byte} does not exist, or the data residing at
-     * the path is not an instance of a {@link Byte}, an absent is
-     * returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The boolean, if available
-     */
     public Optional<Byte> getByte(DataQuery path) {
         return this.get(path).flatMap(Coerce::asByte);
     }
 
-    /**
-     * Gets the {@link Character} by path, if available.
-     *
-     * <p>If a {@link Character} does not exist, or the data residing at
-     * the path is not an instance of a {@link Character}, an absent is
-     * returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The boolean, if available
-     */
     public Optional<Character> getCharacter(DataQuery path) {
         return this.get(path).flatMap(Coerce::asChar);
     }
 
-    /**
-     * Gets the {@link Short} by path, if available.
-     *
-     * <p>If a {@link Short} does not exist, or the data residing at
-     * the path is not an instance of a {@link Short}, an absent is
-     * returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The boolean, if available
-     */
     public Optional<Short> getShort(DataQuery path) {
         return get(path).flatMap(Coerce::asShort);
     }
 
-    /**
-     * Gets the {@link Integer} by path, if available.
-     *
-     * <p>If a {@link Integer} does not exist, or the data residing at
-     * the path is not an instance of a {@link Integer}, an absent is
-     * returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The integer, if available
-     */
     public Optional<Integer> getInt(DataQuery path) {
         return get(path).flatMap(Coerce::asInteger);
     }
 
-    /**
-     * Gets the {@link Long} by path, if available.
-     *
-     * <p>If a {@link Long} does not exist, or the data residing at
-     * the path is not an instance of a {@link Long}, an absent is
-     * returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The long, if available
-     */
     public Optional<Long> getLong(DataQuery path) {
         return get(path).flatMap(Coerce::asLong);
     }
 
-    /**
-     * Gets the {@link Float} by path, if available.
-     *
-     * <p>If a {@link Float} does not exist, or the data residing at
-     * the path is not an instance of a {@link Float}, an absent is
-     * returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The boolean, if available
-     */
     public Optional<Float> getFloat(DataQuery path) {
         return get(path).flatMap(Coerce::asFloat);
     }
 
-    /**
-     * Gets the {@link Double} by path, if available.
-     *
-     * <p>If a {@link Double} does not exist, or the data residing at
-     * the path is not an instance of a {@link Double}, an absent is
-     * returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The double, if available
-     */
     public Optional<Double> getDouble(DataQuery path) {
         return get(path).flatMap(Coerce::asDouble);
     }
 
-    /**
-     * Gets the {@link String} by path, if available.
-     *
-     * <p>If a {@link String} does not exist, or the data residing at
-     * the path is not an instance of a {@link String}, an absent is
-     * returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The string, if available
-     */
     public Optional<String> getString(DataQuery path) {
         return get(path).flatMap(Coerce::asString);
     }
 
-    /**
-     * Gets the boolean array at path, if available.
-     *
-     * <p>If the boolean array does not exist, or the data
-     * residing at the path can not be coerced into a boolean array,
-     * an absent is returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The boolean array, if available
-     */
     public Optional<boolean[]> getBooleanArray(DataQuery path) {
         return get(path).flatMap(Coerce::asBooleanArray);
     }
 
-    /**
-     * Gets the byte array at path, if available.
-     *
-     * <p>If the byte array does not exist, or the data
-     * residing at the v can not be coerced into a byte array,
-     * an absent is returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The byte array, if available
-     */
     public Optional<byte[]> getByteArray(DataQuery path) {
         return get(path).flatMap(Coerce::asByteArray);
     }
 
-    /**
-     * Gets the char array at path, if available.
-     *
-     * <p>If the char array does not exist, or the data
-     * residing at the path can not be coerced into a char array,
-     * an absent is returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The char array, if available
-     */
     public Optional<char[]> getCharArray(DataQuery path) {
         return get(path).flatMap(Coerce::asCharArray);
     }
 
-    /**
-     * Gets the short array at path, if available.
-     *
-     * <p>If the short array does not exist, or the data
-     * residing at the path can not be coerced into a short array,
-     * an absent is returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The short array, if available
-     */
     public Optional<short[]> getShortArray(DataQuery path) {
         return get(path).flatMap(Coerce::asShortArray);
     }
 
-    /**
-     * Gets the int array at path, if available.
-     *
-     * <p>If the int array does not exist, or the data
-     * residing at the path can not be coerced into a int array,
-     * an absent is returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The int array, if available
-     */
     public Optional<int[]> getIntArray(DataQuery path) {
         return get(path).flatMap(Coerce::asIntArray);
     }
 
-    /**
-     * Gets the long array at path, if available.
-     *
-     * <p>If the long array does not exist, or the data
-     * residing at the path can not be coerced into a long array,
-     * an absent is returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The long array, if available
-     */
     public Optional<long[]> getLongArray(DataQuery path) {
         return get(path).flatMap(Coerce::asLongArray);
     }
 
-    /**
-     * Gets the float array at path, if available.
-     *
-     * <p>If the float array does not exist, or the data
-     * residing at the path can not be coerced into a float array,
-     * an absent is returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The float array, if available
-     */
     public Optional<float[]> getFloatArray(DataQuery path) {
         return get(path).flatMap(Coerce::asFloatArray);
     }
 
-    /**
-     * Gets the double array at path, if available.
-     *
-     * <p>If the double array does not exist, or the data
-     * residing at the path can not be coerced into a double array,
-     * an absent is returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The double array, if available
-     */
     public Optional<double[]> getDoubleArray(DataQuery path) {
         return get(path).flatMap(Coerce::asDoubleArray);
     }
 
-    /**
-     * Gets the {@link String} array at path, if available.
-     *
-     * <p>If the {@link String} array does not exist, or the data
-     * residing at the path can not be coerced into a {@link String} array,
-     * an absent is returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The {@link String} array, if available
-     */
     public Optional<String[]> getStringArray(DataQuery path) {
         return get(path).flatMap(Coerce::asStringArray);
     }
@@ -545,5 +227,34 @@ public abstract class DataQueryable<K> implements DataView<K> {
     public <T extends DataSerializable> Optional<T> getSpongeObject(DataQuery path, Class<T> type) {
         checkNotNull(type, "type");
         return this.get(path).flatMap(o -> this.coerseSpongeObject(o, type));
+    }
+
+    /*
+     * Helper methods
+     */
+
+    @SuppressWarnings("unchecked")
+    private static Optional<Object> get(DataView view, String key) {
+        return view.get(view.key(key));
+    }
+    @SuppressWarnings("unchecked")
+    private static void set(DataView view, String key, Object value) {
+        view.set(view.key(key), value);
+    }
+    @SuppressWarnings("unchecked")
+    private static boolean contains(DataView view, String key) {
+        return view.contains(view.key(key));
+    }
+    @SuppressWarnings("unchecked")
+    private static DataMap createMap(DataView view, String key) {
+        return view.createMap(view.key(key));
+    }
+    @SuppressWarnings("unchecked")
+    private static DataList createList(DataView view, String key) {
+        return view.createList(view.key(key));
+    }
+    @SuppressWarnings("unchecked")
+    private static void remove(DataView view, String key) {
+        view.remove(view.key(key));
     }
 }
