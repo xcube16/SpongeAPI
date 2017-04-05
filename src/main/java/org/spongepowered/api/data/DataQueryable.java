@@ -39,14 +39,6 @@ import java.util.Optional;
 
 public abstract class DataQueryable<K> implements DataView<K> {
 
-    /**
-     * Parses a {@link String} into a key type.
-     *
-     * @param key A {@link String} representation of a key
-     * @return A key
-     */
-    protected abstract K key(String key);
-
     private Optional<DataQueryable> getQueryable(K key) {
         return this.get(key).filter(o -> o instanceof DataQueryable).map(o -> (DataQueryable) o);
     }
@@ -548,5 +540,10 @@ public abstract class DataQueryable<K> implements DataView<K> {
      */
     public Optional<String[]> getStringArray(DataQuery path) {
         return get(path).flatMap(Coerce::asStringArray);
+    }
+
+    public <T extends DataSerializable> Optional<T> getSpongeObject(DataQuery path, Class<T> type) {
+        checkNotNull(type, "type");
+        return this.get(path).flatMap(o -> this.coerseSpongeObject(o, type));
     }
 }
