@@ -30,6 +30,7 @@ import org.spongepowered.api.data.DataList;
 import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.persistence.DataBuilder;
+import org.spongepowered.api.data.persistence.DataTranslator;
 import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.lang.reflect.Array;
@@ -45,20 +46,6 @@ public final class Coerce2 {
      * No subclasses for you.
      */
     private Coerce2() {}
-
-    /**
-     * Gets the given object as a {@link String}.
-     *
-     * @param obj The object to translate
-     * @return The boolean, if available
-     */
-    public static Optional<String> asString(Object obj) {
-        if (obj instanceof char[]) {
-            return Optional.of(String.valueOf((char[]) obj));
-        } else {
-            return Optional.of(obj.toString());
-        }
-    }
 
     /**
      * Gets the given object as a {@link Boolean}.
@@ -93,62 +80,40 @@ public final class Coerce2 {
     }
 
     /**
-     * Gets the given object as a {@link Integer}.
+     * Gets the given object as a {@link Byte}.
      *
      * <p>Note that this does not translate numbers spelled out as strings.</p>
      *
      * @param obj The object to translate
-     * @return The integer value, if available
+     * @return The byte value, if available
      */
-    public static Optional<Integer> asInteger(Object obj) {
+    public static Optional<Byte> asByte(Object obj) {
         if (obj instanceof Number) {
-            return Optional.of(((Number) obj).intValue());
+            return Optional.of(((Number) obj).byteValue());
         }
 
         try {
-            // use parseDouble() so dots don't cause it to fail
-            return Optional.of((int) Double.parseDouble(Coerce2.sanitiseNumber(obj)));
+            return Optional.of(Byte.valueOf(Coerce2.sanitiseNumber(obj)));
         } catch (NumberFormatException e) {
             return Optional.empty();
         }
     }
 
     /**
-     * Gets the given object as a {@link Double}.
-     *
-     * <p>Note that this does not translate numbers spelled out as strings.</p>
+     * Gets the given object as a {@link Character}.
      *
      * @param obj The object to translate
-     * @return The double value, if available
+     * @return The character, if available
      */
-    public static Optional<Double> asDouble(Object obj) {
-        if (obj instanceof Number) {
-            return Optional.of(((Number) obj).doubleValue());
+    public static Optional<Character> asChar(Object obj) {
+        if (obj instanceof Character) {
+            return Optional.of((Character) obj);
         }
 
-        try {
-            return Optional.of(Double.valueOf(Coerce2.sanitiseNumber(obj)));
-        } catch (NumberFormatException e) {
-            return Optional.empty();
-        }
-    }
-
-    /**
-     * Gets the given object as a {@link Float}.
-     *
-     * <p>Note that this does not translate numbers spelled out as strings.</p>
-     *
-     * @param obj The object to translate
-     * @return The float value, if available
-     */
-    public static Optional<Float> asFloat(Object obj) {
-        if (obj instanceof Number) {
-            return Optional.of(((Number) obj).floatValue());
-        }
-
-        try {
-            return Optional.of(Float.valueOf(Coerce2.sanitiseNumber(obj)));
-        } catch (NumberFormatException e) {
+        String str = obj.toString();
+        if (str.length() > 0) {
+            return Optional.of(str.charAt(0));
+        } else {
             return Optional.empty();
         }
     }
@@ -175,20 +140,21 @@ public final class Coerce2 {
     }
 
     /**
-     * Gets the given object as a {@link Byte}.
+     * Gets the given object as a {@link Integer}.
      *
      * <p>Note that this does not translate numbers spelled out as strings.</p>
      *
      * @param obj The object to translate
-     * @return The byte value, if available
+     * @return The integer value, if available
      */
-    public static Optional<Byte> asByte(Object obj) {
+    public static Optional<Integer> asInteger(Object obj) {
         if (obj instanceof Number) {
-            return Optional.of(((Number) obj).byteValue());
+            return Optional.of(((Number) obj).intValue());
         }
 
         try {
-            return Optional.of(Byte.valueOf(Coerce2.sanitiseNumber(obj)));
+            // use parseDouble() so dots don't cause it to fail
+            return Optional.of((int) Double.parseDouble(Coerce2.sanitiseNumber(obj)));
         } catch (NumberFormatException e) {
             return Optional.empty();
         }
@@ -221,47 +187,65 @@ public final class Coerce2 {
     }
 
     /**
-     * Gets the given object as a {@link Character}.
+     * Gets the given object as a {@link Float}.
+     *
+     * <p>Note that this does not translate numbers spelled out as strings.</p>
      *
      * @param obj The object to translate
-     * @return The character, if available
+     * @return The float value, if available
      */
-    public static Optional<Character> asChar(Object obj) {
-        if (obj instanceof Character) {
-            return Optional.of((Character) obj);
+    public static Optional<Float> asFloat(Object obj) {
+        if (obj instanceof Number) {
+            return Optional.of(((Number) obj).floatValue());
         }
 
-        String str = obj.toString();
-        if (str.length() > 0) {
-            return Optional.of(str.charAt(0));
-        } else {
+        try {
+            return Optional.of(Float.valueOf(Coerce2.sanitiseNumber(obj)));
+        } catch (NumberFormatException e) {
             return Optional.empty();
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T extends DataSerializable> Optional<T> asSpongeObject(Object obj, Class<T> type) {
-        if (obj instanceof DataMap) {
-
-            // See if type is a DataSerializable, in which case it *might* have a builder
-            if (DataSerializable.class.isAssignableFrom(type)) {
-                Optional<DataBuilder<T>> builder = Sponge.getDataManager().getBuilder(type);
-                if (builder.isPresent()) {
-                    return builder.get().build((DataMap) obj);
-                } // else: ok, it did'nt have a builder, move on
-            }
-
-            // Try using a data translator
-            return Sponge.getDataManager().getTranslator(type)
-                    .map(translator -> translator.translate((DataMap) obj));
+    /**
+     * Gets the given object as a {@link Double}.
+     *
+     * <p>Note that this does not translate numbers spelled out as strings.</p>
+     *
+     * @param obj The object to translate
+     * @return The double value, if available
+     */
+    public static Optional<Double> asDouble(Object obj) {
+        if (obj instanceof Number) {
+            return Optional.of(((Number) obj).doubleValue());
         }
-        if (CatalogType.class.isAssignableFrom(type)) {
-            // The compiler does not like the `(Class) type` hack. Added @SuppressWarnings("unchecked")
-            return Coerce.asString(obj).flatMap(s -> Sponge.getRegistry().getType((Class) type, s));
+
+        try {
+            return Optional.of(Double.valueOf(Coerce2.sanitiseNumber(obj)));
+        } catch (NumberFormatException e) {
+            return Optional.empty();
         }
-        return Optional.empty();
     }
 
+    /**
+     * Gets the given object as a {@link String}.
+     *
+     * @param obj The object to translate
+     * @return The boolean, if available
+     */
+    public static Optional<String> asString(Object obj) {
+        if (obj instanceof char[]) {
+            return Optional.of(String.valueOf((char[]) obj));
+        } else {
+            return Optional.of(obj.toString());
+        }
+    }
+
+    /**
+     * Gets the given object as a boolean[].
+     *
+     * @param obj The object to translate
+     * @return The boolean[], if available
+     */
     public static Optional<boolean[]> asBooleanArray(Object obj) {
         if (obj instanceof boolean[]) {
             return Optional.of((boolean[]) obj); // fast path
@@ -310,6 +294,12 @@ public final class Coerce2 {
         return Optional.empty();
     }
 
+    /**
+     * Gets the given object as a byte[].
+     *
+     * @param obj The object to translate
+     * @return The byte[], if available
+     */
     public static Optional<byte[]> asByteArray(Object obj) {
         if (obj instanceof byte[]) {
             return Optional.of((byte[]) obj); // fast path
@@ -331,6 +321,12 @@ public final class Coerce2 {
         return Optional.empty();
     }
 
+    /**
+     * Gets the given object as a char[].
+     *
+     * @param obj The object to translate
+     * @return The char[], if available
+     */
     public static Optional<char[]> asCharArray(Object obj) {
         if (obj instanceof char[]) {
             return Optional.of((char[]) obj); // fast path
@@ -371,6 +367,12 @@ public final class Coerce2 {
         return Optional.empty();
     }
 
+    /**
+     * Gets the given object as a short[].
+     *
+     * @param obj The object to translate
+     * @return The short[], if available
+     */
     public static Optional<short[]> asShortArray(Object obj) {
         if (obj instanceof short[]) {
             return Optional.of((short[]) obj); // fast path
@@ -392,6 +394,12 @@ public final class Coerce2 {
         return Optional.empty();
     }
 
+    /**
+     * Gets the given object as a int[].
+     *
+     * @param obj The object to translate
+     * @return The int[], if available
+     */
     public static Optional<int[]> asIntArray(Object obj) {
         if (obj instanceof int[]) {
             return Optional.of((int[]) obj); // fast path
@@ -413,6 +421,12 @@ public final class Coerce2 {
         return Optional.empty();
     }
 
+    /**
+     * Gets the given object as a long[].
+     *
+     * @param obj The object to translate
+     * @return The long[], if available
+     */
     public static Optional<long[]> asLongArray(Object obj) {
         if (obj instanceof long[]) {
             return Optional.of((long[]) obj); // fast path
@@ -434,6 +448,12 @@ public final class Coerce2 {
         return Optional.empty();
     }
 
+    /**
+     * Gets the given object as a float[].
+     *
+     * @param obj The object to translate
+     * @return The float[], if available
+     */
     public static Optional<float[]> asFloatArray(Object obj) {
         if (obj instanceof float[]) {
             return Optional.of((float[]) obj); // fast path
@@ -455,6 +475,12 @@ public final class Coerce2 {
         return Optional.empty();
     }
 
+    /**
+     * Gets the given object as a double[].
+     *
+     * @param obj The object to translate
+     * @return The double[], if available
+     */
     public static Optional<double[]> asDoubleArray(Object obj) {
         if (obj instanceof double[]) {
             return Optional.of((double[]) obj); // fast path
@@ -476,6 +502,12 @@ public final class Coerce2 {
         return Optional.empty();
     }
 
+    /**
+     * Gets the given object as a {@link String}[].
+     *
+     * @param obj The object to translate
+     * @return The {@link String}[], if available
+     */
     public static Optional<String[]> asStringArray(Object obj) {
         if (obj instanceof String[]) {
             return Optional.of((String[]) obj); // fast path
@@ -515,6 +547,50 @@ public final class Coerce2 {
         return Optional.empty();
     }
 
+    /**
+     * Gets the given object as a {@link DataSerializable}, {@link CatalogType}, or {@link DataTranslator}-able
+     * object registered in Sponge, if available.
+     *
+     * <p>If {@code obj} is a {@link DataMap}
+     * and {@code type} is a {@link DataSerializable},
+     * and the {@link DataSerializable} has a corresponding {@link DataBuilder} registered
+     * in Sponge's DataManager, present is returned.</p>
+     *
+     * <p>If {@code obj} is a {@link DataMap}
+     * and a {@link DataTranslator} corresponding to {@code type} is registered
+     * in Sponge's DataManager, present is returned.</p>
+     *
+     * <p>If {@code type} is a {@link CatalogType} registered in Sponge
+     * and {@code obj} can be coerced into a {@link String}
+     * representing the specific {@link CatalogType}, present is returned.</p>
+     *
+     * @param <T> The type of object
+     * @param type The class of the object
+     * @return The deserialized object, if available
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends DataSerializable> Optional<T> asSpongeObject(Object obj, Class<T> type) {
+        if (obj instanceof DataMap) {
+
+            // See if type is a DataSerializable, in which case it *might* have a builder
+            if (DataSerializable.class.isAssignableFrom(type)) {
+                Optional<DataBuilder<T>> builder = Sponge.getDataManager().getBuilder(type);
+                if (builder.isPresent()) {
+                    return builder.get().build((DataMap) obj);
+                } // else: ok, it did'nt have a builder, move on
+            }
+
+            // Try using a data translator
+            return Sponge.getDataManager().getTranslator(type)
+                    .map(translator -> translator.translate((DataMap) obj));
+        }
+        if (CatalogType.class.isAssignableFrom(type)) {
+            // The compiler does not like the `(Class) type` hack. Added @SuppressWarnings("unchecked")
+            return Coerce.asString(obj).flatMap(s -> Sponge.getRegistry().getType((Class) type, s));
+        }
+        return Optional.empty();
+    }
+
     private static String sanitiseNumber(Object obj) {
         return obj.toString().trim();
     }
@@ -549,7 +625,7 @@ public final class Coerce2 {
                     if (str.contains(".")) {
                         break; // We have doubles
                     }
-                    parsed[at] = Long.parseLong(str.trim());
+                    parsed[at] = Long.parseLong(sanitiseNumber(str));
                 }
 
                 if (at == parsed.length) {
@@ -566,7 +642,7 @@ public final class Coerce2 {
                         if (str.contains(".")) {
                             break; // We have doubles
                         }
-                        parsed2[at] = Double.parseDouble(str.trim());
+                        parsed2[at] = Double.parseDouble(sanitiseNumber(str));
                     }
                     return Optional.of(new DoubleArray(parsed2));
                 }
