@@ -27,17 +27,10 @@ package org.spongepowered.api.data;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.spongepowered.api.CatalogType;
-import org.spongepowered.api.data.key.Key;
-import org.spongepowered.api.data.persistence.DataTranslator;
-import org.spongepowered.api.data.value.BaseValue;
-import org.spongepowered.api.util.Coerce;
+import org.spongepowered.api.util.Coerce2;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-
-import javax.annotation.Nullable;
 
 public abstract class DataQueryable<K> implements DataView<K> {
 
@@ -153,80 +146,80 @@ public abstract class DataQueryable<K> implements DataView<K> {
     }
 
     public Optional<Boolean> getBoolean(DataQuery path) {
-        return this.get(path).flatMap(Coerce::asBoolean);
+        return this.get(path).flatMap(Coerce2::asBoolean);
     }
 
     public Optional<Byte> getByte(DataQuery path) {
-        return this.get(path).flatMap(Coerce::asByte);
+        return this.get(path).flatMap(Coerce2::asByte);
     }
 
     public Optional<Character> getCharacter(DataQuery path) {
-        return this.get(path).flatMap(Coerce::asChar);
+        return this.get(path).flatMap(Coerce2::asChar);
     }
 
     public Optional<Short> getShort(DataQuery path) {
-        return get(path).flatMap(Coerce::asShort);
+        return get(path).flatMap(Coerce2::asShort);
     }
 
     public Optional<Integer> getInt(DataQuery path) {
-        return get(path).flatMap(Coerce::asInteger);
+        return get(path).flatMap(Coerce2::asInteger);
     }
 
     public Optional<Long> getLong(DataQuery path) {
-        return get(path).flatMap(Coerce::asLong);
+        return get(path).flatMap(Coerce2::asLong);
     }
 
     public Optional<Float> getFloat(DataQuery path) {
-        return get(path).flatMap(Coerce::asFloat);
+        return get(path).flatMap(Coerce2::asFloat);
     }
 
     public Optional<Double> getDouble(DataQuery path) {
-        return get(path).flatMap(Coerce::asDouble);
+        return get(path).flatMap(Coerce2::asDouble);
     }
 
     public Optional<String> getString(DataQuery path) {
-        return get(path).flatMap(Coerce::asString);
+        return get(path).flatMap(Coerce2::asString);
     }
 
     public Optional<boolean[]> getBooleanArray(DataQuery path) {
-        return get(path).flatMap(Coerce::asBooleanArray);
+        return get(path).flatMap(Coerce2::asBooleanArray);
     }
 
     public Optional<byte[]> getByteArray(DataQuery path) {
-        return get(path).flatMap(Coerce::asByteArray);
+        return get(path).flatMap(Coerce2::asByteArray);
     }
 
     public Optional<char[]> getCharArray(DataQuery path) {
-        return get(path).flatMap(Coerce::asCharArray);
+        return get(path).flatMap(Coerce2::asCharArray);
     }
 
     public Optional<short[]> getShortArray(DataQuery path) {
-        return get(path).flatMap(Coerce::asShortArray);
+        return get(path).flatMap(Coerce2::asShortArray);
     }
 
     public Optional<int[]> getIntArray(DataQuery path) {
-        return get(path).flatMap(Coerce::asIntArray);
+        return get(path).flatMap(Coerce2::asIntArray);
     }
 
     public Optional<long[]> getLongArray(DataQuery path) {
-        return get(path).flatMap(Coerce::asLongArray);
+        return get(path).flatMap(Coerce2::asLongArray);
     }
 
     public Optional<float[]> getFloatArray(DataQuery path) {
-        return get(path).flatMap(Coerce::asFloatArray);
+        return get(path).flatMap(Coerce2::asFloatArray);
     }
 
     public Optional<double[]> getDoubleArray(DataQuery path) {
-        return get(path).flatMap(Coerce::asDoubleArray);
+        return get(path).flatMap(Coerce2::asDoubleArray);
     }
 
     public Optional<String[]> getStringArray(DataQuery path) {
-        return get(path).flatMap(Coerce::asStringArray);
+        return get(path).flatMap(Coerce2::asStringArray);
     }
 
     public <T extends DataSerializable> Optional<T> getSpongeObject(DataQuery path, Class<T> type) {
         checkNotNull(type, "type");
-        return this.get(path).flatMap(o -> this.coerseSpongeObject(o, type));
+        return this.get(path).flatMap(o -> Coerce2.asSpongeObject(o, type));
     }
 
     /*

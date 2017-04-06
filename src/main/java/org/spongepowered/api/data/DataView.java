@@ -24,7 +24,6 @@
  */
 package org.spongepowered.api.data;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.spongepowered.api.CatalogType;
@@ -33,7 +32,7 @@ import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.persistence.DataBuilder;
 import org.spongepowered.api.data.persistence.DataTranslator;
 import org.spongepowered.api.data.value.BaseValue;
-import org.spongepowered.api.util.Coerce;
+import org.spongepowered.api.util.Coerce2;
 
 import java.util.List;
 import java.util.Map;
@@ -235,7 +234,7 @@ public interface DataView<K> {
      * @return The {@link Boolean}, if available
      */
     default Optional<Boolean> getBoolean(K key) {
-        return this.get(key).flatMap(Coerce::asBoolean);
+        return this.get(key).flatMap(Coerce2::asBoolean);
     }
 
     /**
@@ -248,7 +247,7 @@ public interface DataView<K> {
      * @return The {@link Byte}, if available
      */
     default Optional<Byte> getByte(K key) {
-        return this.get(key).flatMap(Coerce::asByte);
+        return this.get(key).flatMap(Coerce2::asByte);
     }
 
     /**
@@ -261,7 +260,7 @@ public interface DataView<K> {
      * @return The {@link Character}, if available
      */
     default Optional<Character> getCharacter(K key) {
-        return this.get(key).flatMap(Coerce::asChar);
+        return this.get(key).flatMap(Coerce2::asChar);
     }
 
     /**
@@ -274,7 +273,7 @@ public interface DataView<K> {
      * @return The {@link Short}, if available
      */
     default Optional<Short> getShort(K key) {
-        return this.get(key).flatMap(Coerce::asShort);
+        return this.get(key).flatMap(Coerce2::asShort);
     }
 
     /**
@@ -287,7 +286,7 @@ public interface DataView<K> {
      * @return The {@link Integer}, if available
      */
     default Optional<Integer> getInt(K key) {
-        return this.get(key).flatMap(Coerce::asInteger);
+        return this.get(key).flatMap(Coerce2::asInteger);
     }
 
     /**
@@ -300,7 +299,7 @@ public interface DataView<K> {
      * @return The {@link Long}, if available
      */
     default Optional<Long> getLong(K key) {
-        return this.get(key).flatMap(Coerce::asLong);
+        return this.get(key).flatMap(Coerce2::asLong);
     }
 
     /**
@@ -313,7 +312,7 @@ public interface DataView<K> {
      * @return The {@link Float}, if available
      */
     default Optional<Float> getFloat(K key) {
-        return this.get(key).flatMap(Coerce::asFloat);
+        return this.get(key).flatMap(Coerce2::asFloat);
     }
 
     /**
@@ -326,7 +325,7 @@ public interface DataView<K> {
      * @return The {@link Double}, if available
      */
     default Optional<Double> getDouble(K key) {
-        return this.get(key).flatMap(Coerce::asDouble);
+        return this.get(key).flatMap(Coerce2::asDouble);
     }
 
     /**
@@ -339,7 +338,7 @@ public interface DataView<K> {
      * @return The {@link String}, if available
      */
     default Optional<String> getString(K key) {
-        return this.get(key).flatMap(Coerce::asString);
+        return this.get(key).flatMap(Coerce2::asString);
     }
 
     /**
@@ -352,8 +351,8 @@ public interface DataView<K> {
      * @param key The key of the value to get
      * @return The boolean array, if available
      */
-    defualt Optional<boolean[]> getBooleanArray(K key) {
-        return this.get(key).flatMap(Coerce::asBooleanArray);
+    default Optional<boolean[]> getBooleanArray(K key) {
+        return this.get(key).flatMap(Coerce2::asBooleanArray);
     }
 
     /**
@@ -366,8 +365,8 @@ public interface DataView<K> {
      * @param key The key of the value to get
      * @return The byte array, if available
      */
-    defualt Optional<byte[]> getByteArray(K key) {
-        return this.get(key).flatMap(Coerce::asByteArray);
+    default Optional<byte[]> getByteArray(K key) {
+        return this.get(key).flatMap(Coerce2::asByteArray);
     }
 
     /**
@@ -380,8 +379,8 @@ public interface DataView<K> {
      * @param key The key of the value to get
      * @return The char array, if available
      */
-    defualt Optional<char[]> getCharArray(K key) {
-        return this.get(key).flatMap(Coerce::asCharArray);
+    default Optional<char[]> getCharArray(K key) {
+        return this.get(key).flatMap(Coerce2::asCharArray);
     }
 
     /**
@@ -394,8 +393,8 @@ public interface DataView<K> {
      * @param key The key of the value to get
      * @return The short array, if available
      */
-    defualt Optional<short[]> getShortArray(K key) {
-        return this.get(key).flatMap(Coerce::asShortArray);
+    default Optional<short[]> getShortArray(K key) {
+        return this.get(key).flatMap(Coerce2::asShortArray);
     }
 
     /**
@@ -408,8 +407,8 @@ public interface DataView<K> {
      * @param key The key of the value to get
      * @return The int array, if available
      */
-    defualt Optional<int[]> getIntegerArray(K key) {
-        return this.get(key).flatMap(Coerce::asIntArray);
+    default Optional<int[]> getIntegerArray(K key) {
+        return this.get(key).flatMap(Coerce2::asIntArray);
     }
 
     /**
@@ -422,8 +421,8 @@ public interface DataView<K> {
      * @param key The key of the value to get
      * @return The long array, if available
      */
-    defualt Optional<long[]> getLongArray(K key) {
-        return this.get(key).flatMap(Coerce::asLongArray);
+    default Optional<long[]> getLongArray(K key) {
+        return this.get(key).flatMap(Coerce2::asLongArray);
     }
 
     /**
@@ -436,8 +435,8 @@ public interface DataView<K> {
      * @param key The key of the value to get
      * @return The float array, if available
      */
-    defualt Optional<float[]> getFloatArray(K key) {
-        return this.get(key).flatMap(Coerce::asFloatArray);
+    default Optional<float[]> getFloatArray(K key) {
+        return this.get(key).flatMap(Coerce2::asFloatArray);
     }
 
     /**
@@ -450,8 +449,8 @@ public interface DataView<K> {
      * @param key The key of the value to get
      * @return The double array, if available
      */
-    defualt Optional<double[]> getDoubleArray(K key) {
-        return this.get(key).flatMap(Coerce::asDoubleArray);
+    default Optional<double[]> getDoubleArray(K key) {
+        return this.get(key).flatMap(Coerce2::asDoubleArray);
     }
 
     /**
@@ -464,8 +463,8 @@ public interface DataView<K> {
      * @param key The key of the value to get
      * @return The {@link String} array, if available
      */
-    defualt Optional<String[]> getStringArray(K key) {
-        return this.get(key).flatMap(Coerce::asStringArray);
+    default Optional<String[]> getStringArray(K key) {
+        return this.get(key).flatMap(Coerce2::asStringArray);
     }
 
     /**
@@ -492,31 +491,7 @@ public interface DataView<K> {
      */
     default <T extends DataSerializable> Optional<T> getSpongeObject(K key, Class<T> type) {
         checkNotNull(type, "type");
-        return this.get(key).flatMap(o -> coerseSpongeObject(o, type));
-    }
-
-    //TODO: move to Coerce?
-    @SuppressWarnings("unchecked")
-    default <T extends DataSerializable> Optional<T> coerseSpongeObject(@Nonnull Object obj, @Nonnull Class<T> type) {
-        if (obj instanceof DataMap) {
-
-            // See if type is a DataSerializable, in which case it *might* have a builder
-            if (DataSerializable.class.isAssignableFrom(type)) {
-                Optional<DataBuilder<T>> builder = Sponge.getDataManager().getBuilder(type);
-                if (builder.isPresent()) {
-                    return builder.get().build((DataMap) obj);
-                } // else: ok, it did'nt have a builder, move on
-            }
-
-            // Try using a data translator
-            return Sponge.getDataManager().getTranslator(type)
-                    .map(translator -> translator.translate((DataMap) obj));
-        }
-        if (CatalogType.class.isAssignableFrom(type)) {
-            // The compiler does not like the `(Class) type` hack. Added @SuppressWarnings("unchecked")
-            return Coerce.asString(obj).flatMap(s -> Sponge.getRegistry().getType((Class) type, s));
-        }
-        return Optional.empty();
+        return this.get(key).flatMap(o -> Coerce2.asSpongeObject(o, type));
     }
 
     /**

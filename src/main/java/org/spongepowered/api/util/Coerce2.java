@@ -24,7 +24,12 @@
  */
 package org.spongepowered.api.util;
 
+import org.spongepowered.api.CatalogType;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataList;
+import org.spongepowered.api.data.DataMap;
+import org.spongepowered.api.data.DataSerializable;
+import org.spongepowered.api.data.persistence.DataBuilder;
 import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.lang.reflect.Array;
@@ -232,6 +237,29 @@ public final class Coerce2 {
         } else {
             return Optional.empty();
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends DataSerializable> Optional<T> asSpongeObject(Object obj, Class<T> type) {
+        if (obj instanceof DataMap) {
+
+            // See if type is a DataSerializable, in which case it *might* have a builder
+            if (DataSerializable.class.isAssignableFrom(type)) {
+                Optional<DataBuilder<T>> builder = Sponge.getDataManager().getBuilder(type);
+                if (builder.isPresent()) {
+                    return builder.get().build((DataMap) obj);
+                } // else: ok, it did'nt have a builder, move on
+            }
+
+            // Try using a data translator
+            return Sponge.getDataManager().getTranslator(type)
+                    .map(translator -> translator.translate((DataMap) obj));
+        }
+        if (CatalogType.class.isAssignableFrom(type)) {
+            // The compiler does not like the `(Class) type` hack. Added @SuppressWarnings("unchecked")
+            return Coerce.asString(obj).flatMap(s -> Sponge.getRegistry().getType((Class) type, s));
+        }
+        return Optional.empty();
     }
 
     public static Optional<boolean[]> asBooleanArray(Object obj) {
