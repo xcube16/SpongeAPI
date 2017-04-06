@@ -120,6 +120,13 @@ public interface DataView<K> {
     Optional<DataView> getParent();
 
     /**
+     * Gets the number of elements in this {@link DataView}.
+     *
+     * @return How many elements there are
+     */
+    int size();
+
+    /**
      * Returns whether this {@link DataView} contains the given key.
      *
      * @param key The key
