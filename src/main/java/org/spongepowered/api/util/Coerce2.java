@@ -33,7 +33,6 @@ import org.spongepowered.api.data.persistence.DataBuilder;
 import org.spongepowered.api.data.persistence.DataTranslator;
 import org.spongepowered.api.util.annotation.NonnullByDefault;
 
-import java.lang.reflect.Array;
 import java.util.Optional;
 
 /**
@@ -227,20 +226,6 @@ public final class Coerce2 {
     }
 
     /**
-     * Gets the given object as a {@link String}.
-     *
-     * @param obj The object to translate
-     * @return The boolean, if available
-     */
-    public static Optional<String> asString(Object obj) {
-        if (obj instanceof char[]) {
-            return Optional.of(String.valueOf((char[]) obj));
-        } else {
-            return Optional.of(obj.toString());
-        }
-    }
-
-    /**
      * Gets the given object as a boolean[].
      *
      * @param obj The object to translate
@@ -250,19 +235,17 @@ public final class Coerce2 {
         if (obj instanceof boolean[]) {
             return Optional.of((boolean[]) obj); // fast path
         }
-        if (!obj.getClass().isArray()) {
-            return Optional.empty();
-        }
 
-        boolean[] booleans = new boolean[Array.getLength(obj)];
+        if (obj instanceof DataList) {
+            DataList strings = (DataList) obj;
+            // TODO: Make shore its a list of String's!!!
+            cause an error so you dont forget;
 
-        Optional<StrArray> strsOpt = wrapStrArray(obj);
-        if (strsOpt.isPresent()) {
-            StrArray strings = strsOpt.get();
+            boolean[] booleans = new boolean[strings.size()];
 
             int i;
             for (i = 0; i < booleans.length; i++) {
-                String str = strings.stringValue(i).trim();
+                String str = strings.getString(i).orElse("").trim();
                 if (str.equalsIgnoreCase("true")
                         || str.equalsIgnoreCase("yes")
                         || str.equalsIgnoreCase("t")
@@ -284,6 +267,7 @@ public final class Coerce2 {
         Optional<NumArray> numsOpt = wrapNumArray(obj);
         if (numsOpt.isPresent()) {
             NumArray numbers = numsOpt.get();
+            boolean[] booleans = new boolean[numbers.size()];
 
             for (int i = 0; i < numbers.size(); i++) {
                 booleans[i] = numbers.intValue(i) != 0; // 0 = false, anything else = true (just like C)
@@ -322,49 +306,17 @@ public final class Coerce2 {
     }
 
     /**
-     * Gets the given object as a char[].
+     * Gets the given object as a {@link String}.
      *
      * @param obj The object to translate
-     * @return The char[], if available
+     * @return The boolean, if available
      */
-    public static Optional<char[]> asCharArray(Object obj) {
+    public static Optional<String> asString(Object obj) {
         if (obj instanceof char[]) {
-            return Optional.of((char[]) obj); // fast path
+            return Optional.of(String.valueOf((char[]) obj));
+        } else {
+            return Optional.of(obj.toString());
         }
-        if (!obj.getClass().isArray()) {
-            return Optional.empty();
-        }
-
-        char[] chars = new char[Array.getLength(obj)];
-
-        if (obj instanceof String[]) {
-            String[] strings = (String[]) obj;
-
-            int i;
-            for (i = 0; i < strings.length; i++) {
-                String str = strings[i];
-                if (str.length() < 1) {
-                    break;
-                }
-                chars[i] = str.charAt(0);
-            }
-            if (i == strings.length) {
-                return Optional.of(chars);
-            }
-        }
-
-        Optional<NumArray> numsOpt = wrapNumArray(obj);
-        if (numsOpt.isPresent()) {
-            NumArray numbers = numsOpt.get();
-
-            for (int i = 0; i < numbers.size(); i++) {
-                // Integer.valueOf(int) never returns a 0 length String so we are safe
-                chars[i] = Integer.toString(numbers.intValue(i)).charAt(0);
-            }
-            return Optional.of(chars);
-        }
-
-        return Optional.empty();
     }
 
     /**
@@ -503,51 +455,6 @@ public final class Coerce2 {
     }
 
     /**
-     * Gets the given object as a {@link String}[].
-     *
-     * @param obj The object to translate
-     * @return The {@link String}[], if available
-     */
-    public static Optional<String[]> asStringArray(Object obj) {
-        if (obj instanceof String[]) {
-            return Optional.of((String[]) obj); // fast path
-        }
-        if (!obj.getClass().isArray()) {
-            return Optional.empty();
-        }
-
-        Optional<StrArray> strsOpt = wrapStrArray(obj);
-        if (strsOpt.isPresent()) {
-            StrArray strs = strsOpt.get();
-            String[] strings = new String[strs.size()];
-
-            for (int i = 0; i < strings.length; i++) {
-                strings[i] = strs.stringValue(i);
-            }
-            return Optional.of(strings);
-        }
-
-        Optional<NumArray> numsOpt = wrapNumArray(obj);
-        if (numsOpt.isPresent()) {
-            NumArray numbers = numsOpt.get();
-            String[] strings = new String[numbers.size()];
-
-            if (numbers.isFloating()) {
-                for (int i = 0; i < numbers.size(); i++) {
-                    strings[i] = Double.toString(numbers.doubleValue(i));
-                }
-            } else {
-                for (int i = 0; i < numbers.size(); i++) {
-                    strings[i] = Long.toString(numbers.longValue(i));
-                }
-            }
-            return Optional.of(strings);
-        }
-
-        return Optional.empty();
-    }
-
-    /**
      * Gets the given object as a {@link DataSerializable}, {@link CatalogType}, or {@link DataTranslator}-able
      * object registered in Sponge, if available.
      *
@@ -613,15 +520,16 @@ public final class Coerce2 {
             return Optional.of(new DoubleArray((double[]) obj));
         }
 
-        Optional<StrArray> strsOpt = wrapStrArray(obj);
-        if (strsOpt.isPresent()) {
-            StrArray strings = strsOpt.get();
+        if (obj instanceof DataList) {
+            DataList strings = (DataList) obj;
+            // TODO: Make shore its a list of String's!!!
+            cause an error so you dont forget;
 
             try {
                 long[] parsed = new long[strings.size()];
                 int at;
                 for (at = 0; at < parsed.length; at++) {
-                    String str = strings.stringValue(at);
+                    String str = strings.getString(at).orElse("");
                     if (str.contains(".")) {
                         break; // We have doubles
                     }
@@ -638,7 +546,7 @@ public final class Coerce2 {
                     }
 
                     for (; at < parsed.length; at++) {
-                        String str = strings.stringValue(at);
+                        String str = strings.getString(at).orElse("");
                         if (str.contains(".")) {
                             break; // We have doubles
                         }
@@ -651,23 +559,6 @@ public final class Coerce2 {
         return Optional.empty();
     }
 
-    /**
-     * Wraps a primitive array of string-like elements in a {@link StrArray}
-     */
-    private static Optional<StrArray> wrapStrArray(Object obj) {
-        if (obj instanceof String[]) {
-            return Optional.of(new StringArray((String[]) obj));
-        } else if (obj instanceof char[]) {
-            return Optional.of(new CharacterArray((char[]) obj));
-        } else if (obj instanceof DataList) {
-            // TODO: Make shore its a list of char[]'s!!!
-            cause an error so you dont forget;
-
-            return Optional.of(new CharArrayListArray((DataList) obj));
-        }
-        return Optional.empty();
-    }
-
     /*
      * Helper classes to wrap number arrays so they can be dalt with generically
      * (saves a lot of special cases in the array coerce methods)
@@ -676,8 +567,6 @@ public final class Coerce2 {
     private interface NumArray {
 
         int size();
-
-        boolean isFloating();
 
         int intValue(int index);
         long longValue(int index);
@@ -697,7 +586,6 @@ public final class Coerce2 {
             return array.length;
         }
 
-        @Override public boolean isFloating() { return false; }
         @Override public int intValue(int index) { return array[index]; }
         @Override public long longValue(int index) { return array[index]; }
         @Override public float floatValue(int index) { return array[index]; }
@@ -716,7 +604,6 @@ public final class Coerce2 {
             return array.length;
         }
 
-        @Override public boolean isFloating() { return false; }
         @Override public int intValue(int index) { return array[index]; }
         @Override public long longValue(int index) { return array[index]; }
         @Override public float floatValue(int index) { return array[index]; }
@@ -735,7 +622,6 @@ public final class Coerce2 {
             return array.length;
         }
 
-        @Override public boolean isFloating() { return false; }
         @Override public int intValue(int index) { return array[index]; }
         @Override public long longValue(int index) { return array[index]; }
         @Override public float floatValue(int index) { return array[index]; }
@@ -754,7 +640,6 @@ public final class Coerce2 {
             return array.length;
         }
 
-        @Override public boolean isFloating() { return false; }
         @Override public int intValue(int index) { return (int) array[index]; }
         @Override public long longValue(int index) { return array[index]; }
         @Override public float floatValue(int index) { return array[index]; }
@@ -773,7 +658,6 @@ public final class Coerce2 {
             return array.length;
         }
 
-        @Override public boolean isFloating() { return true; }
         @Override public int intValue(int index) { return (int) array[index]; }
         @Override public long longValue(int index) { return (long) array[index]; }
         @Override public float floatValue(int index) { return array[index]; }
@@ -792,75 +676,9 @@ public final class Coerce2 {
             return array.length;
         }
 
-        @Override public boolean isFloating() { return true; }
         @Override public int intValue(int index) { return (int) array[index]; }
         @Override public long longValue(int index) { return (long) array[index]; }
         @Override public float floatValue(int index) { return (float) array[index]; }
         @Override public double doubleValue(int index) { return array[index]; }
-    }
-
-    private interface StrArray {
-
-        int size();
-
-        String stringValue(int index);
-    }
-
-    private static class StringArray implements StrArray {
-
-        private String[] array;
-
-        StringArray(String[] array) {
-            this.array = array;
-        }
-
-        @Override public int size() {
-            return array.length;
-        }
-
-        @Override public String stringValue(int index) {
-            return array[index];
-        }
-    }
-
-    private static class CharacterArray implements StrArray {
-
-        private char[] array;
-
-        CharacterArray(char[] array) {
-            this.array = array;
-        }
-
-        @Override public int size() {
-            return array.length;
-        }
-
-        @Override public String stringValue(int index) {
-            return Character.toString(array[index]);
-        }
-    }
-
-    // a list of char arrays
-    private static class CharArrayListArray implements StrArray {
-
-        private DataList list;
-
-        /**
-         * @param list a list of char[]'s
-         */
-        public CharArrayListArray(DataList list) {
-            this.list = list;
-        }
-
-        @Override public int size() {
-            return list.size();
-        }
-
-        @SuppressWarnings("ConstantConditions")
-        @Override public String stringValue(int index) {
-            // ok... this look kind of dangerous,
-            // but we know this is a list of char[]'s and char[]'s coerce to String's.
-            return list.getString(index).get();
-        }
     }
 }

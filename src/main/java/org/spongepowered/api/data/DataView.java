@@ -55,18 +55,16 @@ import java.util.Optional;
  * * {@link Long}<br/>
  * * {@link Float}<br/>
  * * {@link Double}<br/>
- * * {@link String}<br/>
  *
  * Optimized List Allowed Types:<br/>
  * * boolean[]<br/>
  * * byte[]<br/>
- * * char[]<br/>
+ * * {@link String}<br/>
  * * short[]<br/>
  * * int[]<br/>
  * * long[]<br/>
  * * float[]<br/>
  * * double[]<br/>
- * * String[]<br/>
  *
  * @param <K> The key type
  */
@@ -328,19 +326,6 @@ public interface DataView<K> {
     }
 
     /**
-     * Gets the {@link String} by key, if available.
-     *
-     * <p>If the data residing at the key is not a {@link String}
-     * and can not be coerced into a {@link String}, an absent is returned.</p>
-     *
-     * @param key The key to the value to get
-     * @return The {@link String}, if available
-     */
-    default Optional<String> getString(K key) {
-        return this.get(key).flatMap(Coerce2::asString);
-    }
-
-    /**
      * Gets the boolean array at key, if available.
      *
      * <p>If the boolean array does not exist, or the data
@@ -369,17 +354,16 @@ public interface DataView<K> {
     }
 
     /**
-     * Gets the char array at key, if available.
+     * Gets the {@link String} by key, if available.
      *
-     * <p>If the char array does not exist, or the data
-     * residing at the key can not be coerced into a char array,
-     * an absent is returned.</p>
+     * <p>If the data residing at the key is not a {@link String}
+     * and can not be coerced into a {@link String}, an absent is returned.</p>
      *
-     * @param key The key of the value to get
-     * @return The char array, if available
+     * @param key The key to the value to get
+     * @return The {@link String}, if available
      */
-    default Optional<char[]> getCharArray(K key) {
-        return this.get(key).flatMap(Coerce2::asCharArray);
+    default Optional<String> getString(K key) {
+        return this.get(key).flatMap(Coerce2::asString);
     }
 
     /**
@@ -450,20 +434,6 @@ public interface DataView<K> {
      */
     default Optional<double[]> getDoubleArray(K key) {
         return this.get(key).flatMap(Coerce2::asDoubleArray);
-    }
-
-    /**
-     * Gets the {@link String} array at key, if available.
-     *
-     * <p>If the {@link String} array does not exist, or the data
-     * residing at the key can not be coerced into a {@link String} array,
-     * an absent is returned.</p>
-     *
-     * @param key The key of the value to get
-     * @return The {@link String} array, if available
-     */
-    default Optional<String[]> getStringArray(K key) {
-        return this.get(key).flatMap(Coerce2::asStringArray);
     }
 
     /**
@@ -823,18 +793,6 @@ public interface DataView<K> {
     Optional<Double> getDouble(DataQuery path);
 
     /**
-     * Gets the {@link String} by path, if available.
-     *
-     * <p>If a {@link String} does not exist, or the data residing at
-     * the path is not an instance of a {@link String}, an absent is
-     * returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The string, if available
-     */
-    Optional<String> getString(DataQuery path);
-
-    /**
      * Gets the boolean array at path, if available.
      *
      * <p>If the boolean array does not exist, or the data
@@ -859,16 +817,16 @@ public interface DataView<K> {
     Optional<byte[]> getByteArray(DataQuery path);
 
     /**
-     * Gets the char array at path, if available.
+     * Gets the {@link String} by path, if available.
      *
-     * <p>If the char array does not exist, or the data
-     * residing at the path can not be coerced into a char array,
-     * an absent is returned.</p>
+     * <p>If a {@link String} does not exist, or the data residing at
+     * the path is not an instance of a {@link String}, an absent is
+     * returned.</p>
      *
      * @param path The path of the value to get
-     * @return The char array, if available
+     * @return The string, if available
      */
-    Optional<char[]> getCharArray(DataQuery path);
+    Optional<String> getString(DataQuery path);
 
     /**
      * Gets the short array at path, if available.
@@ -929,18 +887,6 @@ public interface DataView<K> {
      * @return The double array, if available
      */
     Optional<double[]> getDoubleArray(DataQuery path);
-
-    /**
-     * Gets the {@link String} array at path, if available.
-     *
-     * <p>If the {@link String} array does not exist, or the data
-     * residing at the path can not be coerced into a {@link String} array,
-     * an absent is returned.</p>
-     *
-     * @param path The path of the value to get
-     * @return The {@link String} array, if available
-     */
-    Optional<String[]> getStringArray(DataQuery path);
 
     /**
      * Gets a {@link DataSerializable}, {@link CatalogType}, or {@link DataTranslator}-able

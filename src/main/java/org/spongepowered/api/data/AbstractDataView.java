@@ -183,10 +183,6 @@ public abstract class AbstractDataView<K> implements DataView<K> {
         return get(path).flatMap(Coerce2::asDouble);
     }
 
-    public Optional<String> getString(DataQuery path) {
-        return get(path).flatMap(Coerce2::asString);
-    }
-
     public Optional<boolean[]> getBooleanArray(DataQuery path) {
         return get(path).flatMap(Coerce2::asBooleanArray);
     }
@@ -195,8 +191,8 @@ public abstract class AbstractDataView<K> implements DataView<K> {
         return get(path).flatMap(Coerce2::asByteArray);
     }
 
-    public Optional<char[]> getCharArray(DataQuery path) {
-        return get(path).flatMap(Coerce2::asCharArray);
+    public Optional<String> getString(DataQuery path) {
+        return get(path).flatMap(Coerce2::asString);
     }
 
     public Optional<short[]> getShortArray(DataQuery path) {
@@ -217,10 +213,6 @@ public abstract class AbstractDataView<K> implements DataView<K> {
 
     public Optional<double[]> getDoubleArray(DataQuery path) {
         return get(path).flatMap(Coerce2::asDoubleArray);
-    }
-
-    public Optional<String[]> getStringArray(DataQuery path) {
-        return get(path).flatMap(Coerce2::asStringArray);
     }
 
     public <T extends DataSerializable> Optional<T> getSpongeObject(DataQuery path, Class<T> type) {

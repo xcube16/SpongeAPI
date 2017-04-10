@@ -33,7 +33,7 @@ public interface DataList extends DataView<Integer> {
      * * Structure Allowed Types<br/>
      * * Optimized List Allowed Types</p>
      *
-     * <p>If there //TODO: o sh*t.. How should CatalogType's be stored as a list/array?!<p/>
+     * <p>If there //TODO: continue<p/>
      *
      * @param element The element to add
      * @return This list, for chaining
