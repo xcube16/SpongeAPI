@@ -26,6 +26,12 @@ package org.spongepowered.api.data;
 
 import java.util.Set;
 
+/**
+ * A {@link DataView} that stores values like a {@link Map}.
+ *
+ * <p>Primitives (like {@link Integer}, {@link Boolean}, {@link Double}, ...)
+ * are NOT supported in {@link DataList}.<p/>
+ */
 public interface DataMap extends DataView<String> {
 
     /**
