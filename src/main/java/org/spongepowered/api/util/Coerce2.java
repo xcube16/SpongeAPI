@@ -237,29 +237,19 @@ public final class Coerce2 {
         }
 
         if (obj instanceof DataList) {
-            DataList strings = (DataList) obj;
-            // TODO: Make shore its a list of String's!!!
-            cause an error so you dont forget;
+            DataList list = (DataList) obj;
 
-            boolean[] booleans = new boolean[strings.size()];
+            boolean[] booleans = new boolean[list.size()];
 
             int i;
             for (i = 0; i < booleans.length; i++) {
-                String str = strings.getString(i).orElse("").trim();
-                if (str.equalsIgnoreCase("true")
-                        || str.equalsIgnoreCase("yes")
-                        || str.equalsIgnoreCase("t")
-                        || str.equalsIgnoreCase("y")) {
-                    booleans[i] = true;
-                } else if (str.equalsIgnoreCase("false")
-                        || str.equalsIgnoreCase("no")
-                        || str.equalsIgnoreCase("f")
-                        || str.equalsIgnoreCase("n")) {
-                    continue;
+                Optional<Boolean> opt = list.getBoolean(i);
+                if (!opt.isPresent()) {
+                    break; // We hit a string that can not be turned into a boolean!
                 }
-                break; // We hit a string that can not be turned into a boolean!
+                booleans[i] = opt.get();
             }
-            if (i == strings.size()) {
+            if (i == booleans.length) {
                 return Optional.of(booleans);
             }
         }
@@ -522,8 +512,6 @@ public final class Coerce2 {
 
         if (obj instanceof DataList) {
             DataList strings = (DataList) obj;
-            // TODO: Make shore its a list of String's!!!
-            cause an error so you dont forget;
 
             try {
                 long[] parsed = new long[strings.size()];
