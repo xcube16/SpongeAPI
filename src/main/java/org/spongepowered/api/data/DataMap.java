@@ -24,39 +24,14 @@
  */
 package org.spongepowered.api.data;
 
-import java.util.Map;
 import java.util.Set;
 
 public interface DataMap extends DataView<String> {
 
     /**
-     * Gets a collection containing all keys in this {@link DataView}.
+     * Gets a collection containing all keys in this {@link DataMap}.
      *
-     * <p>If deep is set to true, then this will contain all the keys
-     * within any child {@link DataView}s (and their children, etc).
-     * These will be in a valid path notation for you to use.</p>
-     *
-     * <p>If deep is set to false, then this will contain only the keys
-     * of any direct children, and not their own children.</p>
-     *
-     * @param deep Whether or not to get all children keys
      * @return A set of current keys in this container
      */
-    Set<DataQuery> getKeys(boolean deep);
-
-    /**
-     * Gets a Map containing all keys and their values for this {@link DataView}.
-     *
-     * <p>If deep is set to true, then this will contain all the keys and
-     * values within any child {@link DataView}s (and their children,
-     * etc). These keys will be in a valid path notation for you to use.</p>
-     *
-     * <p>If deep is set to false, then this will contain only the keys and
-     * values of any direct children, and not their own children.</p>
-     *
-     * @param deep Whether or not to get a deep list of all children or not
-     * @return Map of keys and values of this container
-     */
-    Map<DataQuery, Object> getValues(boolean deep);
-
+    Set<String> getKeys();
 }

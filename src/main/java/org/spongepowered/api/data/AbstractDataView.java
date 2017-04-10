@@ -32,7 +32,13 @@ import org.spongepowered.api.util.Coerce2;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class DataQueryable<K> implements DataView<K> {
+/**
+ * Implements the queryable methods for DataView.
+ * Node: It could be done with default methods in DataView in java 9 (private methods)
+ *
+ * @param <K> The key type
+ */
+public abstract class AbstractDataView<K> implements DataView<K> {
 
     /**
      * Gets the {@link DataView} that contains a query's last element if it exists
@@ -102,7 +108,7 @@ public abstract class DataQueryable<K> implements DataView<K> {
         return opt.isPresent() && contains(opt.get(), parts.get(parts.size() - 1));
     }
 
-    public DataQueryable<K> set(DataQuery path, Object value) {
+    public AbstractDataView<K> set(DataQuery path, Object value) {
         checkNotNull(path, "path");
         checkNotNull(value, "value");
         List<String> parts = path.getParts();
@@ -112,7 +118,7 @@ public abstract class DataQueryable<K> implements DataView<K> {
         return this;
     }
 
-    public DataQueryable<K> remove(DataQuery path) {
+    public AbstractDataView<K> remove(DataQuery path) {
         checkNotNull(path, "path");
         List<String> parts = path.getParts();
         checkArgument(parts.isEmpty(), "The query can not be empty");

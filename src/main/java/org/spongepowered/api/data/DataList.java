@@ -24,6 +24,19 @@
  */
 package org.spongepowered.api.data;
 
-public interface DataList extends DataQueryable<Integer> {
+public interface DataList extends DataView<Integer> {
 
+    /**
+     * Adds an element to the end of the list.
+     *
+     * <p>The element must be one of<br/>
+     * * Structure Allowed Types<br/>
+     * * Optimized List Allowed Types</p>
+     *
+     * <p>If there //TODO: o sh*t.. How should CatalogType's be stored as a list/array?!<p/>
+     *
+     * @param element The element to add
+     * @return This list, for chaining
+     */
+    DataView add(Object element);
 }
