@@ -243,7 +243,7 @@ public class MemoryDataView implements DataView {
         if (isPrimitive(value)) { // Primitive Allowed Types
             this.map.put(key, value);
 
-        } else if (value instanceof boolean[]) { // Optimized List Allowed Types
+        } else if (value instanceof boolean[]) { // Array Allowed Types
             this.map.put(key, copy ? ((boolean[]) value).clone() : value);
         } else if (value instanceof byte[]) {
             this.map.put(key, copy ? ((byte[])    value).clone() : value);

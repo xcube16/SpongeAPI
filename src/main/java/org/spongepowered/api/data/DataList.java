@@ -24,6 +24,16 @@
  */
 package org.spongepowered.api.data;
 
+import org.spongepowered.api.CatalogType;
+import org.spongepowered.api.data.persistence.DataTranslator;
+
+import java.util.Map;
+
+/**
+ * <p>Primitives (like {@link Integer}, {@link Boolean}, {@link Double}, ...)
+ * are NOT supported in {@link DataList}<p/>
+ *
+ */
 public interface DataList extends DataView<Integer> {
 
     /**
@@ -31,12 +41,15 @@ public interface DataList extends DataView<Integer> {
      *
      * <p>The element must be one of<br/>
      * * Structure Allowed Types<br/>
-     * * Optimized List Allowed Types</p>
-     *
-     * <p>If there //TODO: continue<p/>
+     * * Array Allowed Types
+     * * {@link DataSerializable}<br/>
+     * * {@link CatalogType}<br/>
+     * * have a {@link DataTranslator} registered in Sponge's {@link DataManager}<br/>
+     * * {@link Map} (will be coerced into a DataMap, or error on failure)</p></p>
      *
      * @param element The element to add
      * @return This list, for chaining
+     * @throws IllegalArgumentException thrown when {@code element} is of an unsupported type
      */
     DataView add(Object element);
 }

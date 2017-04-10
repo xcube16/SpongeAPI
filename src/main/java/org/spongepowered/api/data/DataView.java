@@ -56,7 +56,7 @@ import java.util.Optional;
  * * {@link Float}<br/>
  * * {@link Double}<br/>
  *
- * Optimized List Allowed Types:<br/>
+ * Array Allowed Types:<br/>
  * * boolean[]<br/>
  * * byte[]<br/>
  * * {@link String}<br/>
@@ -154,11 +154,12 @@ public interface DataView<K> {
      * * {@link DataSerializable}<br/>
      * * {@link CatalogType}<br/>
      * * have a {@link DataTranslator} registered in Sponge's {@link DataManager}<br/>
-     * * {@link Map} (keys will be turned into queries vea toString())</p>
+     * * {@link Map} (will be coerced into a DataMap, or error on failure)</p>
      *
      * @param key The key of the object to set
      * @param value The value of the data
      * @return This view, for chaining
+     * @throws IllegalArgumentException thrown when {@code element} is of an unsupported type
      */
     DataView set(K key, Object value);
 
@@ -208,10 +209,10 @@ public interface DataView<K> {
      * Gets the {@link DataList} by key, if available.
      *
      * <p>If the data residing at the key is not a
-     * {@link DataList} or Optimized List Allowed Type,
+     * {@link DataList} or Array Allowed Types,
      * an absent is returned.</p>
      *
-     * <p>Implementation note: If the underlying data is an Optimized List Allowed Type,
+     * <p>Implementation note: If the underlying data is an Array Allowed Types,
      * it must also be converted into the {@link DataList} in order for mutations to work.<p/>
      *
      * @param key The key to the value to get
