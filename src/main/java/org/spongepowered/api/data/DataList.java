@@ -24,8 +24,12 @@
  */
 package org.spongepowered.api.data;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.spongepowered.api.CatalogType;
+import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.persistence.DataTranslator;
+import org.spongepowered.api.data.value.BaseValue;
 
 import java.util.List;
 import java.util.Map;
@@ -53,5 +57,22 @@ public interface DataList extends DataView<Integer> {
      * @return This list, for chaining
      * @throws IllegalArgumentException thrown when {@code element} is of an unsupported type
      */
-    DataView add(Object element);
+    DataList add(Object element);
+
+    @Override
+    DataList set(Integer index, Object element);
+
+    @Override
+    DataList set(DataQuery query, Object value);
+
+    @Override
+    default <E> DataList set(Key<? extends BaseValue<E>> key, E value) {
+        return this.set(checkNotNull(key, "Key was null!").getQuery(), value);
+    }
+
+    @Override
+    DataList remove(Integer index);
+
+    @Override
+    DataList remove(DataQuery path);
 }

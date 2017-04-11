@@ -541,7 +541,7 @@ public interface DataView<K> {
     K key(String key);
 
     /**
-     * Returns whether this {@link AbstractDataView} contains the given path.
+     * Returns whether this {@link DataView} contains the given path.
      *
      * @param path The path relative to this data view
      * @return True if the path exists
@@ -549,7 +549,7 @@ public interface DataView<K> {
     boolean contains(DataQuery path);
 
     /**
-     * Returns whether this {@link AbstractDataView} contains an entry for all
+     * Returns whether this {@link DataView} contains an entry for all
      * provided {@link DataQuery} objects.
      *
      * @param path The path relative to this data view
@@ -572,7 +572,7 @@ public interface DataView<K> {
     }
 
     /**
-     * Returns whether this {@link AbstractDataView} contains the given {@link Key}'s
+     * Returns whether this {@link DataView} contains the given {@link Key}'s
      * defaulted {@link DataQuery}.
      *
      * @param key The key to get the data path relative to this data view
@@ -583,7 +583,7 @@ public interface DataView<K> {
     }
 
     /**
-     * Returns whether this {@link AbstractDataView} contains the given {@link Key}es
+     * Returns whether this {@link DataView} contains the given {@link Key}es
      * defaulted {@link DataQuery}.
      *
      * @param key The key to get the data path relative to this data view
@@ -607,7 +607,7 @@ public interface DataView<K> {
 
     /**
      * <p>Sets the given Object value according to the given path relative to
-     * this {@link AbstractDataView}'s path.</p>
+     * this {@link DataView}'s path.</p>
      *
      * <p>The value must be one of<br/>
      * * Allowed Types<br/>
@@ -620,7 +620,7 @@ public interface DataView<K> {
      * @param value The value of the data
      * @return This view, for chaining
      */
-    AbstractDataView<K> set(DataQuery path, Object value);
+    DataView<K> set(DataQuery path, Object value);
 
     /**
      * <p>Sets the given {@link Key}ed value according to the provided
@@ -638,7 +638,7 @@ public interface DataView<K> {
      * @param <E> The type of value
      * @return This view, for chaining
      */
-    default <E> AbstractDataView<K> set(Key<? extends BaseValue<E>> key, E value) {
+    default <E> DataView<K> set(Key<? extends BaseValue<E>> key, E value) {
         return this.set(checkNotNull(key, "Key was null!").getQuery(), value);
     }
 
@@ -651,7 +651,7 @@ public interface DataView<K> {
      * @param path The path of data to remove
      * @return This view, for chaining
      */
-    AbstractDataView<K> remove(DataQuery path);
+    DataView<K> remove(DataQuery path);
 
     /**
      * Creates a new {@link DataMap} at the desired path.

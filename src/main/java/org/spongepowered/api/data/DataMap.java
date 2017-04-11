@@ -24,6 +24,12 @@
  */
 package org.spongepowered.api.data;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import org.spongepowered.api.data.key.Key;
+import org.spongepowered.api.data.value.BaseValue;
+
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -40,4 +46,21 @@ public interface DataMap extends DataView<String> {
      * @return A set of current keys in this container
      */
     Set<String> getKeys();
+
+    @Override
+    DataList set(String key, Object element);
+
+    @Override
+    DataMap set(DataQuery query, Object value);
+
+    @Override
+    default <E> DataMap set(Key<? extends BaseValue<E>> key, E value) {
+        return this.set(checkNotNull(key, "Key was null!").getQuery(), value);
+    }
+
+    @Override
+    DataMap remove(String key);
+
+    @Override
+    DataMap remove(DataQuery path);
 }
