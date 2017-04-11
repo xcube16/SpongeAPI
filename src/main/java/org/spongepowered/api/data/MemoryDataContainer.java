@@ -79,19 +79,4 @@ public class MemoryDataContainer extends MemoryDataView implements DataContainer
         return this;
     }
 
-    @Override
-    public DataContainer set(DataQuery path, Object value) {
-        return (DataContainer) super.set(path, value);
-    }
-
-    @Override
-    public <E> DataContainer set(Key<? extends BaseValue<E>> key, E value) {
-        return set(checkNotNull(key).getQuery(), value);
-    }
-
-    @Override
-    public DataContainer remove(DataQuery path) {
-        return (DataContainer) super.remove(path);
-    }
-
 }

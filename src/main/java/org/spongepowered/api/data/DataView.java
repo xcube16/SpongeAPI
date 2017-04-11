@@ -82,32 +82,7 @@ public interface DataView<K> {
     DataContainer getContainer();
 
     /**
-     * Gets the current path of this {@link DataView} from its root
-     * {@link DataContainer}.
-     *
-     * <p>For any {@link DataContainer} itself, this will return an
-     * empty string as it is the root of the path.</p>
-     *
-     * <p>The full path will always include this {@link DataView}s name
-     * at the end of the path.</p>
-     *
-     * @return The path of this view originating from the root
-     */
-    DataQuery getCurrentPath();
-
-    /**
-     * Gets the name of this individual {@link DataView} in the path.
-     *
-     * <p>This will always be the final substring of the full path
-     * from {@link #getCurrentPath()}.</p>
-     *
-     * @return The name of this DataView
-     */
-    String getName();
-
-    /**
-     * Gets the parent {@link DataView} of this view. The parent directly
-     * contains this view according to the {@link #getCurrentPath()}.
+     * Gets the parent {@link DataView} of this view.
      *
      * <p>For any {@link DataContainer}, this will return an absent parent.</p>
      *
