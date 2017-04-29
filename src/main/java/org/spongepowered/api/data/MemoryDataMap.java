@@ -44,7 +44,7 @@ import javax.annotation.Nullable;
 /**
  * Default implementation of a {@link DataView} being used in memory.
  */
-public class MemoryDataMap extends AbstractDataView<String> implements DataMap {
+public class MemoryDataMap extends AbstractDataMap {
 
     protected final Map<String, Object> map = Maps.newLinkedHashMap();
     private final DataContainer container;
@@ -63,11 +63,6 @@ public class MemoryDataMap extends AbstractDataView<String> implements DataMap {
         this.parent = parent;
         this.container = parent.getContainer();
         this.safety = checkNotNull(safety, "Safety mode");
-    }
-
-    @Override
-    public String key(String key) {
-        return key;
     }
 
     @Override

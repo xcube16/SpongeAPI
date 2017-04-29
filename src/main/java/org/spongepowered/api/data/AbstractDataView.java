@@ -108,7 +108,7 @@ public abstract class AbstractDataView<K> implements DataView<K> {
         return opt.isPresent() && contains(opt.get(), parts.get(parts.size() - 1));
     }
 
-    public AbstractDataView<K> set(DataQuery path, Object value) {
+    public DataView<K> set(DataQuery path, Object value) {
         checkNotNull(path, "path");
         checkNotNull(value, "value");
         List<String> parts = path.getParts();
@@ -118,7 +118,7 @@ public abstract class AbstractDataView<K> implements DataView<K> {
         return this;
     }
 
-    public AbstractDataView<K> remove(DataQuery path) {
+    public DataView<K> remove(DataQuery path) {
         checkNotNull(path, "path");
         List<String> parts = path.getParts();
         checkArgument(parts.isEmpty(), "The query can not be empty");
