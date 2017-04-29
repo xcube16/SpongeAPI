@@ -26,9 +26,6 @@ package org.spongepowered.api.data;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.spongepowered.api.data.key.Key;
-import org.spongepowered.api.data.value.BaseValue;
-
 import java.util.Optional;
 
 /**
@@ -41,7 +38,7 @@ import java.util.Optional;
  */
 @SuppressWarnings("deprecation")
 @Deprecated
-public class MemoryDataContainer extends MemoryDataView implements DataContainer {
+public class MemoryDataContainer extends MemoryDataMap implements DataContainer {
 
     /**
      * Creates a new {@link MemoryDataContainer} with a default

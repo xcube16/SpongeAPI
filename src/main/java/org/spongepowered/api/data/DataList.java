@@ -31,6 +31,7 @@ import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.persistence.DataTranslator;
 import org.spongepowered.api.data.value.BaseValue;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +52,8 @@ public interface DataList extends DataView<Integer> {
      * * {@link DataSerializable}<br/>
      * * {@link CatalogType}<br/>
      * * have a {@link DataTranslator} registered in Sponge's {@link DataManager}<br/>
-     * * {@link Map} (will be coerced into a DataMap, or error on failure)</p></p>
+     * * {@link Map} (will be coerced into a DataMap, or error on failure)<br/>
+     * * {@link Collection} (will be coerced into a {@link DataList}/array, or error on failure)</p>
      *
      * @param element The element to add
      * @return This list, for chaining

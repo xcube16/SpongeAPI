@@ -33,6 +33,7 @@ import org.spongepowered.api.data.persistence.DataTranslator;
 import org.spongepowered.api.data.value.BaseValue;
 import org.spongepowered.api.util.Coerce2;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -129,7 +130,8 @@ public interface DataView<K> {
      * * {@link DataSerializable}<br/>
      * * {@link CatalogType}<br/>
      * * have a {@link DataTranslator} registered in Sponge's {@link DataManager}<br/>
-     * * {@link Map} (will be coerced into a DataMap, or error on failure)</p>
+     * * {@link Map} (will be coerced into a {@link DataMap}, or error on failure)<br/>
+     * * {@link Collection} (will be coerced into a {@link DataList}/array, or error on failure)</p>
      *
      * @param key The key of the object to set
      * @param value The value of the data

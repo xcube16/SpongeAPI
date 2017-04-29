@@ -48,7 +48,7 @@ public interface DataMap extends DataView<String> {
     Set<String> getKeys();
 
     @Override
-    DataList set(String key, Object element);
+    DataMap set(String key, Object element);
 
     @Override
     DataMap set(DataQuery query, Object value);

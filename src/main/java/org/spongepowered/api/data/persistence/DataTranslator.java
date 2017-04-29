@@ -72,20 +72,4 @@ public interface DataTranslator<T> extends CatalogType {
      *     for any reason
      */
     DataContainer translate(T obj) throws InvalidDataException;
-
-    /**
-     * Serializes the {@code T} object and applies the provided
-     * data to the provided {@link DataView} instead of creating
-     * a new {@link DataContainer}, reducing nested information.
-     *
-     * @param obj The object to serialize
-     * @param dataView The data view to serialize to
-     * @return The provided data view, for chaining
-     */
-    default DataView addTo(T obj, DataView dataView) {
-        for (Map.Entry<DataQuery, Object> entry : translate(obj).getValues(false).entrySet()) {
-            dataView.set(entry.getKey(), entry);
-        }
-        return dataView;
-    }
 }
