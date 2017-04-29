@@ -29,6 +29,12 @@ package org.spongepowered.api.data;
  */
 public abstract class AbstractDataList extends AbstractDataView<Integer> implements DataList {
 
+    /*
+     * ===========================
+     * ==== queryable methods ====
+     * ===========================
+     */
+
     @Override
     public Integer key(String key) {
         try {

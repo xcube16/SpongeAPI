@@ -50,19 +50,16 @@ public class MemoryDataMap extends AbstractDataMap {
     private final DataContainer container;
     @Nullable
     private final DataView parent;
-    private final DataView.SafetyMode safety;
 
-    protected MemoryDataMap(DataView.SafetyMode safety) {
+    protected MemoryDataMap() {
         checkState(this instanceof DataContainer, "Cannot construct a root MemoryDataView without a container!");
         this.parent = null;
         this.container = (DataContainer) this;
-        this.safety = checkNotNull(safety, "Safety mode");
     }
 
-    protected MemoryDataMap(DataView parent, DataView.SafetyMode safety) {
+    protected MemoryDataMap(DataView parent) {
         this.parent = parent;
         this.container = parent.getContainer();
-        this.safety = checkNotNull(safety, "Safety mode");
     }
 
     @Override
@@ -94,87 +91,47 @@ public class MemoryDataMap extends AbstractDataMap {
     public Optional<Object> get(String key) {
         checkNotNull(key, "key");
 
-        @Nullable final Object object = this.map.get(key);
-        if (object == null) {
-            return Optional.empty();
-        }
-        if(this.safety == SafetyMode.ALL_DATA_CLONED) {
-            if (object.getClass().isArray()) {
-                if (object instanceof boolean[]) {
-                    return Optional.of(((boolean[]) object).clone());
-                } else if (object instanceof byte[]) {
-                    return Optional.of(((byte[]) object).clone());
-                } else if (object instanceof short[]) {
-                    return Optional.of(((short[]) object).clone());
-                } else if (object instanceof int[]) {
-                    return Optional.of(((int[]) object).clone());
-                } else if (object instanceof long[]) {
-                    return Optional.of(((long[]) object).clone());
-                } else if (object instanceof float[]) {
-                    return Optional.of(((float[]) object).clone());
-                } else if (object instanceof double[]) {
-                    return Optional.of(((double[]) object).clone());
-                } else {
-                    return Optional.of(((Object[]) object).clone());
-                }
-            }
-        }
-        return Optional.of(object);
+        return Optional.ofNullable(this.map.get(key));
     }
 
     @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public DataMap set(String key, Object value) {
+    public MemoryDataMap set(String key, Object value) {
         checkNotNull(key, "key");
         checkNotNull(value, "value");
 
-        boolean copy = this.safety != SafetyMode.NO_DATA_CLONED;
-
-        if (isPrimitive(value)) { // Primitive Allowed Types
+        if (isPrimitive(value) || isPrimitiveArray(value)) { // Primitive Allowed Types or Array Allowed Types
             this.map.put(key, value);
-
-        } else if (value instanceof boolean[]) { // Array Allowed Types
-            this.map.put(key, copy ? ((boolean[]) value).clone() : value);
-        } else if (value instanceof byte[]) {
-            this.map.put(key, copy ? ((byte[])    value).clone() : value);
-        } else if (value instanceof short[]) {
-            this.map.put(key, copy ? ((short[])   value).clone() : value);
-        } else if (value instanceof int[]) {
-            this.map.put(key, copy ? ((int[])     value).clone() : value);
-        } else if (value instanceof long[]) {
-            this.map.put(key, copy ? ((long[])    value).clone() : value);
-        } else if (value instanceof float[]) {
-            this.map.put(key, copy ? ((float[])   value).clone() : value);
-        } else if (value instanceof double[]) {
-            this.map.put(key, copy ? ((double[])  value).clone() : value);
 
         } else if (value instanceof DataMap) { // Structure Allowed Types
             copyDataMap(key, (DataMap) value);
         } else if (value instanceof DataList) { // Structure Allowed Types
             copyDataList(key, (DataList) value);
-        } else if (value instanceof Collection) {
-            setCollection(key, (Collection) value);
 
-        } else if (value instanceof DataSerializable) {
+        } else if (value instanceof DataSerializable) { // Sponge Object
             copyDataMap(key, ((DataSerializable) value).toContainer());
-
-        } else if (value instanceof CatalogType) {
+        } else if (value instanceof CatalogType) { // Sponge Object
             this.map.put(key, ((CatalogType) value).getId());
 
-        } else if (value instanceof Map) {
-            setMap(key, (Map) value);
+        } else if (value instanceof Map) { // just extra candy
+            copyMap(key, (Map) value);
+        } else if (value instanceof Collection) { // just extra candy
+            copyCollection(key, (Collection) value);
 
-        } else {
+        } else { // Sponge Object? maybe?
             Optional<? extends DataTranslator> translator = Sponge.getDataManager().getTranslator(value.getClass());
-            if (translator.isPresent()) {
+            if (translator.isPresent()) { // yep, Sponge Object
                 copyDataMap(key, translator.get().translate(value));
-            } else {
+            } else { // nope, KU-BOOM!
                 throw new IllegalArgumentException(value.getClass() + " can not be serialized");
             }
         }
         return this;
     }
 
+    /**
+     * is a Primitive Allowed Type
+     */
     private boolean isPrimitive(Object value) {
          return value instanceof Boolean ||
                 value instanceof Byte ||
@@ -187,15 +144,29 @@ public class MemoryDataMap extends AbstractDataMap {
                 value instanceof String;
     }
 
+    /**
+     * is an Array Allowed Type
+     */
+    private boolean isPrimitiveArray(Object value) {
+        return value instanceof boolean[] ||
+                value instanceof byte[] ||
+                value instanceof String ||
+                value instanceof short[] ||
+                value instanceof int[] ||
+                value instanceof long[] ||
+                value instanceof float[] ||
+                value instanceof double[];
+    }
+
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private void setCollection(String key, Collection<?> value) {
+    private void copyCollection(String key, Collection<?> value) {
         DataList sublist = this.createList(key);
         for (Object object : value) {
             sublist.add(object);
         }
     }
 
-    private void setMap(String key, Map<?, ?> value) {
+    private void copyMap(String key, Map<?, ?> value) {
         DataMap submap = this.createMap(key);
         for (Map.Entry<?, ?> entry : value.entrySet()) {
             if (entry.getKey() instanceof String) {
@@ -217,8 +188,6 @@ public class MemoryDataMap extends AbstractDataMap {
     }
 
     private void copyDataList(String key, DataList value) {
-        checkArgument(!value.equals(this), "Cannot insert self-referencing Objects!");
-
         DataList sublist = this.createList(key);
         for (int i = 0; i < value.size(); i++) {
             sublist.add(value.get(i));
@@ -226,7 +195,7 @@ public class MemoryDataMap extends AbstractDataMap {
     }
 
     @Override
-    public DataMap remove(String key) {
+    public MemoryDataMap remove(String key) {
         checkNotNull(key, "key");
         this.map.remove(key);
         return this;
@@ -236,7 +205,7 @@ public class MemoryDataMap extends AbstractDataMap {
     public DataMap createMap(String key) {
         checkNotNull(key, "key");
 
-        DataMap result = new MemoryDataMap(this, this.safety);
+        DataMap result = new MemoryDataMap(this);
         this.map.put(key, result);
         return result;
     }
@@ -245,26 +214,14 @@ public class MemoryDataMap extends AbstractDataMap {
     public DataList createList(String key) {
         checkNotNull(key, "key");
 
-        DataList result = new MemoryDataList(this, this.safety);
+        DataList result = new MemoryDataList(this);
         this.map.put(key, result);
         return result;
     }
 
     @Override
     public DataContainer copy() {
-        final DataContainer container = new MemoryDataContainer(this.safety);
-        getKeys()
-                .forEach(key ->
-                        get(key).ifPresent(obj ->
-                                container.set(key, obj)
-                        )
-                );
-        return container;
-    }
-
-    @Override
-    public DataContainer copy(SafetyMode safety) {
-        final DataContainer container = new MemoryDataContainer(safety);
+        final DataContainer container = new MemoryDataContainer();
         getKeys()
                 .forEach(key ->
                         get(key).ifPresent(obj ->
@@ -277,11 +234,6 @@ public class MemoryDataMap extends AbstractDataMap {
     @Override
     public boolean isEmpty() {
         return this.map.isEmpty();
-    }
-
-    @Override
-    public SafetyMode getSafetyMode() {
-        return this.safety;
     }
 
     @Override
@@ -305,7 +257,6 @@ public class MemoryDataMap extends AbstractDataMap {
     @Override
     public String toString() {
         final Objects.ToStringHelper helper = Objects.toStringHelper(this);
-        helper.add("safety", this.safety.name());
         return helper.add("map", this.map).toString();
     }
 }

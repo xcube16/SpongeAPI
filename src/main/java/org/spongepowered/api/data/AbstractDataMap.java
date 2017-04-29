@@ -29,6 +29,13 @@ package org.spongepowered.api.data;
  */
 public abstract class AbstractDataMap extends AbstractDataView<String> implements DataMap {
 
+
+    /*
+     * ===========================
+     * ==== queryable methods ====
+     * ===========================
+     */
+
     @Override
     public String key(String key) {
         return key;

@@ -40,6 +40,12 @@ import java.util.Optional;
  */
 public abstract class AbstractDataView<K> implements DataView<K> {
 
+    /*
+     * ===========================
+     * ==== queryable methods ====
+     * ===========================
+     */
+
     /**
      * Gets the {@link DataView} that contains a query's last element if it exists
      *

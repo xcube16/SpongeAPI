@@ -212,22 +212,10 @@ public interface DataManager {
     Collection<Class<? extends DataManipulator<?, ?>>> getAllRegistrationsFor(PluginContainer container);
 
     /**
-     * Creates a new {@link DataContainer} with a default
-     * {@link org.spongepowered.api.data.DataView.SafetyMode} of
-     * {@link org.spongepowered.api.data.DataView.SafetyMode#ALL_DATA_CLONED}.
+     * Creates a new {@link DataContainer}.
      *
      * @return A new data container
      */
     DataContainer createContainer();
-
-    /**
-     * Creates a new {@link DataContainer} with the provided
-     * {@link org.spongepowered.api.data.DataView.SafetyMode}.
-     *
-     * @param safety The safety mode to use
-     * @see org.spongepowered.api.data.DataView.SafetyMode
-     * @return A new data container with the provided safety mode
-     */
-    DataContainer createContainer(DataView.SafetyMode safety);
 
 }
