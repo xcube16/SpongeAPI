@@ -27,32 +27,17 @@ package org.spongepowered.api.data;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.spongepowered.api.data.DataQuery.of;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.persistence.DataTranslator;
-import org.spongepowered.api.data.value.BaseValue;
-import org.spongepowered.api.util.Coerce;
-import org.spongepowered.api.util.Coerce2;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
@@ -81,6 +66,11 @@ public class MemoryDataMap extends AbstractDataView<String> implements DataMap {
     }
 
     @Override
+    public String key(String key) {
+        return key;
+    }
+
+    @Override
     public DataContainer getContainer() {
         return this.container;
     }
@@ -88,6 +78,16 @@ public class MemoryDataMap extends AbstractDataView<String> implements DataMap {
     @Override
     public Optional<DataView> getParent() {
         return Optional.ofNullable(this.parent);
+    }
+
+    @Override
+    public int size() {
+        return map.size();
+    }
+
+    @Override
+    public boolean contains(String key) {
+        return map.containsKey(key);
     }
 
     @Override
@@ -142,8 +142,6 @@ public class MemoryDataMap extends AbstractDataView<String> implements DataMap {
             this.map.put(key, copy ? ((boolean[]) value).clone() : value);
         } else if (value instanceof byte[]) {
             this.map.put(key, copy ? ((byte[])    value).clone() : value);
-        } else if (value instanceof char[]) {
-            this.map.put(key, copy ? ((char[])    value).clone() : value);
         } else if (value instanceof short[]) {
             this.map.put(key, copy ? ((short[])   value).clone() : value);
         } else if (value instanceof int[]) {
@@ -306,16 +304,12 @@ public class MemoryDataMap extends AbstractDataView<String> implements DataMap {
         }
         final MemoryDataMap other = (MemoryDataMap) obj;
 
-        return Objects.equal(this.map.entrySet(), other.map.entrySet())
-               && Objects.equal(this.path, other.path);
+        return Objects.equal(this.map.entrySet(), other.map.entrySet());
     }
 
     @Override
     public String toString() {
         final Objects.ToStringHelper helper = Objects.toStringHelper(this);
-        if (!this.path.toString().isEmpty()) {
-            helper.add("path", this.path);
-        }
         helper.add("safety", this.safety.name());
         return helper.add("map", this.map).toString();
     }
