@@ -29,18 +29,22 @@ package org.spongepowered.api.data;
  */
 public abstract class AbstractDataList extends AbstractDataView<Integer> implements DataList {
 
+
+
     /*
      * ===========================
      * ==== queryable methods ====
      * ===========================
      */
 
+    protected static final Integer INVALID_KEY = -1; // TODO: does this work as an "invalid key"?
+
     @Override
     public Integer key(String key) {
         try {
             return Integer.valueOf(key);
         } catch (NumberFormatException e) {
-            return Integer.MIN_VALUE; // TODO: does this work as an "invalid key"?
+            return INVALID_KEY;
         }
     }
 

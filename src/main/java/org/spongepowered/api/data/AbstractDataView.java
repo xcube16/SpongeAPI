@@ -29,7 +29,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.spongepowered.api.util.Coerce2;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -39,6 +41,72 @@ import java.util.Optional;
  * @param <K> The key type
  */
 public abstract class AbstractDataView<K> implements DataView<K> {
+
+    /**
+     * is a Primitive Allowed Type
+     */
+    protected boolean isPrimitive(Object value) {
+        return value instanceof Boolean ||
+                value instanceof Byte ||
+                value instanceof Character ||
+                value instanceof Short ||
+                value instanceof Integer ||
+                value instanceof Long ||
+                value instanceof Float ||
+                value instanceof Double ||
+                value instanceof String;
+    }
+
+    /**
+     * is an Array Allowed Type
+     */
+    protected boolean isPrimitiveArray(Object value) {
+        return value instanceof boolean[] ||
+                value instanceof byte[] ||
+                value instanceof String ||
+                value instanceof short[] ||
+                value instanceof int[] ||
+                value instanceof long[] ||
+                value instanceof float[] ||
+                value instanceof double[];
+    }
+
+    protected void copyCollection(K key, Collection<?> value) {
+        DataList sublist = this.createList(key);
+        for (Object object : value) {
+            sublist.add(object);
+        }
+    }
+
+    protected void copyMap(K key, Map<?, ?> value) {
+        DataMap submap = this.createMap(key);
+        for (Map.Entry<?, ?> entry : value.entrySet()) {
+            if (entry.getKey() instanceof String) {
+                submap.set((String) entry.getKey(), entry.getValue());
+            } else {
+                throw new IllegalArgumentException("map had an unsupported key type");
+            }
+        }
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    protected void copyDataMap(K key, DataMap value) {
+        checkArgument(!value.equals(this), "Cannot insert self-referencing Objects!");
+
+        DataMap submap = this.createMap(key);
+        for (String subkey : value.getKeys()) {
+            submap.set(subkey, value.get(subkey).get());
+        }
+    }
+
+    protected void copyDataList(K key, DataList value) {
+        checkArgument(!value.equals(this), "Cannot insert self-referencing Objects!");
+
+        DataList sublist = this.createList(key);
+        for (int i = 0; i < value.size(); i++) {
+            sublist.add(value.get(i));
+        }
+    }
 
     /*
      * ===========================

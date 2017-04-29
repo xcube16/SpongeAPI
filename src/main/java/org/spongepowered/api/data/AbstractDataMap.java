@@ -24,11 +24,58 @@
  */
 package org.spongepowered.api.data;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import org.spongepowered.api.CatalogType;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.persistence.DataTranslator;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
+
 /**
  * Implements implementation independent details of DataMap.
  */
 public abstract class AbstractDataMap extends AbstractDataView<String> implements DataMap {
 
+
+    protected abstract void setRaw(String key, Object value);
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public DataMap set(String key, Object value) {
+        checkNotNull(key, "key");
+        checkNotNull(value, "value");
+
+        if (isPrimitive(value) || isPrimitiveArray(value)) { // Primitive Allowed Types or Array Allowed Types
+            this.setRaw(key, value);
+
+        } else if (value instanceof DataMap) { // Structure Allowed Types
+            copyDataMap(key, (DataMap) value);
+        } else if (value instanceof DataList) { // Structure Allowed Types
+            copyDataList(key, (DataList) value);
+
+        } else if (value instanceof DataSerializable) { // Sponge Object
+            copyDataMap(key, ((DataSerializable) value).toContainer());
+        } else if (value instanceof CatalogType) { // Sponge Object
+            this.setRaw(key, ((CatalogType) value).getId());
+
+        } else if (value instanceof Map) { // just extra candy
+            copyMap(key, (Map) value);
+        } else if (value instanceof Collection) { // just extra candy
+            copyCollection(key, (Collection) value);
+
+        } else { // Sponge Object? maybe?
+            Optional<? extends DataTranslator> translator = Sponge.getDataManager().getTranslator(value.getClass());
+            if (translator.isPresent()) { // yep, Sponge Object
+                copyDataMap(key, translator.get().translate(value));
+            } else { // nope, KU-BOOM!
+                throw new IllegalArgumentException(value.getClass() + " can not be serialized");
+            }
+        }
+        return this;
+    }
 
     /*
      * ===========================
