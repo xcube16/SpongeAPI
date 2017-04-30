@@ -40,6 +40,10 @@ import java.util.Optional;
 public abstract class AbstractDataMap extends AbstractDataView<String> implements DataMap {
 
 
+    /**
+     * An internal method that sets a raw value in the underlying data structure.
+     * The key and value are already be sanitized and ready to go.
+     */
     protected abstract void setRaw(String key, Object value);
 
     @Override

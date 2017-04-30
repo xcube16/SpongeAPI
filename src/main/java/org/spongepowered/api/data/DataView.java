@@ -442,18 +442,6 @@ public interface DataView<K> {
     }
 
     /**
-     * Copies this {@link DataView} and all of it's contents into a new
-     * {@link DataContainer}.
-     *
-     * <p>Note that the copy will not have the same path as this
-     * {@link DataView} since it will be constructed with the top level path
-     * being itself.</p>
-     *
-     * @return The newly constructed data view
-     */
-    DataContainer copy();
-
-    /**
      * Gets if this view contains no data.
      *
      * @return True if no data

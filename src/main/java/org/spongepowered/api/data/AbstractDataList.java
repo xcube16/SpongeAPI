@@ -24,12 +24,72 @@
  */
 package org.spongepowered.api.data;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import org.spongepowered.api.CatalogType;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.persistence.DataTranslator;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
+
 /**
  * Implements implementation independent details of DataList.
  */
 public abstract class AbstractDataList extends AbstractDataView<Integer> implements DataList {
 
+    /**
+     * An internal method that sets a raw value in the underlying data structure.
+     * The key and value are already be sanitized and ready to go.
+     */
+    protected abstract void setRaw(Integer index, Object value);
 
+    /**
+     * An internal method that adds a raw value in the underlying data structure.
+     * The value is already be sanitized and ready to go.
+     */
+    protected abstract void addRaw(Object value);
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public DataList set(Integer key, Object value) {
+        checkNotNull(key, "key");
+        checkNotNull(value, "value");
+
+        if (isPrimitiveArray(value)) { // Array Allowed Types
+            this.setRaw(key, value);
+
+        } else if (value instanceof DataMap) { // Structure Allowed Types
+            copyDataMap(key, (DataMap) value);
+        } else if (value instanceof DataList) { // Structure Allowed Types
+            copyDataList(key, (DataList) value);
+
+        } else if (value instanceof DataSerializable) { // Sponge Object
+            copyDataMap(key, ((DataSerializable) value).toContainer());
+        } else if (value instanceof CatalogType) { // Sponge Object
+            this.setRaw(key, ((CatalogType) value).getId());
+
+        } else if (value instanceof Map) { // just extra candy
+            copyMap(key, (Map) value);
+        } else if (value instanceof Collection) { // just extra candy
+            copyCollection(key, (Collection) value);
+
+        } else { // Sponge Object? maybe?
+            Optional<? extends DataTranslator> translator = Sponge.getDataManager().getTranslator(value.getClass());
+            if (translator.isPresent()) { // yep, Sponge Object
+                copyDataMap(key, translator.get().translate(value));
+            } else { // nope, KU-BOOM!
+                throw new IllegalArgumentException(value.getClass() + " can not be serialized");
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public DataList add(Object value) {
+        return this.set(this.size(), value);
+    }
 
     /*
      * ===========================
@@ -37,7 +97,7 @@ public abstract class AbstractDataList extends AbstractDataView<Integer> impleme
      * ===========================
      */
 
-    protected static final Integer INVALID_KEY = -1; // TODO: does this work as an "invalid key"?
+    private static final Integer INVALID_KEY = -1;
 
     @Override
     public Integer key(String key) {

@@ -61,6 +61,20 @@ public interface DataList extends DataView<Integer> {
      */
     DataList add(Object element);
 
+    /**
+     * Creates a new {@link DataMap} and adds it to the end of the list.
+     *
+     * @return The newly created {@link DataMap}
+     */
+    DataMap addMap();
+
+    /**
+     * Creates a new {@link DataList} and adds it to the end of the list.
+     *
+     * @return The newly created {@link DataList}
+     */
+    DataList addList();
+
     @Override
     DataList set(Integer index, Object element);
 

@@ -25,34 +25,26 @@
 package org.spongepowered.api.data;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.annotation.Nullable;
 
 /**
  * Default implementation of a {@link DataView} being used in memory.
  */
-public class MemoryDataMap extends AbstractDataMap {
+public class MemoryDataList extends AbstractDataList {
 
-    protected final Map<String, Object> map = Maps.newLinkedHashMap();
+    protected final List<Object> list = Lists.newArrayList();
     private final DataContainer container;
     @Nullable
     private final DataView parent;
 
-    protected MemoryDataMap() {
-        checkState(this instanceof DataContainer, "Cannot construct a root MemoryDataView without a container!");
-        this.parent = null;
-        this.container = (DataContainer) this;
-    }
-
-    protected MemoryDataMap(DataView parent) {
+    protected MemoryDataList(DataView parent) {
         this.parent = parent;
         this.container = parent.getContainer();
     }
@@ -69,40 +61,44 @@ public class MemoryDataMap extends AbstractDataMap {
 
     @Override
     public int size() {
-        return this.map.size();
+        return this.list.size();
     }
 
     @Override
-    public boolean contains(String key) {
-        return this.map.containsKey(key);
+    public boolean contains(Integer key) {
+        return key >= 0 && key < this.size();
     }
 
     @Override
-    public Set<String> getKeys() {
-        return this.map.keySet();
-    }
-
-    @Override
-    public Optional<Object> get(String key) {
+    public Optional<Object> get(Integer key) {
         checkNotNull(key, "key");
 
-        return Optional.ofNullable(this.map.get(key));
+        return this.contains(key) ? Optional.of(this.list.get(key)) : Optional.empty();
     }
 
     @Override
-    public void setRaw(String key, Object value) {
-        this.map.put(key, value);
+    public void setRaw(Integer key, Object value) {
+        if (key == this.size()) {
+            addRaw(value);
+        } else {
+            this.list.set(key, value);
+        }
     }
 
     @Override
-    public MemoryDataMap remove(String key) {
+    public void addRaw(Object value) {
+        this.list.add(value);
+    }
+
+    @Override
+    public MemoryDataList remove(Integer key) {
         checkNotNull(key, "key");
-        this.map.remove(key);
+        this.list.remove(key);
         return this;
     }
 
     @Override
-    public DataMap createMap(String key) {
+    public DataMap createMap(Integer key) {
         checkNotNull(key, "key");
 
         DataMap result = new MemoryDataMap(this);
@@ -111,7 +107,7 @@ public class MemoryDataMap extends AbstractDataMap {
     }
 
     @Override
-    public DataList createList(String key) {
+    public DataList createList(Integer key) {
         checkNotNull(key, "key");
 
         DataList result = new MemoryDataList(this);
@@ -120,25 +116,23 @@ public class MemoryDataMap extends AbstractDataMap {
     }
 
     @Override
-    public DataContainer copy() {
-        final DataContainer container = new MemoryDataContainer();
-        getKeys()
-                .forEach(key ->
-                        get(key).ifPresent(obj ->
-                                container.set(key, obj)
-                        )
-                );
-        return container;
+    public DataMap addMap() {
+        return this.createMap(this.size());
+    }
+
+    @Override
+    public DataList addList() {
+        return this.createList(this.size());
     }
 
     @Override
     public boolean isEmpty() {
-        return this.map.isEmpty();
+        return this.list.isEmpty();
     }
 
     @Override
     public int hashCode() {
-        return this.map.hashCode();
+        return this.list.hashCode();
     }
 
     @Override
@@ -149,14 +143,14 @@ public class MemoryDataMap extends AbstractDataMap {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        final MemoryDataMap other = (MemoryDataMap) obj;
+        final MemoryDataList other = (MemoryDataList) obj;
 
-        return Objects.equal(this.map.entrySet(), other.map.entrySet());
+        return Objects.equal(this.list, other.list);
     }
 
     @Override
     public String toString() {
         final Objects.ToStringHelper helper = Objects.toStringHelper(this);
-        return helper.add("map", this.map).toString();
+        return helper.add("list", this.list).toString();
     }
 }
