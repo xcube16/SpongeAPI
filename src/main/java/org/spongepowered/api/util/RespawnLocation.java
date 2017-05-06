@@ -28,13 +28,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.flowpowered.math.vector.Vector3d;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.data.DataSerializable;
-import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.Queries;
 import org.spongepowered.api.data.manipulator.mutable.entity.RespawnLocationData;
 import org.spongepowered.api.data.persistence.AbstractDataBuilder;
-import org.spongepowered.api.data.persistence.InvalidDataException;
+import org.spongepowered.api.data.persistence.DataBuilder;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -119,12 +118,14 @@ public final class RespawnLocation implements DataSerializable {
     }
 
     @Override
-    public DataContainer toContainer() {
-        return DataContainer.createNew()
-                .set(Queries.CONTENT_VERSION, getContentVersion())
+    public void toContainer(DataMap container) {
+        container.set(Queries.CONTENT_VERSION, getContentVersion())
+
+                // TODO: Use vector's serializer/deserializer
                 .set(Queries.POSITION_X, getPosition().getX())
                 .set(Queries.POSITION_Y, getPosition().getY())
                 .set(Queries.POSITION_Z, getPosition().getZ())
+
                 .set(Queries.FORCED_SPAWN, isForced())
                 .set(Queries.WORLD_ID, getWorldUniqueId().toString());
     }
@@ -237,13 +238,19 @@ public final class RespawnLocation implements DataSerializable {
         }
 
         @Override
-        protected Optional<RespawnLocation> buildContent(DataView container) throws InvalidDataException {
-            final String worldString = container.getString(Queries.WORLD_ID).get();
-            final UUID worldId = UUID.fromString(worldString);
+        protected Optional<RespawnLocation> buildContent(DataMap container) {
+            final Optional<String> worldString = container.getString(Queries.WORLD_ID);
+            if (!worldString.isPresent()) {
+                return Optional.empty();
+            }
+            final UUID worldId = UUID.fromString(worldString.get());
+
+            //TODO: Use vector's serializer/deserializer
             final double xPos = container.getDouble(Queries.POSITION_X).get();
             final double yPos = container.getDouble(Queries.POSITION_Y).get();
             final double zPos = container.getDouble(Queries.POSITION_Z).get();
             final Vector3d position = new Vector3d(xPos, yPos, zPos);
+
             final boolean forcedSpawn = container.getBoolean(Queries.FORCED_SPAWN).orElse(false);
             final Builder builder = new Builder();
             builder.world = worldId;

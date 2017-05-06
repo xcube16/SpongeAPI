@@ -27,8 +27,8 @@ package org.spongepowered.api.data.persistence;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.data.DataSerializable;
-import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.Queries;
 import org.spongepowered.api.data.manipulator.DataManipulatorBuilder;
 
@@ -58,20 +58,17 @@ public abstract class AbstractDataBuilder<T extends DataSerializable> implements
     /**
      * Builds the currently {@link #supportedVersion} variant of the intended
      * {@link DataSerializable}, such that all content upgrades have already
-     * been handled by {@link #build(DataView)}. This otherwise follows the
-     * same contract as {@link DataBuilder#build(DataView)}.
+     * been handled by {@link #build(DataMap)}. This otherwise follows the
+     * same contract as {@link DataBuilder#build(DataMap)}.
      *
      * @param container The container with data to build from
      * @return The deserialized data serializable, if possible
-     * @throws InvalidDataException If there's issues of invalid data formats
-     *     or invalid data
      */
-    protected abstract Optional<T> buildContent(DataView container) throws InvalidDataException;
+    protected abstract Optional<T> buildContent(DataMap container);
 
     @Override
-    public final Optional<T> build(DataView container) throws InvalidDataException {
-        if (container.contains(Queries.CONTENT_VERSION)) {
-            final int contentVersion = container.getInt(Queries.CONTENT_VERSION).get();
+    public final Optional<T> build(DataMap container) {
+        container.getInt(Queries.CONTENT_VERSION).ifPresent(contentVersion -> {
             if (contentVersion < this.supportedVersion) {
                 Optional<DataContentUpdater> updater = Sponge.getDataManager().getWrappedContentUpdater(this.requiredClass, contentVersion,
                         this.supportedVersion);
@@ -80,13 +77,10 @@ public abstract class AbstractDataBuilder<T extends DataSerializable> implements
                             + " data from the version: " + contentVersion + " to " + this.supportedVersion
                             + ". Please notify the SpongePowered developers of this issue!");
                 }
-                container = updater.get().update(container);
+                updater.get().update(container);
             }
-        }
-        try {
-            return buildContent(container);
-        } catch (Exception e) {
-            throw new InvalidDataException("Could not deserialize something correctly, likely due to bad type data.", e);
-        }
+        });
+
+        return buildContent(container);
     }
 }

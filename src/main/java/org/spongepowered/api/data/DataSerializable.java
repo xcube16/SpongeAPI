@@ -27,8 +27,8 @@ package org.spongepowered.api.data;
 import org.spongepowered.api.data.persistence.DataContentUpdater;
 
 /**
- * Represents an object that can be represented by a {@link DataContainer}.
- * <p>DataContainers received from {@link DataSerializable#toContainer()}
+ * Represents an object that can be represented by a {@link DataMap}.
+ * <p>DataMaps populated from {@link DataSerializable#toContainer(DataMap)}
  * should be considered to be copies of the original data, and therefore,
  * thread safe.</p>
  */
@@ -37,10 +37,10 @@ public interface DataSerializable {
     /**
      * Gets the content version of this {@link DataSerializable}. The version
      * may differ between instances of plugins and implementations such that
-     * the {@link DataView} from {@link #toContainer()} may include different
+     * the {@link DataMap} from {@link #toContainer(DataMap)} may include different
      * information, or remove other information as they are no longer deemed
      * necessary. The version goes hand in hand with {@link DataContentUpdater}
-     * as it is required when there exists any {@link DataView} of this
+     * as it is required when there exists any {@link DataMap} of this
      * {@link DataSerializable} with an "older" version.
      *
      * @return The version of the content being serialized
@@ -48,10 +48,10 @@ public interface DataSerializable {
     int getContentVersion();
 
     /**
-     * Serializes this object into a comprehensible {@link DataContainer}.
+     * Serializes this object into a comprehensible {@link DataMap}.
      *
-     * @return A newly created DataContainer
+     * @param container The {@link DataMap} to serialize into
      */
-    DataContainer toContainer();
+    void toContainer(DataMap container);
 
 }

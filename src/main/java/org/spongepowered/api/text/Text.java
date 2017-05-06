@@ -29,7 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
-import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.Queries;
 import org.spongepowered.api.scoreboard.Score;
@@ -288,10 +288,11 @@ public abstract class Text implements TextRepresentable, DataSerializable, Compa
     }
 
     @Override
-    public DataContainer toContainer() {
-        return DataContainer.createNew()
-                .set(Queries.CONTENT_VERSION, getContentVersion())
-                .set(Queries.JSON, TextSerializers.JSON.serialize(this));
+    public void toContainer(DataMap container) {
+        container.set(Queries.CONTENT_VERSION, getContentVersion())
+                 .set(Queries.JSON, TextSerializers.JSON.serialize(this));
+        //TODO: Don't store as a json string, store in DataMap directly.
+        //A JSON <-> DataView translator might help prevent duplicate serialization code
     }
 
     @Override

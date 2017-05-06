@@ -28,7 +28,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
-import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataList;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.Queries;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -38,7 +39,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Represents a view of the Book GUI on the client. A BookView is not
@@ -100,13 +100,13 @@ public final class BookView implements DataSerializable {
     }
 
     @Override
-    public DataContainer toContainer() {
-        List<DataContainer> pages = this.pages.stream().map(Text::toContainer).collect(Collectors.toList());
-        return DataContainer.createNew()
-                .set(Queries.CONTENT_VERSION, getContentVersion())
-                .set(Queries.TEXT_TITLE, this.title.toContainer())
-                .set(Queries.TEXT_AUTHOR, this.author.toContainer())
-                .set(Queries.TEXT_PAGE_LIST, pages);
+    public void toContainer(DataMap container) {
+        DataList pages = container.set(Queries.CONTENT_VERSION, getContentVersion())
+                .set(Queries.TEXT_TITLE, this.title)
+                .set(Queries.TEXT_AUTHOR, this.author)
+                .createList(Queries.TEXT_PAGE_LIST);
+
+        this.pages.forEach(p -> p.toContainer(pages.addMap()));
     }
 
     @Override

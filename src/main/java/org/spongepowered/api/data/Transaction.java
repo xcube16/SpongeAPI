@@ -152,16 +152,14 @@ public class Transaction<T extends DataSerializable> implements DataSerializable
     }
 
     @Override
-    public DataContainer toContainer() {
-        final DataContainer container = DataContainer.createNew()
-            .set(Queries.CONTENT_VERSION, getContentVersion())
-            .set(Queries.TYPE_CLASS, this.original.getClass().getName())
-            .set(Queries.ORIGINAL, this.original)
-            .set(Queries.DEFAULT_REPLACEMENT, this.defaultReplacement)
-            .set(Queries.VALID, this.valid);
+    public void toContainer(DataMap container) {
+        container.set(Queries.CONTENT_VERSION, getContentVersion())
+                .set(Queries.TYPE_CLASS, this.original.getClass().getName())
+                .set(Queries.ORIGINAL, this.original)
+                .set(Queries.DEFAULT_REPLACEMENT, this.defaultReplacement)
+                .set(Queries.VALID, this.valid);
         if (this.custom != null) {
             container.set(Queries.CUSTOM_REPLACEMENT, this.custom);
         }
-        return container;
     }
 }

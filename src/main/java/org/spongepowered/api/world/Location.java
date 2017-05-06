@@ -38,8 +38,8 @@ import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.block.ScheduledBlockUpdate;
 import org.spongepowered.api.block.tileentity.TileEntity;
-import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataHolder;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.data.DataTransactionResult;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.Property;
@@ -787,8 +787,7 @@ public final class Location<E extends Extent> implements DataHolder {
     }
 
     @Override
-    public DataContainer toContainer() {
-        final DataContainer container = DataContainer.createNew();
+    public void toContainer(DataMap container) {
         container.set(Queries.CONTENT_VERSION, getContentVersion());
         if (getExtent() instanceof World) {
             container.set(Queries.WORLD_NAME, ((World) getExtent()).getName());
@@ -804,7 +803,6 @@ public final class Location<E extends Extent> implements DataHolder {
             .set(Queries.POSITION_X, this.getX())
             .set(Queries.POSITION_Y, this.getY())
             .set(Queries.POSITION_Z, this.getZ());
-        return container;
     }
 
     @Override

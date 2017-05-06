@@ -32,7 +32,7 @@ import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
-import org.spongepowered.api.data.DataView;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.data.Queries;
 import org.spongepowered.api.data.persistence.AbstractDataBuilder;
 import org.spongepowered.api.data.persistence.InvalidDataException;
@@ -80,12 +80,14 @@ public class TextConfigSerializer extends AbstractDataBuilder<Text> implements T
             throw new ObjectMappingException(e);
         }
 
+        //TODO: When Text.toContainer() no longer stores a json string, use a generic DataMap <-> ConfigurationNode serializer
         return Sponge.getDataManager().deserialize(Text.class, DataContainer.createNew().set(Queries.JSON, writer.toString())).get();
     }
 
     @Override
     public void serialize(TypeToken<?> type, Text obj, ConfigurationNode value) throws ObjectMappingException {
-        String json = (String) obj.toContainer().get(Queries.JSON).get();
+        //TODO: When Text.toContainer() no longer stores a json string, use a generic DataMap <-> ConfigurationNode serializer
+        String json = TextSerializers.JSON.serialize(obj);
         GsonConfigurationLoader gsonLoader = GsonConfigurationLoader.builder()
                 .setSource(() -> new BufferedReader(new StringReader(json)))
                 .build();
@@ -98,9 +100,11 @@ public class TextConfigSerializer extends AbstractDataBuilder<Text> implements T
     }
 
     @Override
-    protected Optional<Text> buildContent(DataView container) throws InvalidDataException {
+    protected Optional<Text> buildContent(DataMap container) throws InvalidDataException {
         try {
-            return container.get(Queries.JSON).map(json -> TextSerializers.JSON.deserialize(json.toString()));
+            //TODO: Don't store as a json string, store in DataMap directly.
+            //A JSON <-> DataView translator might help prevent duplicate serialization code
+            return container.getString(Queries.JSON).map(TextSerializers.JSON::deserialize);
         } catch (TextParseException e) {
             throw new InvalidDataException(e);
         }

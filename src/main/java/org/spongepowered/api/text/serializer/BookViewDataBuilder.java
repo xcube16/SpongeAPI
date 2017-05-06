@@ -32,9 +32,7 @@ import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.data.DataQuery;
-import org.spongepowered.api.data.DataView;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.data.persistence.AbstractDataBuilder;
 import org.spongepowered.api.data.persistence.InvalidDataException;
 import org.spongepowered.api.text.BookView;
@@ -65,37 +63,25 @@ public class BookViewDataBuilder extends AbstractDataBuilder<BookView> implement
         super(BookView.class, 1);
     }
 
-    private Text getText(Object textView) {
-        if (!(textView instanceof DataView)) {
-            throw new InvalidDataException("Expected DataView");
-        }
-        return Sponge.getDataManager().deserialize(Text.class, (DataView) textView).get();
-    }
-
-    private Optional<Text> findText(DataView container, DataQuery query) {
-        if (container.contains(query)) {
-            return Optional.of(getText(container.get(query).get()));
-        }
-        return Optional.empty();
-    }
-
     @Override
-    protected Optional<BookView> buildContent(DataView container) throws InvalidDataException {
+    protected Optional<BookView> buildContent(DataMap container) throws InvalidDataException {
         BookView.Builder builder = BookView.builder();
-        findText(container, TEXT_TITLE).ifPresent(builder::title);
-        findText(container, TEXT_AUTHOR).ifPresent(builder::author);
-        if (container.contains(TEXT_PAGE_LIST)) {
-            Object pageList = container.get(TEXT_PAGE_LIST).get();
-            if (!(pageList instanceof List)) {
-                throw new InvalidDataException("Expected List");
+
+        container.getSpongeObject(TEXT_TITLE, Text.class).ifPresent(builder::title);
+        container.getSpongeObject(TEXT_AUTHOR, Text.class).ifPresent(builder::author);
+        container.getList(TEXT_PAGE_LIST).ifPresent(pageList -> {
+            // TODO: better way to interate over DataList
+            for (int i = 0; i < pageList.size(); i++) {
+                pageList.getSpongeObject(i, Text.class).ifPresent(builder::addPage);
             }
-            ((List<?>) pageList).forEach(textView -> builder.addPage(getText(textView)));
-        }
+        });
+
         return Optional.of(builder.build());
     }
 
     @Override
     public BookView deserialize(TypeToken<?> type, ConfigurationNode value) throws ObjectMappingException {
+        // TODO: Replace with generic DataMap <-> ConfigurationNode translator to void duplicated code
         BookView.Builder builder = BookView.builder();
         builder.author(value.getNode(NODE_AUTHOR).getValue(TOKEN_TEXT));
         builder.title(value.getNode(NODE_TITLE).getValue(TOKEN_TEXT));
@@ -105,6 +91,7 @@ public class BookViewDataBuilder extends AbstractDataBuilder<BookView> implement
 
     @Override
     public void serialize(TypeToken<?> type, BookView bookView, ConfigurationNode value) throws ObjectMappingException {
+        // TODO: Replace with generic DataMap <-> ConfigurationNode translator to void duplicated code
         value.getNode(NODE_AUTHOR).setValue(TOKEN_TEXT, bookView.getAuthor());
         value.getNode(NODE_TITLE).setValue(TOKEN_TEXT, bookView.getTitle());
         value.getNode(NODE_PAGES).setValue(TOKEN_TEXT_LIST, bookView.getPages());

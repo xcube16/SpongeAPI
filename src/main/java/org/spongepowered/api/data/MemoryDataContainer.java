@@ -24,8 +24,6 @@
  */
 package org.spongepowered.api.data;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.Optional;
 
 /**
@@ -41,29 +39,13 @@ import java.util.Optional;
 public class MemoryDataContainer extends MemoryDataMap implements DataContainer {
 
     /**
-     * Creates a new {@link MemoryDataContainer} with a default
-     * {@link org.spongepowered.api.data.DataView.SafetyMode} of
-     * {@link org.spongepowered.api.data.DataView.SafetyMode#ALL_DATA_CLONED}.
+     * Creates a new {@link MemoryDataContainer}.
      *
      * @deprecated Use {@link DataContainer#createNew()}
      */
     @Deprecated
     public MemoryDataContainer() {
-        this(DataView.SafetyMode.ALL_DATA_CLONED);
-    }
-
-    /**
-     * Creates a new {@link MemoryDataContainer} with the provided
-     * {@link org.spongepowered.api.data.DataView.SafetyMode}.
-     *
-     * @param safety The safety mode to use
-     * @see org.spongepowered.api.data.DataView.SafetyMode
-     *
-     * @deprecated Use {@link DataContainer#createNew(org.spongepowered.api.data.DataView.SafetyMode)}
-     */
-    @Deprecated
-    public MemoryDataContainer(DataView.SafetyMode safety) {
-        super(safety);
+        super();
     }
 
     @Override
@@ -75,5 +57,4 @@ public class MemoryDataContainer extends MemoryDataMap implements DataContainer 
     public final DataContainer getContainer() {
         return this;
     }
-
 }

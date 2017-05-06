@@ -26,7 +26,7 @@ package org.spongepowered.api.data.manipulator.mutable.common;
 
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.manipulator.immutable.ImmutableVariantData;
 import org.spongepowered.api.data.manipulator.mutable.VariantData;
@@ -59,8 +59,8 @@ public abstract class AbstractSingleCatalogData<T extends CatalogType, M extends
     }
 
     @Override
-    public DataContainer toContainer() {
-        return super.toContainer()
-                .set(this.usedKey.getQuery(), this.getValue().getId());
+    public void toContainer(DataMap container) {
+        super.toContainer(container);
+        container.set(this.usedKey.getQuery(), this.getValue());
     }
 }

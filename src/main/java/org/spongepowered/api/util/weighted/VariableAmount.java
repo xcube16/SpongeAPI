@@ -26,7 +26,7 @@ package org.spongepowered.api.util.weighted;
 
 import com.flowpowered.math.GenericMath;
 import com.google.common.base.Objects;
-import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.Queries;
 
@@ -36,7 +36,7 @@ import java.util.Random;
  * Represents a value which may vary randomly.
  * 
  * <p>Implementors of this interface using it in a fashion in which may ever be
- * serialized <strong>must</strong> implement the {@link #toContainer()}
+ * serialized <strong>must</strong> implement the {@link #toContainer(DataMap)}
  * method.</p>
  */
 @FunctionalInterface
@@ -210,7 +210,7 @@ public interface VariableAmount extends DataSerializable {
     // This is overridden to allow this to be a functional interface as this
     // greatly increases the usability of the interface.
     @Override
-    default DataContainer toContainer() {
+    default void toContainer(DataMap container) {
         throw new UnsupportedOperationException();
     }
 
@@ -261,9 +261,8 @@ public interface VariableAmount extends DataSerializable {
         }
 
         @Override
-        public DataContainer toContainer() {
-            return DataContainer.createNew()
-                    .set(Queries.CONTENT_VERSION, getContentVersion())
+        public void toContainer(DataMap container) {
+            container.set(Queries.CONTENT_VERSION, getContentVersion())
                     .set(Queries.VARIABLE_AMOUNT, this.amount);
         }
 
@@ -320,9 +319,8 @@ public interface VariableAmount extends DataSerializable {
         }
 
         @Override
-        public DataContainer toContainer() {
-            return DataContainer.createNew()
-                    .set(Queries.CONTENT_VERSION, getContentVersion())
+        public void toContainer(DataMap container) {
+            container.set(Queries.CONTENT_VERSION, getContentVersion())
                     .set(Queries.VARIABLE_BASE, this.base)
                     .set(Queries.VARIABLE_VARIANCE, this.variance);
         }
@@ -380,9 +378,8 @@ public interface VariableAmount extends DataSerializable {
         }
 
         @Override
-        public DataContainer toContainer() {
-            return DataContainer.createNew()
-                    .set(Queries.CONTENT_VERSION, getContentVersion())
+        public void toContainer(DataMap container) {
+            container.set(Queries.CONTENT_VERSION, getContentVersion())
                     .set(Queries.VARIABLE_BASE, this.base)
                     .set(Queries.VARIABLE_VARIANCE, this.addition);
         }
@@ -445,9 +442,8 @@ public interface VariableAmount extends DataSerializable {
         }
 
         @Override
-        public DataContainer toContainer() {
-            return DataContainer.createNew()
-                    .set(Queries.CONTENT_VERSION, getContentVersion())
+        public void toContainer(DataMap container) {
+            container.set(Queries.CONTENT_VERSION, getContentVersion())
                     .set(Queries.VARIABLE_CHANCE, this.chance)
                     .set(Queries.VARIABLE_BASE, this.base)
                     .set(Queries.VARIABLE_VARIANCE, this.inner);

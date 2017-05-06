@@ -66,7 +66,7 @@ public abstract class AbstractDataList extends AbstractDataView<Integer> impleme
             copyDataList(key, (DataList) value);
 
         } else if (value instanceof DataSerializable) { // Sponge Object
-            copyDataMap(key, ((DataSerializable) value).toContainer());
+            ((DataSerializable) value).toContainer(createMap(key));
         } else if (value instanceof CatalogType) { // Sponge Object
             this.setRaw(key, ((CatalogType) value).getId());
 

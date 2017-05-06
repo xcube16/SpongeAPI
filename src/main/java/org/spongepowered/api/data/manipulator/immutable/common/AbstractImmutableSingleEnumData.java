@@ -25,7 +25,7 @@
 package org.spongepowered.api.data.manipulator.immutable.common;
 
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.manipulator.DataManipulator;
 import org.spongepowered.api.data.manipulator.ImmutableDataManipulator;
@@ -63,8 +63,7 @@ public abstract class AbstractImmutableSingleEnumData<E extends Enum<E>, I exten
     }
 
     @Override
-    public DataContainer toContainer() {
-        return super.toContainer()
-                .set(this.usedKey.getQuery(), this.value.name());
+    public void toContainer(DataMap container) {
+        container.set(this.usedKey.getQuery(), this.value.name());
     }
 }

@@ -30,12 +30,11 @@ import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
 import org.apache.commons.lang3.Validate;
-import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.data.DataSerializable;
-import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.Queries;
 import org.spongepowered.api.data.persistence.AbstractDataBuilder;
-import org.spongepowered.api.data.persistence.InvalidDataException;
+import org.spongepowered.api.data.persistence.DataBuilder;
 import org.spongepowered.api.data.type.DyeColor;
 
 import java.util.Objects;
@@ -323,12 +322,11 @@ public final class Color implements DataSerializable {
     }
 
     @Override
-    public DataContainer toContainer() {
-        return DataContainer.createNew()
-            .set(Queries.CONTENT_VERSION, getContentVersion())
-            .set(Queries.COLOR_RED, this.getRed())
-            .set(Queries.COLOR_GREEN, this.getGreen())
-            .set(Queries.COLOR_BLUE, this.getBlue());
+    public void toContainer(DataMap container) {
+        container.set(Queries.CONTENT_VERSION, getContentVersion())
+                .set(Queries.COLOR_RED, this.getRed())
+                .set(Queries.COLOR_GREEN, this.getGreen())
+                .set(Queries.COLOR_BLUE, this.getBlue());
     }
 
     @Override
@@ -368,18 +366,14 @@ public final class Color implements DataSerializable {
         }
 
         @Override
-        protected Optional<Color> buildContent(DataView container) throws InvalidDataException {
-            if (!container.contains(Queries.COLOR_RED, Queries.COLOR_GREEN, Queries.COLOR_BLUE)) {
-                return Optional.empty();
-            }
-            try {
-                final int red = container.getInt(Queries.COLOR_RED).get();
-                final int green = container.getInt(Queries.COLOR_GREEN).get();
-                final int blue = container.getInt(Queries.COLOR_BLUE).get();
-                return Optional.of(Color.ofRgb(red, green, blue));
-            } catch (Exception e) {
-                throw new InvalidDataException("Could not parse some data.", e);
-            }
+        protected Optional<Color> buildContent(DataMap container) {
+            // Its ok if some of the colors are missing...
+            // What do you get when you mix red + empty + empty? well... red
+            final int red = container.getInt(Queries.COLOR_RED).orElse(0);
+            final int green = container.getInt(Queries.COLOR_GREEN).orElse(0);
+            final int blue = container.getInt(Queries.COLOR_BLUE).orElse(0);
+
+            return Optional.of(Color.ofRgb(red, green, blue));
         }
     }
 }
