@@ -34,18 +34,40 @@ import org.spongepowered.api.data.value.BaseValue;
 import org.spongepowered.api.util.Coerce2;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 /**
- * Represents an object of data represented by a map.
- * <p>DataViews always exist within a {@link DataContainer} and can be used
- * for serialization.</p>
+ * A key-value like data structure allowing only a fixed number of types (see Allowed Types)
+ *
+ * <p>{@link DataView}s make a good IR (Intermediate Representation) for data when serializing,
+ * as you only need one object specific serializer to go to/form a DataView,
+ * than a generic DataView to any binary/config format serializer can be used!</p>
+ *
+ * <p>I recommend that serializer methods (object -> DataView) do not create any root
+ * {@link DataView}s of there own. Instead they should be provided with a {@link DataView} in
+ * which to store there fields in.<br/>
+ * Example serializable object:<br/>
+ * {@code
+ * public class Foo {
+ *
+ *     private int someInt;
+ *     private String someString;
+ *     private Bar bar; // assume bar also has a serialize() method
+ *
+ *     public void serialize(DataMap storage) {
+ *         storage.set("someInt", someInt) // A DataQuery may be used instead of "someInt"
+ *                .set("someString", someString);
+ *         bar.serialize(storage.createMap("bar"));
+ *     }
+ * }
+ * }</p>
+ *
+ * TODO: Use the recommendation in all of Sponge... I know... lots of breaking changes
  *
  * Structure Allowed Types:<br/>
- * * {@link DataView}<br/>
- * * {@link List}&lt;Structure Type or Optimized List Type&gt;<br/>
+ * * {@link DataMap}<br/>
+ * * {@link DataList}<br/>
  *
  * Primitive Allowed Types:<br/>
  * * {@link Boolean}<br/>
@@ -67,25 +89,16 @@ import java.util.Optional;
  * * float[]<br/>
  * * double[]<br/>
  *
+ * <p>Note: Sub-interfaces (DataList and DataMap) may further restrict the Allowed Types.</p>
+ *
  * @param <K> The key type
  */
 public interface DataView<K> {
 
     /**
-     * Gets the parent container of this DataView.
-     *
-     * <p>Every DataView will always have a {@link DataContainer}.</p>
-     *
-     * <p>For any {@link DataContainer}, this will return itself.</p>
-     *
-     * @return The parent container
-     */
-    DataContainer getContainer();
-
-    /**
      * Gets the parent {@link DataView} of this view.
      *
-     * <p>For any {@link DataContainer}, this will return an absent parent.</p>
+     * <p>If this is the root {@link DataView}, than an absent is returned.</p>
      *
      * @return The parent data view containing this view
      */

@@ -34,9 +34,6 @@ import java.util.Set;
 
 /**
  * A {@link DataView} that stores values like a {@link Map}.
- *
- * <p>Primitives (like {@link Integer}, {@link Boolean}, {@link Double}, ...)
- * are NOT supported in {@link DataList}.<p/>
  */
 public interface DataMap extends DataView<String> {
 
@@ -49,7 +46,7 @@ public interface DataMap extends DataView<String> {
 
     /**
      * Copies this {@link DataView} and all of it's contents into a new
-     * {@link DataContainer}.
+     * {@link DataMap}.
      *
      * <p>Note that the copy will not have the same path as this
      * {@link DataView} since it will be constructed with the top level path
@@ -57,7 +54,7 @@ public interface DataMap extends DataView<String> {
      *
      * @return The newly constructed data view
      */
-    DataContainer copy();
+    DataMap copy();
 
     @Override
     DataMap set(String key, Object element);

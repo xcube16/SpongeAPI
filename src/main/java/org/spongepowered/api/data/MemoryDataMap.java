@@ -42,24 +42,15 @@ import javax.annotation.Nullable;
 public class MemoryDataMap extends AbstractDataMap {
 
     protected final Map<String, Object> map = Maps.newLinkedHashMap();
-    private final DataContainer container;
     @Nullable
     private final DataView parent;
 
-    protected MemoryDataMap() {
-        checkState(this instanceof DataContainer, "Cannot construct a root MemoryDataView without a container!");
+    public MemoryDataMap() {
         this.parent = null;
-        this.container = (DataContainer) this;
     }
 
     protected MemoryDataMap(DataView parent) {
         this.parent = parent;
-        this.container = parent.getContainer();
-    }
-
-    @Override
-    public DataContainer getContainer() {
-        return this.container;
     }
 
     @Override
@@ -120,8 +111,8 @@ public class MemoryDataMap extends AbstractDataMap {
     }
 
     @Override
-    public DataContainer copy() {
-        final DataContainer container = new MemoryDataContainer();
+    public DataMap copy() {
+        final DataMap container = new MemoryDataMap();
         getKeys()
                 .forEach(key ->
                         get(key).ifPresent(obj ->

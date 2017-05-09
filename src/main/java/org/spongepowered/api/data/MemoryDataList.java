@@ -40,18 +40,15 @@ import javax.annotation.Nullable;
 public class MemoryDataList extends AbstractDataList {
 
     protected final List<Object> list = Lists.newArrayList();
-    private final DataContainer container;
     @Nullable
     private final DataView parent;
 
-    protected MemoryDataList(DataView parent) {
-        this.parent = parent;
-        this.container = parent.getContainer();
+    public MemoryDataList() {
+        this.parent = null;
     }
 
-    @Override
-    public DataContainer getContainer() {
-        return this.container;
+    protected MemoryDataList(DataView parent) {
+        this.parent = parent;
     }
 
     @Override
