@@ -25,7 +25,7 @@
 package org.spongepowered.api.world.storage;
 
 import com.flowpowered.math.vector.Vector3i;
-import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.World;
 
@@ -69,14 +69,14 @@ public interface WorldStorage {
     CompletableFuture<Boolean> doesChunkExist(Vector3i chunkCoords);
 
     /**
-     * Gets a {@link DataContainer} including all data related to a
+     * Gets a {@link DataMap} including all data related to a
      * {@link Chunk}.
      *
      * <p>The container is a read only instance of the data, and therefor should
      * not be considered as mutable data. Changes are NOT saved, and the data
      * may not be in sync with the server if the chunk is currently loaded.</p>
      *
-     * <p>This may not return a {@link DataContainer} in the event there is no
+     * <p>This may not return a {@link DataMap} in the event there is no
      * chunk data generated at the desired coordinates.</p>
      *
      * <p>It is imperative to understand that the {@link CompletableFuture} task
@@ -86,7 +86,7 @@ public interface WorldStorage {
      * @param chunkCoords The chunk coordinates
      * @return The data container representing the chunk data, if available
      */
-    CompletableFuture<Optional<DataContainer>> getChunkData(Vector3i chunkCoords);
+    CompletableFuture<Optional<DataMap>> getChunkData(Vector3i chunkCoords);
 
     /**
      * Gets the {@link WorldProperties} of this storage. In the vanilla storage

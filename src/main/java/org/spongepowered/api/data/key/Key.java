@@ -26,7 +26,7 @@ package org.spongepowered.api.data.key;
 
 import com.google.common.reflect.TypeToken;
 import org.spongepowered.api.CatalogType;
-import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.value.BaseValue;
@@ -60,7 +60,7 @@ public interface Key<V extends BaseValue<?>> extends CatalogType {
 
     /**
      * Gets the {@link DataQuery} for recommended use with
-     * {@link DataContainer}s.
+     * {@link DataView}s.
      *
      * @return The recommended {@link DataQuery} for use
      */

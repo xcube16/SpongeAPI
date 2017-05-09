@@ -29,8 +29,8 @@ import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.collect.ImmutableSet;
 import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataHolder;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.data.DataTransactionResult;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.key.Key;
@@ -1091,7 +1091,7 @@ public interface LocationCompositeValueStore {
 
     /**
      * Attempts to set all data of the block at the given position according to
-     * the {@link DataContainer}'s held information. Using this to modify known
+     * the {@link DataMap}'s held information. Using this to modify known
      * {@link DataManipulator}s is unsupported and if the data is invalid, an
      * {@link InvalidDataException} is thrown.
      *
@@ -1113,7 +1113,7 @@ public interface LocationCompositeValueStore {
 
     /**
      * Attempts to set all data of the block at the given position according to
-     * the {@link DataContainer}'s held information. Using this to modify known
+     * the {@link DataMap}'s held information. Using this to modify known
      * {@link DataManipulator}s is unsupported and if the data is invalid, an
      * {@link InvalidDataException} is thrown.
      *

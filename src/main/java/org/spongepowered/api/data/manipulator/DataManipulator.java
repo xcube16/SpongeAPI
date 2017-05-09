@@ -27,8 +27,8 @@ package org.spongepowered.api.data.manipulator;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataHolder;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.merge.MergeFunction;
@@ -95,16 +95,16 @@ public interface DataManipulator<M extends DataManipulator<M, I>, I extends Immu
     Optional<M> fill(DataHolder dataHolder, MergeFunction overlap);
 
     /**
-     * Attempts to read the raw data from the provided {@link DataContainer}.
+     * Attempts to read the raw data from the provided {@link DataMap}.
      * This manipulator should be "reset" to a default state and apply all data
-     * from the given {@link DataContainer}. If data is missing from the
-     * {@link DataContainer}, {@link Optional#empty()} can be returned.
+     * from the given {@link DataMap}. If data is missing from the
+     * {@link DataMap}, {@link Optional#empty()} can be returned.
      *
      * @param container The container of raw data
      * @return This {@link DataManipulator} with relevant data filled from the
-     *     given {@link DataContainer}, if compatible
+     *     given {@link DataMap}, if compatible
      */
-    Optional<M> from(DataContainer container);
+    Optional<M> from(DataMap container);
 
     /**
      * Sets the supported {@link Key}'s value such that the value is set on

@@ -24,7 +24,6 @@
  */
 package org.spongepowered.api.data;
 
-import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.data.manipulator.DataManipulator;
 import org.spongepowered.api.data.manipulator.DataManipulatorBuilder;
 import org.spongepowered.api.data.manipulator.ImmutableDataManipulator;
@@ -51,11 +50,11 @@ public interface DataManager {
 
     /**
      * Registers a {@link DataBuilder} that will dynamically build
-     * the given {@link DataSerializable} from a {@link DataContainer}.
+     * the given {@link DataSerializable} from a {@link DataMap}.
      *
      * <p>Builders may not always exist for a given {@link DataSerializable},
      * nor is it guaranteed that a provided builder will function with all
-     * {@link DataContainer}s.
+     * {@link DataMap}s.
      * </p>
      *
      * @param clazz The class of the {@link DataSerializable}
@@ -96,7 +95,7 @@ public interface DataManager {
      *
      * <p>Builders may not always exist for a given {@link DataSerializable},
      * nor is it guaranteed that a provided builder will function with all
-     * {@link DataContainer}s.</p>
+     * {@link DataMap}s.</p>
      *
      * @param clazz The class of the data serializable
      * @param <T> The type of data serializable
@@ -210,12 +209,5 @@ public interface DataManager {
      * @return The collection of all registered data manipulator classes
      */
     Collection<Class<? extends DataManipulator<?, ?>>> getAllRegistrationsFor(PluginContainer container);
-
-    /**
-     * Creates a new {@link DataContainer}.
-     *
-     * @return A new data container
-     */
-    DataContainer createContainer();
 
 }

@@ -31,8 +31,8 @@ import ninja.leaping.configurate.loader.HeaderMode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataMap;
+import org.spongepowered.api.data.MemoryDataMap;
 import org.spongepowered.api.data.Queries;
 import org.spongepowered.api.data.persistence.AbstractDataBuilder;
 import org.spongepowered.api.data.persistence.InvalidDataException;
@@ -81,7 +81,7 @@ public class TextConfigSerializer extends AbstractDataBuilder<Text> implements T
         }
 
         //TODO: When Text.toContainer() no longer stores a json string, use a generic DataMap <-> ConfigurationNode serializer
-        return Sponge.getDataManager().deserialize(Text.class, DataContainer.createNew().set(Queries.JSON, writer.toString())).get();
+        return Sponge.getDataManager().deserialize(Text.class, new MemoryDataMap().set(Queries.JSON, writer.toString())).get();
     }
 
     @Override

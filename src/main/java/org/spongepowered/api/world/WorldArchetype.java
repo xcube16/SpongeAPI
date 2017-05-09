@@ -28,7 +28,7 @@ import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.GameRegistry;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
@@ -183,12 +183,12 @@ public interface WorldArchetype extends CatalogType {
     boolean isPVPEnabled();
 
     /**
-     * Gets a {@link DataContainer} of any extra settings required by the
+     * Gets a {@link DataMap} of any extra settings required by the
      * generator.
      *
      * @return The generator settings
      */
-    DataContainer getGeneratorSettings();
+    DataMap getGeneratorSettings();
 
     /**
      * Gets the {@link SerializationBehavior} that worlds built from this will use.
@@ -320,7 +320,7 @@ public interface WorldArchetype extends CatalogType {
          * @param settings The generator settings
          * @return The builder, for chaining
          */
-        Builder generatorSettings(DataContainer settings);
+        Builder generatorSettings(DataMap settings);
 
         /**
          * Sets the desired {@link PortalAgentType} for the world.

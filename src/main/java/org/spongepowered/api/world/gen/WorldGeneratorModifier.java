@@ -26,7 +26,7 @@ package org.spongepowered.api.world.gen;
 
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.GameRegistry;
-import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.util.annotation.CatalogedBy;
 import org.spongepowered.api.world.storage.WorldProperties;
 
@@ -34,7 +34,7 @@ import org.spongepowered.api.world.storage.WorldProperties;
  * Custom world generation is done using this interface. Any plugin that wishes
  * to modify the world generator should implement this interface. When the
  * server admin/player has chosen to use this modifier for a world, the method
- * {@link #modifyWorldGenerator(WorldProperties, DataContainer, WorldGenerator)}
+ * {@link #modifyWorldGenerator(WorldProperties, DataMap, WorldGenerator)}
  * will be called.
  *
  * <p>The modifier can change every aspect of terrain generation using the
@@ -70,6 +70,6 @@ public interface WorldGeneratorModifier extends CatalogType {
      * @param worldGenerator The world generator, should be modified.
      * @see WorldGenerator Additional information on the generation process
      */
-    void modifyWorldGenerator(WorldProperties world, DataContainer settings, WorldGenerator worldGenerator);
+    void modifyWorldGenerator(WorldProperties world, DataMap settings, WorldGenerator worldGenerator);
 
 }

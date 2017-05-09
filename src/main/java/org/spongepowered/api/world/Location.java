@@ -777,7 +777,7 @@ public final class Location<E extends Extent> implements DataHolder {
     }
 
     @Override
-    public void setRawData(DataView container) throws InvalidDataException {
+    public void setRawData(DataMap container) throws InvalidDataException {
         getExtent().setRawData(getBlockPosition(), container);
     }
 

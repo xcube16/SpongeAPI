@@ -24,7 +24,7 @@
  */
 package org.spongepowered.api.world.storage;
 
-import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.world.Chunk;
 
 import javax.annotation.Nullable;
@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
  * avoid loading all chunks into memory at once, reducing the memory footprint
  * and persistence operations.</p> <p>The chunks are loaded individually in
  * sequence. Strong references to the chunks represented by
- * {@link DataContainer}s should be avoided <strong>AT ALL COSTS</strong>. The
+ * {@link DataMap}s should be avoided <strong>AT ALL COSTS</strong>. The
  * data represented is a copy and therefore shouldn't be considered synchronized
  * to live data.</p>
  *
@@ -47,18 +47,18 @@ public interface ChunkDataStream {
 
     /**
      * Gets the next {@link Chunk} represented by a read only
-     * {@link DataContainer}.
+     * {@link DataMap}.
      *
      * <p>This method BLOCKS the thread until the next available data has been
      * read.</p>
      *
-     * <p>This may not return a {@link DataContainer} in the event there is no
+     * <p>This may not return a {@link DataMap} in the event there is no
      * chunk data available to read.</p>
      *
      * @return The chunk data represented by a data container
      */
     @Nullable
-    DataContainer next();
+    DataMap next();
 
     /**
      * Checks if there is an available chunk to represent.
@@ -68,7 +68,7 @@ public interface ChunkDataStream {
     boolean hasNext();
 
     /**
-     * Gets the number of chunks available to read as {@link DataContainer}s.
+     * Gets the number of chunks available to read as {@link DataMap}s.
      *
      * @return The number of remaining chunks available to read
      */

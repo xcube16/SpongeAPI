@@ -24,7 +24,7 @@
  */
 package org.spongepowered.api.data.persistence;
 
-import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.data.DataView;
 
 import java.io.IOException;
@@ -37,7 +37,7 @@ import java.io.Writer;
 public interface StringDataFormat extends DataFormat {
 
     /**
-     * Creates a new {@link DataContainer} from the contents of the given
+     * Creates a new {@link DataMap} from the contents of the given
      * {@link String}.
      *
      * @param input The string to parse
@@ -46,10 +46,10 @@ public interface StringDataFormat extends DataFormat {
      *         supported format
      * @throws IOException If there was an error reading from the string
      */
-    DataContainer read(String input) throws InvalidDataException, IOException;
+    DataMap read(String input) throws InvalidDataException, IOException;
 
     /**
-     * Creates a new {@link DataContainer} from the contents of the given
+     * Creates a new {@link DataMap} from the contents of the given
      * {@link Reader}.
      *
      * @param input The reader
@@ -58,7 +58,7 @@ public interface StringDataFormat extends DataFormat {
      *         supported format
      * @throws IOException If there was an error reading from the reader
      */
-    DataContainer readFrom(Reader input) throws InvalidDataException, IOException;
+    DataMap readFrom(Reader input) throws InvalidDataException, IOException;
 
     /**
      * Serializes the given {@link DataView} to a {@link String} using

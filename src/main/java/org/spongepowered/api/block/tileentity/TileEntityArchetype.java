@@ -28,7 +28,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.data.Archetype;
-import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.manipulator.DataManipulator;
@@ -76,7 +76,7 @@ public interface TileEntityArchetype extends Archetype<BlockSnapshot, TileEntity
      *
      * @return The copied container of the tile entity
      */
-    DataContainer getTileData();
+    DataMap getTileData();
 
     /**
      * Sets the raw data for the desired {@link TileEntity}. Note that position
@@ -88,7 +88,7 @@ public interface TileEntityArchetype extends Archetype<BlockSnapshot, TileEntity
      *         tile entity
      */
     @Override
-    void setRawData(DataView container) throws InvalidDataException;
+    void setRawData(DataMap container) throws InvalidDataException;
 
     @Override
     TileEntityArchetype copy();

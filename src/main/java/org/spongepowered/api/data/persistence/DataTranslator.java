@@ -26,13 +26,11 @@ package org.spongepowered.api.data.persistence;
 
 import com.google.common.reflect.TypeToken;
 import org.spongepowered.api.CatalogType;
-import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.util.annotation.CatalogedBy;
-
-import java.util.Map;
 
 /**
  * A compatibility object to translate and translate any type of
@@ -64,12 +62,12 @@ public interface DataTranslator<T> extends CatalogType {
     T translate(DataView view) throws InvalidDataException;
 
     /**
-     * Serializes the provided object to a {@link DataContainer}.
+     * Serializes the provided object to a {@link DataMap}.
      *
      * @param obj The object to translate
      * @return The object serialized to a container
      * @throws InvalidDataException If the desired object is not supported
      *     for any reason
      */
-    DataContainer translate(T obj) throws InvalidDataException;
+    DataMap translate(T obj) throws InvalidDataException;
 }

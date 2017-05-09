@@ -27,7 +27,7 @@ package org.spongepowered.api.world.storage;
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import org.spongepowered.api.GameRegistry;
-import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.DataView;
@@ -565,12 +565,12 @@ public interface WorldProperties extends DataSerializable {
     boolean removeGameRule(String gameRule);
 
     /**
-     * Gets a {@link DataContainer} containing any additional properties for
+     * Gets a {@link DataMap} containing any additional properties for
      * this world. The returned data is a snapshot of the data and is not live.
      *
      * @return Any additional properties
      */
-    DataContainer getAdditionalProperties();
+    DataMap getAdditionalProperties();
 
     /**
      * Gets a section of the additional properties returned by
@@ -615,7 +615,7 @@ public interface WorldProperties extends DataSerializable {
      *
      * @return The generator settings.
      */
-    DataContainer getGeneratorSettings();
+    DataMap getGeneratorSettings();
 
     /**
      * Gets the {@link SerializationBehavior} in use.

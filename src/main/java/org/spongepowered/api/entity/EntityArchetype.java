@@ -26,8 +26,7 @@ package org.spongepowered.api.entity;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.Archetype;
-import org.spongepowered.api.data.DataContainer;
-import org.spongepowered.api.data.DataView;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.manipulator.DataManipulator;
 import org.spongepowered.api.data.persistence.DataBuilder;
@@ -67,10 +66,10 @@ public interface EntityArchetype extends Archetype<EntitySnapshot, Entity> {
      *
      * @return The copied container of the entity
      */
-    DataContainer getEntityData();
+    DataMap getEntityData();
 
     @Override
-    void setRawData(DataView container) throws InvalidDataException;
+    void setRawData(DataMap container) throws InvalidDataException;
 
     @Override
     EntityArchetype copy();
@@ -105,10 +104,10 @@ public interface EntityArchetype extends Archetype<EntitySnapshot, Entity> {
         /**
          * Sets the desired {@link EntityType} of the produced {@link EntityArchetype}.
          *
-         * @param view The data to set for the archetype
+         * @param container The data to set for the archetype
          * @return This builder, for chaining
          */
-        Builder entityData(DataView view);
+        Builder entityData(DataMap container);
 
         /**
          * Sets the desired {@link EntityType} of the produced {@link EntityArchetype}.

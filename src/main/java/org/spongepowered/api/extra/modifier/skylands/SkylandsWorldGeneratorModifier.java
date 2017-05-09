@@ -25,7 +25,7 @@
 package org.spongepowered.api.extra.modifier.skylands;
 
 import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.util.weighted.VariableAmount;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.gen.GenerationPopulator;
@@ -45,7 +45,7 @@ import java.util.List;
 public class SkylandsWorldGeneratorModifier implements WorldGeneratorModifier {
 
     @Override
-    public void modifyWorldGenerator(WorldProperties properties, DataContainer settings, WorldGenerator worldGenerator) {
+    public void modifyWorldGenerator(WorldProperties properties, DataMap settings, WorldGenerator worldGenerator) {
         worldGenerator.setBaseGenerationPopulator(new SkylandsTerrainGenerator());
         worldGenerator.setBiomeGenerator(new SkylandsBiomeGenerator());
         final List<GenerationPopulator> generationPopulators = worldGenerator.getGenerationPopulators();

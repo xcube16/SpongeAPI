@@ -28,8 +28,7 @@ import com.flowpowered.math.vector.Vector3i;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.tileentity.TileEntity;
 import org.spongepowered.api.block.tileentity.TileEntityArchetype;
-import org.spongepowered.api.data.DataContainer;
-import org.spongepowered.api.data.DataView;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.data.ImmutableDataBuilder;
 import org.spongepowered.api.data.LocatableSnapshot;
 import org.spongepowered.api.util.generator.dummy.DummyObjectProvider;
@@ -96,14 +95,14 @@ public interface BlockSnapshot extends LocatableSnapshot<BlockSnapshot> {
 
     /**
      * Creates a copy of the {@link BlockSnapshot} with the provided
-     * {@link DataContainer}. Note that this is equal to calling
-     * {@link Builder#build(DataView)}. All data is
+     * {@link DataMap}. Note that this is equal to calling
+     * {@link Builder#build(DataMap)}. All data is
      * validated and
      *
      * @param container The data container
      * @return The new snapshot
      */
-    BlockSnapshot withContainer(DataContainer container);
+    BlockSnapshot withContainer(DataMap container);
 
     /**
      * Restores the {@link BlockSnapshot} to the {@link Location} stored within

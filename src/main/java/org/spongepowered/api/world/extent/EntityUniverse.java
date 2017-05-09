@@ -29,7 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.flowpowered.math.imaginary.Quaterniond;
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
-import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.data.manipulator.DataManipulator;
 import org.spongepowered.api.data.property.entity.EyeLocationProperty;
 import org.spongepowered.api.entity.Entity;
@@ -144,7 +144,7 @@ public interface EntityUniverse {
      * @param entityContainer The data container of the entity
      * @return An entity, if one was created
      */
-    Optional<Entity> createEntity(DataContainer entityContainer);
+    Optional<Entity> createEntity(DataMap entityContainer);
 
     /**
      * Create an entity instance at the given position.
@@ -160,7 +160,7 @@ public interface EntityUniverse {
      * @param position The position of the entity to spawn at
      * @return An entity, if one was created
      */
-    Optional<Entity> createEntity(DataContainer entityContainer, Vector3d position);
+    Optional<Entity> createEntity(DataMap entityContainer, Vector3d position);
 
     /**
      * Create an entity instance at the given position with the default

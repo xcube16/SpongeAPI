@@ -30,7 +30,7 @@ import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ListMultimap;
-import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.entity.Entity;
 
 import java.util.List;
@@ -197,10 +197,10 @@ public interface ChunkTicketManager {
         World getWorld();
 
         /**
-         * Gets the companion data stored in a {@link DataContainer}. Note that
-         * the provided {@link DataContainer} is modifiable, but a copy of the
+         * Gets the companion data stored in a {@link DataMap}. Note that
+         * the provided {@link DataMap} is modifiable, but a copy of the
          * internal container, and as such may need to be
-         * {@link #setCompanionData(DataContainer)} before modifications can
+         * {@link #setCompanionData(DataMap)} before modifications can
          * be handled.
          *
          * <p>The sort of data stored in the contianer is plugin/mod dependent
@@ -210,7 +210,7 @@ public interface ChunkTicketManager {
          *
          * @return The companion data in the form of a data container
          */
-        DataContainer getCompanionData();
+        DataMap getCompanionData();
 
         /**
          * Sets the companion data for this loading ticket.
@@ -222,7 +222,7 @@ public interface ChunkTicketManager {
          *
          * @param container The container containing the companion data
          */
-        void setCompanionData(DataContainer container);
+        void setCompanionData(DataMap container);
 
         /**
          * Gets the ID of the plugin that this ticket belongs to.

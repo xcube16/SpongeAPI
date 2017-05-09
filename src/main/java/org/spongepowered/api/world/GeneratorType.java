@@ -25,7 +25,7 @@
 package org.spongepowered.api.world;
 
 import org.spongepowered.api.CatalogType;
-import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.util.annotation.CatalogedBy;
 import org.spongepowered.api.world.gen.WorldGenerator;
 
@@ -41,7 +41,7 @@ public interface GeneratorType extends CatalogType {
      *
      * @return The settings
      */
-    DataContainer getGeneratorSettings();
+    DataMap getGeneratorSettings();
 
     /**
      * Creates a new {@link WorldGenerator} for this generator type
