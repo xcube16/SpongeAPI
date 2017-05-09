@@ -30,7 +30,6 @@ import org.spongepowered.api.GameRegistry;
 import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.DataSerializable;
-import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.world.DimensionType;
@@ -580,17 +579,17 @@ public interface WorldProperties extends DataSerializable {
      * @param path The path for the section.
      * @return The data view representing the requested section
      */
-    Optional<DataView> getPropertySection(DataQuery path);
+    Optional<DataMap> getPropertySection(DataQuery path);
 
     /**
-     * Sets a path within the additional data to the given {@link DataView}. If
+     * Sets a path within the additional data to the given {@link DataMap}. If
      * you are using this to store data related to your mod/plugin is is HIGHLY
      * recommended that the identifier you pass in be your mod/plugin id.
      *
      * @param path The path for the section
      * @param data The new data
      */
-    void setPropertySection(DataQuery path, DataView data);
+    void setPropertySection(DataQuery path, DataMap data);
 
     /**
      * Gets an immutable collection of the world generator modifiers currently

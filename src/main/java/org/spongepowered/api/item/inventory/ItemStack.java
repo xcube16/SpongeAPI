@@ -33,7 +33,7 @@ import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.tileentity.TileEntity;
 import org.spongepowered.api.data.DataHolder;
-import org.spongepowered.api.data.DataView;
+import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.manipulator.DataManipulator;
 import org.spongepowered.api.data.manipulator.ImmutableDataManipulator;
@@ -254,12 +254,12 @@ public interface ItemStack extends DataHolder, Translatable {
 
         /**
          * Attempts to reconstruct the builder with all of the data from
-         * {@link ItemStack#toContainer()} including all custom data.
+         * {@link ItemStack#toContainer(DataMap)} including all custom data.
          *
          * @param container The container to translate
          * @return This bulder, for chaining
          */
-        Builder fromContainer(DataView container);
+        Builder fromContainer(DataMap container);
 
         /**
          * Reconstructs this builder to use the {@link ItemStackSnapshot}

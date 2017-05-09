@@ -32,7 +32,6 @@ import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.DataMap;
 import org.spongepowered.api.data.DataTransactionResult;
-import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.manipulator.DataManipulator;
 import org.spongepowered.api.data.merge.MergeFunction;
@@ -1063,13 +1062,13 @@ public interface LocationCompositeValueStore {
      * contains invalid data, <code>false</code> is returned.
      *
      * <p>This validation should be checked prior to calling
-     * {@link #setRawData(Vector3i, DataView)} to avoid exceptions.</p>
+     * {@link #setRawData(Vector3i, DataMap)} to avoid exceptions.</p>
      *
      * @param position The position of the block
      * @param container The raw data to validate
      * @return True if the data is valid
      */
-    default boolean validateRawData(Vector3i position, DataView container) {
+    default boolean validateRawData(Vector3i position, DataMap container) {
         return validateRawData(position.getX(), position.getY(), position.getZ(), container);
     }
 
@@ -1079,7 +1078,7 @@ public interface LocationCompositeValueStore {
      * contains invalid data, <code>false</code> is returned.
      *
      * <p>This validation should be checked prior to calling
-     * {@link #setRawData(Vector3i, DataView)} to avoid exceptions.</p>
+     * {@link #setRawData(Vector3i, DataMap)} to avoid exceptions.</p>
      *
      * @param x The X position
      * @param y The Y position
@@ -1087,7 +1086,7 @@ public interface LocationCompositeValueStore {
      * @param container The raw data to validate
      * @return True if the data is valid
      */
-    boolean validateRawData(int x, int y, int z, DataView container);
+    boolean validateRawData(int x, int y, int z, DataMap container);
 
     /**
      * Attempts to set all data of the block at the given position according to
@@ -1107,7 +1106,7 @@ public interface LocationCompositeValueStore {
      * @throws InvalidDataException If the container is missing or has invalid
      *         data that this holder will refuse
      */
-    default void setRawData(Vector3i position, DataView container) throws InvalidDataException {
+    default void setRawData(Vector3i position, DataMap container) throws InvalidDataException {
         setRawData(position.getX(), position.getY(), position.getZ(), container);
     }
 
@@ -1131,6 +1130,6 @@ public interface LocationCompositeValueStore {
      * @throws InvalidDataException If the container is missing or has invalid
      *         data that this holder will refuse
      */
-    void setRawData(int x, int y, int z, DataView container) throws InvalidDataException;
+    void setRawData(int x, int y, int z, DataMap container) throws InvalidDataException;
 
 }

@@ -105,7 +105,7 @@ public interface DataManager {
 
     /**
      * Attempts to translate an instance of the {@link DataSerializable} from
-     * the provided {@link DataView}. If there is no {@link DataBuilder}
+     * the provided {@link DataMap}. If there is no {@link DataBuilder}
      * registered for the provided {@link DataSerializable}, then
      * {@link Optional#empty()} may be returned.
      *
@@ -114,7 +114,7 @@ public interface DataManager {
      * @param <T> The type of data serializable
      * @return The data serializable, if available
      */
-    <T extends DataSerializable> Optional<T> deserialize(Class<T> clazz, DataView dataView);
+    <T extends DataSerializable> Optional<T> deserialize(Class<T> clazz, DataMap dataView);
 
     /**
      * Registers the given {@link ImmutableDataHolder} class with it's

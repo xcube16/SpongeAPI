@@ -46,7 +46,7 @@ public interface DataHolder extends DataSerializable, PropertyHolder, CompositeV
      * @param container The raw data to validate
      * @return True if the data is valid
      */
-    boolean validateRawData(DataView container);
+    boolean validateRawData(DataMap container);
 
     /**
      * Attempts to set all data of this {@link DataHolder} according to the

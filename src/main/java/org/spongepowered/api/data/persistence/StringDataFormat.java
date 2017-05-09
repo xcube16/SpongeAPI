@@ -25,7 +25,6 @@
 package org.spongepowered.api.data.persistence;
 
 import org.spongepowered.api.data.DataMap;
-import org.spongepowered.api.data.DataView;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -61,22 +60,22 @@ public interface StringDataFormat extends DataFormat {
     DataMap readFrom(Reader input) throws InvalidDataException, IOException;
 
     /**
-     * Serializes the given {@link DataView} to a {@link String} using
+     * Serializes the given {@link DataMap} to a {@link String} using
      * the format specified by this {@link DataFormat}.
      *
      * @param data The DataView to write
      * @throws IOException If there was an error serializing the data
      */
-    String write(DataView data) throws IOException;
+    String write(DataMap data) throws IOException;
 
     /**
-     * Writes the given {@link DataView} to the given {@link Writer} using
+     * Writes the given {@link DataMap} to the given {@link Writer} using
      * the format specified by this {@link DataFormat}.
      *
      * @param output The writer to write the data to
-     * @param data The DataView to write to the writer
+     * @param data The {@link DataMap} to write to the writer
      * @throws IOException If there was an error writing to the writer
      */
-    void writeTo(Writer output, DataView data) throws IOException;
+    void writeTo(Writer output, DataMap data) throws IOException;
 
 }

@@ -24,14 +24,14 @@
  */
 package org.spongepowered.api.data.persistence;
 
-import org.spongepowered.api.data.DataView;
+import org.spongepowered.api.data.DataMap;
 
 import java.io.InputStream;
 
 /**
  * An exception that occurs when a {@link DataBuilder} or
  * {@link DataFormat} is unable to handle an operation, which can include:
- * {@link DataBuilder#build(DataView)}, {@link DataFormat#readFrom(InputStream)},
+ * {@link DataBuilder#build(DataMap)}, {@link DataFormat#readFrom(InputStream)},
  * etc.
  */
 public class InvalidDataException extends UnsupportedOperationException {

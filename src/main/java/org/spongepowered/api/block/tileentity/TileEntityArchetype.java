@@ -29,7 +29,6 @@ import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.data.Archetype;
 import org.spongepowered.api.data.DataMap;
-import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.manipulator.DataManipulator;
 import org.spongepowered.api.data.persistence.DataBuilder;
@@ -118,7 +117,7 @@ public interface TileEntityArchetype extends Archetype<BlockSnapshot, TileEntity
 
         Builder tile(TileEntity tileEntity);
 
-        Builder tileData(DataView dataView);
+        Builder tileData(DataMap container);
 
         Builder setData(DataManipulator<?, ?> manipulator);
 
