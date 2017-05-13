@@ -31,6 +31,7 @@ import org.spongepowered.api.data.value.BaseValue;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * A {@link DataView} that stores values like a {@link Map}.
@@ -72,4 +73,9 @@ public interface DataMap extends DataView<String> {
 
     @Override
     DataMap remove(DataQuery path);
+
+    @Override
+    default void forEachKey(Consumer<String> consumer) {
+        getKeys().forEach(consumer);
+    }
 }

@@ -34,6 +34,7 @@ import org.spongepowered.api.data.value.BaseValue;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * A {@link DataView} that stores values like a {@link List}.
@@ -91,4 +92,11 @@ public interface DataList extends DataView<Integer> {
 
     @Override
     DataList remove(DataQuery path);
+
+    @Override
+    default void forEachKey(Consumer<Integer> consumer) {
+        for (int i = 0; i < this.size(); i++) {
+            consumer.accept(i);
+        }
+    }
 }

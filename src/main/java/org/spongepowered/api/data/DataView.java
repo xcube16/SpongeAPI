@@ -36,6 +36,7 @@ import org.spongepowered.api.util.Coerce2;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * A key-value like data structure allowing only a fixed number of types (see Allowed Types)
@@ -460,6 +461,19 @@ public interface DataView<K> {
      * @return True if no data
      */
     boolean isEmpty();
+
+    /**
+     * Performs the given action for each key in this {@link DataView} until all keys
+     * have been processed or the action throws an exception.
+     * Exceptions thrown by the action are relayed to the caller.
+     *
+     * <p>The given action must not do anything that modifies/adds/removes
+     * keys in this {@link DataView}, doing so will cause undefined behaviour.<br/>
+     * TODO: throw a ConcurrentModificationException instead of undefined behaviour?</p>
+     *
+     * @param consumer The action to be preformed for each key
+     */
+    void forEachKey(Consumer<K> consumer);
 
     /*
      * ===========================
