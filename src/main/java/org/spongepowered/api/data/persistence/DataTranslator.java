@@ -62,12 +62,13 @@ public interface DataTranslator<T> extends CatalogType {
     T translate(DataMap view) throws InvalidDataException;
 
     /**
-     * Serializes the provided object to a {@link DataMap}.
+     * Serializes the {@code T} object to the provided {@link DataView}.
      *
-     * @param obj The object to translate
-     * @return The object serialized to a container
+     * @param obj The object to serialize
+     * @param view The data view to serialize to
+     * @return The provided data view, for chaining
      * @throws InvalidDataException If the desired object is not supported
      *     for any reason
      */
-    DataMap translate(T obj) throws InvalidDataException;
+    DataMap translate(T obj, DataMap view) throws InvalidDataException;
 }

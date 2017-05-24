@@ -465,13 +465,13 @@ public final class Coerce2 {
      * @param type The class of the object
      * @return The deserialized object, if available
      */
-    @SuppressWarnings("unchecked")
-    public static <T extends DataSerializable> Optional<T> asSpongeObject(Object obj, Class<T> type) {
+    @SuppressWarnings("unchecked") // checked with Class#isAssignableFrom()
+    public static <T> Optional<T> asSpongeObject(Object obj, Class<T> type) {
         if (obj instanceof DataMap) {
 
             // See if type is a DataSerializable, in which case it *might* have a builder
             if (DataSerializable.class.isAssignableFrom(type)) {
-                Optional<DataBuilder<T>> builder = Sponge.getDataManager().getBuilder(type);
+                Optional<DataBuilder> builder = Sponge.getDataManager().getBuilder((Class) type);
                 if (builder.isPresent()) {
                     return builder.get().build((DataMap) obj);
                 } // else: ok, it did'nt have a builder, move on
@@ -482,7 +482,6 @@ public final class Coerce2 {
                     .map(translator -> translator.translate((DataMap) obj));
         }
         if (CatalogType.class.isAssignableFrom(type)) {
-            // The compiler does not like the `(Class) type` hack. Added @SuppressWarnings("unchecked")
             return Coerce.asString(obj).flatMap(s -> Sponge.getRegistry().getType((Class) type, s));
         }
         return Optional.empty();

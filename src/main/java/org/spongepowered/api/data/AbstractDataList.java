@@ -78,7 +78,7 @@ public abstract class AbstractDataList extends AbstractDataView<Integer> impleme
         } else { // Sponge Object? maybe?
             Optional<? extends DataTranslator> translator = Sponge.getDataManager().getTranslator(value.getClass());
             if (translator.isPresent()) { // yep, Sponge Object
-                copyDataMap(key, translator.get().translate(value));
+                translator.get().translate(value, createMap(key));
             } else { // nope, KU-BOOM!
                 throw new IllegalArgumentException(value.getClass() + " can not be serialized");
             }

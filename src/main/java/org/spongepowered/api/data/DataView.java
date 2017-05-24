@@ -117,7 +117,12 @@ public interface DataView<K> {
      *
      * @param key The key
      * @return True if the key exists
+     *
+     * @deprecated Checking the existence of a key is not useful without
+     * checking that it can be coerced into the type you want.
+     * Just use the normal get methods as they return an {@link Optional}
      */
+    @Deprecated
     boolean contains(K key);
 
     /**
@@ -450,7 +455,7 @@ public interface DataView<K> {
      * @param type The class of the object
      * @return The deserialized object, if available
      */
-    default <T extends DataSerializable> Optional<T> getSpongeObject(K key, Class<T> type) {
+    default <T> Optional<T> getSpongeObject(K key, Class<T> type) {
         checkNotNull(type, "type");
         return this.get(key).flatMap(o -> Coerce2.asSpongeObject(o, type));
     }
@@ -497,7 +502,12 @@ public interface DataView<K> {
      *
      * @param path The path relative to this data view
      * @return True if the path exists
+     *
+     * @deprecated Checking the existence of a key is not useful without
+     * checking that it can be coerced into the type you want.
+     * Just use the normal get methods as they return an {@link Optional}
      */
+    @Deprecated
     boolean contains(DataQuery path);
 
     /**
@@ -507,7 +517,12 @@ public interface DataView<K> {
      * @param path The path relative to this data view
      * @param paths The additional paths to check
      * @return True if all paths exist
+     *
+     * @deprecated Checking the existence of a key is not useful without
+     * checking that it can be coerced into the type you want.
+     * Just use the normal get methods as they return an {@link Optional}
      */
+    @Deprecated
     default boolean contains(DataQuery path, DataQuery... paths) {
         checkNotNull(path, "DataQuery cannot be null!");
         checkNotNull(paths, "DataQuery varargs cannot be null!");
@@ -529,7 +544,12 @@ public interface DataView<K> {
      *
      * @param key The key to get the data path relative to this data view
      * @return True if the path exists
+     *
+     * @deprecated Checking the existence of a key is not useful without
+     * checking that it can be coerced into the type you want.
+     * Just use the normal get methods as they return an {@link Optional}
      */
+    @Deprecated
     default boolean contains(Key<?> key) {
         return this.contains(checkNotNull(key, "Key cannot be null!").getQuery());
     }
@@ -541,7 +561,12 @@ public interface DataView<K> {
      * @param key The key to get the data path relative to this data view
      * @param keys The additional keys to check
      * @return True if the path exists
+     *
+     * @deprecated Checking the existence of a key is not useful without
+     * checking that it can be coerced into the type you want.
+     * Just use the normal get methods as they return an {@link Optional}
      */
+    @Deprecated
     default boolean contains(Key<?> key, Key<?>... keys) {
         checkNotNull(key, "Key cannot be null!");
         checkNotNull(keys, "Keys cannot be null!");
@@ -863,5 +888,5 @@ public interface DataView<K> {
      * @param type The class of the object
      * @return The deserialized object, if available
      */
-    <T extends DataSerializable> Optional<T> getSpongeObject(DataQuery path, Class<T> type);
+    <T> Optional<T> getSpongeObject(DataQuery path, Class<T> type);
 }

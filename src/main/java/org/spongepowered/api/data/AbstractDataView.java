@@ -289,7 +289,7 @@ public abstract class AbstractDataView<K> implements DataView<K> {
         return get(path).flatMap(Coerce2::asDoubleArray);
     }
 
-    public <T extends DataSerializable> Optional<T> getSpongeObject(DataQuery path, Class<T> type) {
+    public <T> Optional<T> getSpongeObject(DataQuery path, Class<T> type) {
         checkNotNull(type, "type");
         return this.get(path).flatMap(o -> Coerce2.asSpongeObject(o, type));
     }
