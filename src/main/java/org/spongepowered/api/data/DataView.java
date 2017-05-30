@@ -468,6 +468,11 @@ public interface DataView<K> {
     boolean isEmpty();
 
     /**
+     * Removes all key-values form this {@link DataView}
+     */
+    void clear();
+
+    /**
      * Performs the given action for each key in this {@link DataView} until all keys
      * have been processed or the action throws an exception.
      * Exceptions thrown by the action are relayed to the caller.

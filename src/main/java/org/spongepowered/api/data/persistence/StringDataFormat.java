@@ -36,28 +36,30 @@ import java.io.Writer;
 public interface StringDataFormat extends DataFormat {
 
     /**
-     * Creates a new {@link DataMap} from the contents of the given
+     * Fills a {@link DataMap} with the contents from the given
      * {@link String}.
      *
+     * @param data The {@link DataMap} to put the contents of the string into
      * @param input The string to parse
-     * @return A data container representing the parsed contents of the string
+     * @return The given {@link DataMap} object for method chaining
      * @throws InvalidDataException If the data in the string was not a
      *         supported format
      * @throws IOException If there was an error reading from the string
      */
-    DataMap read(String input) throws InvalidDataException, IOException;
+    DataMap read(DataMap data, String input) throws InvalidDataException, IOException;
 
     /**
-     * Creates a new {@link DataMap} from the contents of the given
+     * Fills a {@link DataMap} with the contents from the given
      * {@link Reader}.
      *
+     * @param data The {@link DataMap} to put the contents of the reader into
      * @param input The reader
-     * @return A data container representing the parsed contents of the reader
+     * @return The given {@link DataMap} object for method chaining
      * @throws InvalidDataException If the data in the reader was not a
      *         supported format
      * @throws IOException If there was an error reading from the reader
      */
-    DataMap readFrom(Reader input) throws InvalidDataException, IOException;
+    DataMap readFrom(DataMap data, Reader input) throws InvalidDataException, IOException;
 
     /**
      * Serializes the given {@link DataMap} to a {@link String} using

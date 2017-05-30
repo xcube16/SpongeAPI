@@ -128,6 +128,11 @@ public class MemoryDataList extends AbstractDataList {
     }
 
     @Override
+    public void clear() {
+        this.list.clear();
+    }
+
+    @Override
     public int hashCode() {
         return this.list.hashCode();
     }

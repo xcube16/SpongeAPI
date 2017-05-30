@@ -128,6 +128,11 @@ public class MemoryDataMap extends AbstractDataMap {
     }
 
     @Override
+    public void clear() {
+        this.map.clear();
+    }
+
+    @Override
     public int hashCode() {
         return this.map.hashCode();
     }

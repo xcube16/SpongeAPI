@@ -50,8 +50,10 @@ public interface DataBuilder<T extends DataSerializable> extends ResettableBuild
      *
      * @param container The container containing all necessary data
      * @return The instance of the {@link DataSerializable}, if successful
+     * @throws InvalidDataException In the event that the builder is unable to
+     *     properly construct the data serializable from the data view
      */
-    Optional<T> build(DataMap container);
+    Optional<T> build(DataMap container) throws InvalidDataException;
 
     @Override
     default DataBuilder<T> reset() {

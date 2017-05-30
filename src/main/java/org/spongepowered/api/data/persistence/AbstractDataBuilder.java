@@ -63,11 +63,13 @@ public abstract class AbstractDataBuilder<T extends DataSerializable> implements
      *
      * @param container The container with data to build from
      * @return The deserialized data serializable, if possible
+     * @throws InvalidDataException If there's issues of invalid data formats
+     *     or invalid data
      */
-    protected abstract Optional<T> buildContent(DataMap container);
+    protected abstract Optional<T> buildContent(DataMap container) throws InvalidDataException;
 
     @Override
-    public final Optional<T> build(DataMap container) {
+    public final Optional<T> build(DataMap container) throws InvalidDataException {
         container.getInt(Queries.CONTENT_VERSION).ifPresent(contentVersion -> {
             if (contentVersion < this.supportedVersion) {
                 Optional<DataContentUpdater> updater = Sponge.getDataManager().getWrappedContentUpdater(this.requiredClass, contentVersion,
@@ -80,7 +82,10 @@ public abstract class AbstractDataBuilder<T extends DataSerializable> implements
                 updater.get().update(container);
             }
         });
-
-        return buildContent(container);
+        try {
+            return buildContent(container);
+        } catch (Exception e) {
+            throw new InvalidDataException("Could not deserialize something correctly, likely due to bad type data.", e);
+        }
     }
 }

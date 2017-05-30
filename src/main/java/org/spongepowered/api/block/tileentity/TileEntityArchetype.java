@@ -71,11 +71,11 @@ public interface TileEntityArchetype extends Archetype<BlockSnapshot, TileEntity
 
     /**
      * Gets the raw {@link TileEntity} data that would be applied to the
-     * generated tile entity. Note that this is a copied container.
+     * generated tile entity.
      *
-     * @return The copied container of the tile entity
+     * @param container The {@link DataMap} to put the tile entity data into
      */
-    DataMap getTileData();
+    void getTileData(DataMap container);
 
     /**
      * Sets the raw data for the desired {@link TileEntity}. Note that position

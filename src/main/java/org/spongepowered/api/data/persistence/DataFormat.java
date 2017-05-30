@@ -40,16 +40,17 @@ import java.io.OutputStream;
 public interface DataFormat extends CatalogType {
 
     /**
-     * Creates a new {@link DataMap} from the contents of the given
+     * Fills a {@link DataMap} with the contents from the given
      * {@link InputStream}.
-     * 
+     *
+     * @param data The {@link DataMap} to put the contents of the input stream into
      * @param input The input stream
-     * @return A data container representing the contents of the input stream
+     * @return The given {@link DataMap} object for method chaining
      * @throws InvalidDataFormatException If the data in the stream was not a
      *         supported format
      * @throws IOException If there was an error reading from the stream
      */
-    DataMap readFrom(InputStream input) throws InvalidDataFormatException, IOException;
+    DataMap readFrom(DataMap data, InputStream input) throws InvalidDataFormatException, IOException;
 
     /**
      * Writes the given {@link DataMap} to the given {@link OutputStream} using
