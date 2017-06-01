@@ -465,8 +465,46 @@ public final class Coerce2 {
      * @param type The class of the object
      * @return The deserialized object, if available
      */
-    @SuppressWarnings("unchecked") // checked with Class#isAssignableFrom()
-    public static <T> Optional<T> asSpongeObject(Object obj, Class<T> type) {
+    @SuppressWarnings("unchecked") // everything should be safe
+    public static <T> Optional<T> asObject(Object obj, Class<T> type) {
+        if (type == DataMap.class && obj instanceof DataMap) {
+            return Optional.of((T) obj);
+        } else if (type == DataList.class && obj instanceof DataList) {
+            return Optional.of((T) obj);
+        } else if (type == Boolean.class) {
+            return (Optional<T>) Coerce2.asBoolean(obj);
+        } else if (type == Byte.class) {
+            return (Optional<T>) Coerce2.asByte(obj);
+        } else if (type == Character.class) {
+            return (Optional<T>) Coerce2.asChar(obj);
+        } else if (type == Short.class) {
+            return (Optional<T>) Coerce2.asShort(obj);
+        } else if (type == Integer.class) {
+            return (Optional<T>) Coerce2.asInteger(obj);
+        } else if (type == Long.class) {
+            return (Optional<T>) Coerce2.asLong(obj);
+        } else if (type == Float.class) {
+            return (Optional<T>) Coerce2.asFloat(obj);
+        } else if (type == Double.class) {
+            return (Optional<T>) Coerce2.asDouble(obj);
+        } else if (type == boolean[].class) {
+            return (Optional<T>) Coerce2.asBooleanArray(obj);
+        } else if (type == byte[].class) {
+            return (Optional<T>) Coerce2.asByteArray(obj);
+        } else if (type == String.class) {
+            return (Optional<T>) Coerce2.asString(obj);
+        } else if (type == short[].class) {
+            return (Optional<T>) Coerce2.asShortArray(obj);
+        } else if (type == int[].class) {
+            return (Optional<T>) Coerce2.asIntArray(obj);
+        } else if (type == long[].class) {
+            return (Optional<T>) Coerce2.asLongArray(obj);
+        } else if (type == float[].class) {
+            return (Optional<T>) Coerce2.asFloatArray(obj);
+        } else if (type == double[].class) {
+            return (Optional<T>) Coerce2.asDoubleArray(obj);
+        }
+
         if (obj instanceof DataMap) {
 
             // See if type is a DataSerializable, in which case it *might* have a builder

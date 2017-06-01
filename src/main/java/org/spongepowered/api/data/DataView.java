@@ -455,9 +455,9 @@ public interface DataView<K> {
      * @param type The class of the object
      * @return The deserialized object, if available
      */
-    default <T> Optional<T> getSpongeObject(K key, Class<T> type) {
+    default <T> Optional<T> getObject(K key, Class<T> type) {
         checkNotNull(type, "type");
-        return this.get(key).flatMap(o -> Coerce2.asSpongeObject(o, type));
+        return this.get(key).flatMap(o -> Coerce2.asObject(o, type));
     }
 
     /**
@@ -872,7 +872,7 @@ public interface DataView<K> {
     Optional<double[]> getDoubleArray(DataQuery path);
 
     /**
-     * Gets a {@link DataSerializable}, {@link CatalogType}, or {@link DataTranslator}-able
+     * Gets an Allowed Type, {@link DataSerializable}, {@link CatalogType}, or {@link DataTranslator}-able
      * object registered in Sponge at path, if available.
      *
      * <p>If the data at the path is a {@link DataMap}
@@ -893,5 +893,5 @@ public interface DataView<K> {
      * @param type The class of the object
      * @return The deserialized object, if available
      */
-    <T> Optional<T> getSpongeObject(DataQuery path, Class<T> type);
+    <T> Optional<T> getObject(DataQuery path, Class<T> type);
 }

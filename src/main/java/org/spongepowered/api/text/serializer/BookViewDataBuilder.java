@@ -67,12 +67,12 @@ public class BookViewDataBuilder extends AbstractDataBuilder<BookView> implement
     protected Optional<BookView> buildContent(DataMap container) throws InvalidDataException {
         BookView.Builder builder = BookView.builder();
 
-        container.getSpongeObject(TEXT_TITLE, Text.class).ifPresent(builder::title);
-        container.getSpongeObject(TEXT_AUTHOR, Text.class).ifPresent(builder::author);
+        container.getObject(TEXT_TITLE, Text.class).ifPresent(builder::title);
+        container.getObject(TEXT_AUTHOR, Text.class).ifPresent(builder::author);
         container.getList(TEXT_PAGE_LIST).ifPresent(pageList -> {
             // TODO: better way to interate over DataList
             for (int i = 0; i < pageList.size(); i++) {
-                pageList.getSpongeObject(i, Text.class).ifPresent(builder::addPage);
+                pageList.getObject(i, Text.class).ifPresent(builder::addPage);
             }
         });
 
