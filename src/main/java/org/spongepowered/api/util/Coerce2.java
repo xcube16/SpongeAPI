@@ -445,21 +445,25 @@ public final class Coerce2 {
     }
 
     /**
-     * Gets the given object as a {@link DataSerializable}, {@link CatalogType}, or {@link DataTranslator}-able
+     * Gets the given object as a DataView Allowed Type, {@link DataSerializable},
+     * {@link CatalogType}, {@link Enum}, or {@link DataTranslator}-able
      * object registered in Sponge, if available.
      *
-     * <p>If {@code obj} is a {@link DataMap}
-     * and {@code type} is a {@link DataSerializable},
+     * <p>If {@code type} is a {@link DataSerializable}, {@code obj} is a {@link DataMap},
      * and the {@link DataSerializable} has a corresponding {@link DataBuilder} registered
-     * in Sponge's DataManager, present is returned.</p>
+     * in Sponge's DataManager, deserialization will be attempted.</p>
      *
-     * <p>If {@code obj} is a {@link DataMap}
-     * and a {@link DataTranslator} corresponding to {@code type} is registered
-     * in Sponge's DataManager, present is returned.</p>
+     * <p>If a {@link DataTranslator} corresponding to {@code type} is registered
+     * in Sponge's DataManager, the data at the path is a {@link DataMap}
+     * and, deserialization will be attempted.</p>
      *
      * <p>If {@code type} is a {@link CatalogType} registered in Sponge
      * and {@code obj} can be coerced into a {@link String}
      * representing the specific {@link CatalogType}, present is returned.</p>
+     *
+     * <p>If {@code type} is an {@link Enum} and {@code obj}
+     * can be coerced into a {@link String} representing the specific {@link Enum}
+     * value's name, present is returned.</p>
      *
      * @param <T> The type of object
      * @param type The class of the object
@@ -521,6 +525,9 @@ public final class Coerce2 {
         }
         if (CatalogType.class.isAssignableFrom(type)) {
             return Coerce.asString(obj).flatMap(s -> Sponge.getRegistry().getType((Class) type, s));
+        }
+        if (Enum.class.isAssignableFrom(type)) {
+            return Coerce.asString(obj).map(s -> (T) Enum.valueOf((Class<? extends Enum>) type, s));
         }
         return Optional.empty();
     }

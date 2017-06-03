@@ -65,9 +65,11 @@ public abstract class AbstractDataMap extends AbstractDataView<String> implement
         } else if (value instanceof CatalogType) { // Sponge Object
             this.setRaw(key, ((CatalogType) value).getId());
 
-        } else if (value instanceof Map) { // just extra candy
+        } else if (value instanceof Enum) { // common java stuff
+            this.setRaw(key, ((Enum) value).name());
+        } else if (value instanceof Map) { // common java stuff
             copyMap(key, (Map) value);
-        } else if (value instanceof Collection) { // just extra candy
+        } else if (value instanceof Collection) { // common java stuff
             copyCollection(key, (Collection) value);
 
         } else { // Sponge Object? maybe?

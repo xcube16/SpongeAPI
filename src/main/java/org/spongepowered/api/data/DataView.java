@@ -148,6 +148,7 @@ public interface DataView<K> {
      * * Allowed Types<br/>
      * * {@link DataSerializable}<br/>
      * * {@link CatalogType}<br/>
+     * * {@link Enum} (the enum's name will be stored as a {@link String})<br/>
      * * have a {@link DataTranslator} registered in Sponge's {@link DataManager}<br/>
      * * {@link Map} (will be coerced into a {@link DataMap}, or error on failure)<br/>
      * * {@link Collection} (will be coerced into a {@link DataList}/array, or error on failure)</p>
@@ -872,21 +873,25 @@ public interface DataView<K> {
     Optional<double[]> getDoubleArray(DataQuery path);
 
     /**
-     * Gets an Allowed Type, {@link DataSerializable}, {@link CatalogType}, or {@link DataTranslator}-able
+     * Gets an Allowed Type, {@link DataSerializable}, {@link CatalogType}, {@link Enum}, or {@link DataTranslator}-able
      * object registered in Sponge at path, if available.
      *
-     * <p>If the data at the path is a {@link DataMap}
-     * and {@code type} is a {@link DataSerializable},
+     * <p>If {@code type} is a {@link DataSerializable},
+     * the data at the path is a {@link DataMap},
      * and the {@link DataSerializable} has a corresponding {@link DataBuilder} registered
-     * in Sponge's DataManager, present is returned.</p>
+     * in Sponge's DataManager, deserialization will be attempted.</p>
      *
-     * <p>If the data at the path is a {@link DataMap}
-     * and a {@link DataTranslator} corresponding to {@code type} is registered
-     * in Sponge's DataManager, present is returned.</p>
+     * <p>If a {@link DataTranslator} corresponding to {@code type} is registered
+     * in Sponge's DataManager, the data at the path is a {@link DataMap},
+     * and deserialization will be attempted.</p>
      *
      * <p>If {@code type} is a {@link CatalogType} registered in Sponge
      * and the data at the path can be coerced into a {@link String}
      * representing the specific {@link CatalogType}, present is returned.</p>
+     *
+     * <p>If {@code type} is an {@link Enum} and the data at the path
+     * can be coerced into a {@link String} representing the specific {@link Enum}
+     * value's name, present is returned.</p>
      *
      * @param <T> The type of object
      * @param path The key of the value to get

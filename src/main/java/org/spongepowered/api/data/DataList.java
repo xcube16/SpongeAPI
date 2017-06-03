@@ -52,6 +52,7 @@ public interface DataList extends DataView<Integer> {
      * * Array Allowed Types
      * * {@link DataSerializable}<br/>
      * * {@link CatalogType}<br/>
+     * * {@link Enum} (the enum's name will be stored as a {@link String})<br/>
      * * have a {@link DataTranslator} registered in Sponge's {@link DataManager}<br/>
      * * {@link Map} (will be coerced into a DataMap, or error on failure)<br/>
      * * {@link Collection} (will be coerced into a {@link DataList}/array, or error on failure)</p>
